@@ -1,0 +1,45 @@
+package info.imdang.app.ui
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.join.complete.joinCompleteScreen
+import info.imdang.app.ui.join.joinScreen
+import info.imdang.app.ui.list.new.newInsightScreen
+import info.imdang.app.ui.list.region.searchByRegionInsightListScreen
+import info.imdang.app.ui.list.visitcomplex.visitComplexInsightScreen
+import info.imdang.app.ui.login.loginScreen
+import info.imdang.app.ui.main.home.search.map.searchByMapScreen
+import info.imdang.app.ui.main.home.search.region.searchByRegionScreen
+import info.imdang.app.ui.main.mainScreen
+import info.imdang.app.ui.onboarding.onboardingScreen
+import info.imdang.app.ui.splash.SPLASH_SCREEN
+import info.imdang.app.ui.splash.splashScreen
+import info.imdang.component.common.webview.commonWebScreen
+import info.imdang.component.theme.ImdangTheme
+
+@Composable
+fun ImdangNavGraph() {
+    val navController = rememberNavController()
+
+    ImdangTheme {
+        NavHost(
+            navController = navController,
+            startDestination = SPLASH_SCREEN
+        ) {
+            splashScreen(navController = navController)
+            loginScreen(navController = navController)
+            onboardingScreen(navController = navController)
+            joinScreen(navController = navController)
+            joinCompleteScreen(navController = navController)
+            mainScreen(navController = navController)
+            visitComplexInsightScreen(navController = navController)
+            newInsightScreen(navController = navController)
+            searchByMapScreen(navController = navController)
+            searchByRegionScreen(navController = navController)
+            searchByRegionInsightListScreen(navController = navController)
+
+            commonWebScreen(navController = navController)
+        }
+    }
+}

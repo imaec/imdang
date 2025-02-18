@@ -18,11 +18,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "info.imdang"
+    namespace = "info.imdang.app"
     compileSdk = AppConfig.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "info.imdang.imdang"
+        applicationId = "info.imdang.app"
         minSdk = AppConfig.MIN_SDK
         targetSdk = AppConfig.TARGET_SDK
         versionCode = AppConfig.VERSION_CODE
