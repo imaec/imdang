@@ -223,9 +223,9 @@ private fun HomeSearchVisitComplexView(navController: NavController) {
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                itemsIndexed(complexes) { index, chip ->
+                itemsIndexed(complexes) { index, complex ->
                     CommonChip(
-                        text = chip,
+                        text = complex,
                         isSelected = index == 0,
                         onClick = {
                             homeViewModel.hideTooltip()
