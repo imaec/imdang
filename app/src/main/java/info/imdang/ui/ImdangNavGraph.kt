@@ -16,6 +16,7 @@ import info.imdang.ui.main.home.search.map.searchByMapScreen
 import info.imdang.ui.main.home.search.region.searchByRegionScreen
 import info.imdang.ui.main.mainScreen
 import info.imdang.ui.onboarding.onboardingScreen
+import info.imdang.ui.splash.SPLASH_SCREEN
 import info.imdang.ui.splash.splashScreen
 
 @Composable
@@ -25,7 +26,7 @@ fun ImdangNavGraph() {
     ImdangTheme {
         NavHost(
             navController = navController,
-            startDestination = MAIN_SCREEN
+            startDestination = SPLASH_SCREEN
         ) {
             splashScreen(navController = navController)
             loginScreen(navController = navController)

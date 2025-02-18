@@ -90,7 +90,10 @@ private fun BottomNavigationItem(
             .size(60.dp)
             .clip(CircleShape)
             .clickable {
-                mainNavController.navigate(mainBottomBarType.route)
+                mainNavController.navigate(mainBottomBarType.route) {
+                    launchSingleTop = true
+                    popUpTo(mainBottomBarType.route) { inclusive = false }
+                }
             }
     ) {
         Column(
