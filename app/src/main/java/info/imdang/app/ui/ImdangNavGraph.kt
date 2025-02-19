@@ -9,11 +9,11 @@ import info.imdang.app.ui.list.new.newInsightScreen
 import info.imdang.app.ui.list.region.searchByRegionInsightListScreen
 import info.imdang.app.ui.list.visitcomplex.visitComplexInsightScreen
 import info.imdang.app.ui.login.loginScreen
+import info.imdang.app.ui.main.MAIN_SCREEN
 import info.imdang.app.ui.main.home.search.map.searchByMapScreen
 import info.imdang.app.ui.main.home.search.region.searchByRegionScreen
 import info.imdang.app.ui.main.mainScreen
 import info.imdang.app.ui.onboarding.onboardingScreen
-import info.imdang.app.ui.splash.SPLASH_SCREEN
 import info.imdang.app.ui.splash.splashScreen
 import info.imdang.component.common.webview.commonWebScreen
 import info.imdang.component.theme.ImdangTheme
@@ -25,7 +25,7 @@ fun ImdangNavGraph() {
     ImdangTheme {
         NavHost(
             navController = navController,
-            startDestination = SPLASH_SCREEN
+            startDestination = MAIN_SCREEN
         ) {
             splashScreen(navController = navController)
             loginScreen(navController = navController)

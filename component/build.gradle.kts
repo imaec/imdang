@@ -75,6 +75,7 @@ dependencies {
 
     // accompanist
     implementation(libs.accompanist.webview)
+    implementation(libs.accompanist.systemuicontroller)
 
     // timber
     implementation(libs.timber)

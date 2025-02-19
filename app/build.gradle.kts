@@ -124,6 +124,7 @@ dependencies {
     // accompanist
     implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicator)
+    implementation(libs.accompanist.systemuicontroller)
 
     // timber
     implementation(libs.timber)

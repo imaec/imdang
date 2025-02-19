@@ -1,5 +1,6 @@
 package info.imdang.app.ui.main
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -25,20 +26,18 @@ fun NavGraphBuilder.mainScreen(navController: NavController) {
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun MainScreen(navController: NavController) {
     val mainNavController = rememberNavController()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        content = { contentPadding ->
+        content = { _ ->
             NavHost(
                 navController = mainNavController,
                 startDestination = HOME_SCREEN,
-                modifier = Modifier.padding(
-                    top = contentPadding.calculateTopPadding(),
-                    bottom = 92.dp
-                )
+                modifier = Modifier.padding(bottom = 92.dp)
             ) {
                 homeScreen(
                     navController = navController,
