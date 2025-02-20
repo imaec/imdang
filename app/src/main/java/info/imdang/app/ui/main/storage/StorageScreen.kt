@@ -9,34 +9,45 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -52,6 +63,7 @@ import info.imdang.component.common.topbar.CollapsingScaffold
 import info.imdang.component.common.topbar.exitUntilCollapsedScrollBehavior
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray200
+import info.imdang.component.theme.Gray25
 import info.imdang.component.theme.Gray50
 import info.imdang.component.theme.Gray500
 import info.imdang.component.theme.Gray700
@@ -62,12 +74,14 @@ import info.imdang.component.theme.Orange500
 import info.imdang.component.theme.T400_14_19_6
 import info.imdang.component.theme.T500_12_16_8
 import info.imdang.component.theme.T500_14_19_6
+import info.imdang.component.theme.T500_16_22_4
 import info.imdang.component.theme.T600_14_19_6
 import info.imdang.component.theme.T600_16_22_4
-import info.imdang.component.theme.T600_18_25_2
 import info.imdang.component.theme.T700_24_33_6
 import info.imdang.component.theme.White
 import info.imdang.resource.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 const val STORAGE_SCREEN = "storage"
 
@@ -224,102 +238,9 @@ private fun StorageCollapsingContent(navController: NavController) {
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
-        HorizontalPager(
-            state = pagerState,
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            pageSpacing = 12.dp
-        ) { page ->
-            StorageAddressPage(
-                addressCount = pagerState.pageCount,
-                isSelected = pagerState.currentPage == page
-            )
-        }
+        StorageAddressView(pagerState = pagerState)
         Spacer(modifier = Modifier.height(24.dp))
         HorizontalDivider(thickness = 8.dp, color = Gray50)
-    }
-}
-
-@Composable
-private fun StorageAddressPage(
-    isSelected: Boolean,
-    addressCount: Int
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = if (isSelected) Orange500 else Gray100,
-                shape = RoundedCornerShape(10.dp)
-            )
-            .padding(all = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                iconResource = R.drawable.ic_pin_gray,
-                tint = White
-            )
-            Text(
-                text = "서울시 강남구 신논현동",
-                style = T600_18_25_2,
-                color = White
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(46.dp)
-                    .background(
-                        color = White.copy(alpha = 0.16f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.complex),
-                    style = T500_14_19_6,
-                    color = White
-                )
-                Text(
-                    text = "${addressCount}개",
-                    style = T600_16_22_4,
-                    color = White
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(46.dp)
-                    .background(
-                        color = White.copy(alpha = 0.16f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.insight),
-                    style = T500_14_19_6,
-                    color = White
-                )
-                Text(
-                    text = "3개",
-                    style = T600_16_22_4,
-                    color = White
-                )
-            }
-        }
     }
 }
 
@@ -357,8 +278,43 @@ private fun StorageContent() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StorageInsightFilterView(insightCount: Int) {
+    val sheetState = rememberModalBottomSheetState()
+    val viewModel = hiltViewModel<StorageViewModel>()
+    val selectedComplex = viewModel.selectedComplex.collectAsStateWithLifecycle().value
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            containerColor = White,
+            dragHandle = {
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .width(52.dp)
+                        .height(6.dp)
+                        .background(
+                            color = Color(0xFFD9D9D9),
+                            shape = CircleShape
+                        )
+                )
+            },
+            onDismissRequest = { showBottomSheet = false }
+        ) {
+            StorageComplexBottomSheet(
+                sheetState = sheetState,
+                onCloseBottomSheet = {
+                    showBottomSheet = false
+                }
+            )
+        }
+    }
+
     Column {
         Row(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
@@ -368,12 +324,17 @@ private fun StorageInsightFilterView(insightCount: Int) {
                 modifier = Modifier
                     .height(36.dp)
                     .background(
-                        color = Orange500,
+                        color = if (selectedComplex == null) Orange500 else White,
+                        shape = CircleShape
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = if (selectedComplex == null) Orange500 else Gray100,
                         shape = CircleShape
                     )
                     .clip(CircleShape)
                     .clickable {
-                        // todo : 주소별 인사이트 조회
+                        viewModel.updateSelectedComplex(null)
                     }
                     .padding(horizontal = 16.dp)
             ) {
@@ -381,24 +342,24 @@ private fun StorageInsightFilterView(insightCount: Int) {
                     modifier = Modifier.align(Alignment.Center),
                     text = stringResource(R.string.all),
                     style = T600_14_19_6,
-                    color = White
+                    color = if (selectedComplex == null) White else Gray500
                 )
             }
             Box(
                 modifier = Modifier
                     .height(36.dp)
                     .background(
-                        color = White,
+                        color = if (selectedComplex != null) Orange500 else White,
                         shape = CircleShape
                     )
                     .border(
                         width = 1.dp,
-                        color = Gray100,
+                        color = if (selectedComplex != null) Orange500 else Gray100,
                         shape = CircleShape
                     )
                     .clip(CircleShape)
                     .clickable {
-                        // todo : 주소별 단지 목록 바텀시트 노출
+                        showBottomSheet = true
                     }
                     .padding(horizontal = 16.dp)
             ) {
@@ -408,14 +369,14 @@ private fun StorageInsightFilterView(insightCount: Int) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.see_by_complex),
+                        text = selectedComplex ?: stringResource(R.string.see_by_complex),
                         style = T600_14_19_6,
-                        color = Gray500
+                        color = if (selectedComplex != null) White else Gray500
                     )
                     Icon(
                         modifier = Modifier.size(12.dp),
                         iconResource = R.drawable.ic_down,
-                        tint = Gray500
+                        tint = if (selectedComplex != null) White else Gray500
                     )
                 }
             }
@@ -459,6 +420,69 @@ private fun StorageInsightFilterView(insightCount: Int) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun StorageComplexBottomSheet(
+    sheetState: SheetState,
+    onCloseBottomSheet: () -> Unit
+) {
+    val config = LocalConfiguration.current
+    val screenHeight = config.screenHeightDp.dp
+    val statusBarHeight = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+    val navigationBarHeight = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+    val coroutineScope = rememberCoroutineScope()
+    val viewModel = hiltViewModel<StorageViewModel>()
+    val complexes = viewModel.complexes.collectAsStateWithLifecycle().value
+
+    LazyColumn(
+        modifier = Modifier.heightIn(
+            max = screenHeight - statusBarHeight - navigationBarHeight - 83.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(
+            start = 20.dp,
+            end = 20.dp,
+            top = 16.dp,
+            bottom = 40.dp
+        )
+    ) {
+        items(complexes) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(62.dp)
+                    .background(
+                        color = Gray25,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable {
+                        viewModel.updateSelectedComplex(it)
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            delay(100)
+                            onCloseBottomSheet()
+                        }
+                    }
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = it,
+                    style = T500_16_22_4,
+                    color = Gray900
+                )
+                Text(
+                    text = "${complexes.size}개",
+                    style = T500_14_19_6,
+                    color = Orange500
+                )
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun StorageScreenPreview() {
@@ -467,5 +491,19 @@ private fun StorageScreenPreview() {
             navController = rememberNavController(),
             mainNavController = rememberNavController()
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+private fun StorageComplexBottomSheetPreview() {
+    ImdangTheme {
+        Box(modifier = Modifier.background(White)) {
+            StorageComplexBottomSheet(
+                sheetState = rememberModalBottomSheetState(),
+                onCloseBottomSheet = {}
+            )
+        }
     }
 }

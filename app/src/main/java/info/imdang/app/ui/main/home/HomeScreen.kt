@@ -118,7 +118,7 @@ private fun HomeScreen(
         ) {
             FreePassBottomSheet(
                 sheetState = sheetState,
-                onClickClose = { isBack ->
+                onCloseBottomSheet = { isBack ->
                     showBottomSheet = false
                     if (isBack) {
                         navController.popBackStack(route = ONBOARDING_SCREEN, inclusive = true)
@@ -229,7 +229,7 @@ private fun HomeContent(
 @Composable
 private fun FreePassBottomSheet(
     sheetState: SheetState,
-    onClickClose: (isBack: Boolean) -> Unit
+    onCloseBottomSheet: (isBack: Boolean) -> Unit
 ) {
     val viewModel = hiltViewModel<HomeViewModel>()
     val coroutineScope = rememberCoroutineScope()
@@ -248,7 +248,7 @@ private fun FreePassBottomSheet(
                         coroutineScope.launch {
                             sheetState.hide()
                             delay(100)
-                            onClickClose(false)
+                            onCloseBottomSheet(false)
                         }
                     }
                     .padding(8.dp)
@@ -315,7 +315,7 @@ private fun FreePassBottomSheet(
                         coroutineScope.launch {
                             sheetState.hide()
                             delay(100)
-                            onClickClose(false)
+                            onCloseBottomSheet(false)
                         }
                     }
                 )
@@ -329,7 +329,7 @@ private fun FreePassBottomSheet(
                         coroutineScope.launch {
                             sheetState.hide()
                             delay(100)
-                            onClickClose(false)
+                            onCloseBottomSheet(false)
                         }
                     }
                 )
@@ -356,7 +356,7 @@ private fun FreePassBottomSheetPreview() {
     ImdangTheme {
         FreePassBottomSheet(
             sheetState = rememberModalBottomSheetState(),
-            onClickClose = {}
+            onCloseBottomSheet = {}
         )
     }
 }
