@@ -66,6 +66,9 @@
     <string name="all">전체</string>
     <string name="see_by_complex">단지별 보기</string>
     <string name="see_just_my_insight">내 인사이트만 보기</string>
+    <string name="storage_by_map">지도로 보기</string>
+    <string name="region_all">지역 전체</string>
+    <string name="select_complete">선택 완료</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>

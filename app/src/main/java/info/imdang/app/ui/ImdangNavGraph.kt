@@ -13,6 +13,8 @@ import info.imdang.app.ui.main.MAIN_SCREEN
 import info.imdang.app.ui.main.home.search.map.searchByMapScreen
 import info.imdang.app.ui.main.home.search.region.searchByRegionScreen
 import info.imdang.app.ui.main.mainScreen
+import info.imdang.app.ui.main.storage.address.storageAddressScreen
+import info.imdang.app.ui.main.storage.map.storageByMapScreen
 import info.imdang.app.ui.onboarding.onboardingScreen
 import info.imdang.app.ui.splash.splashScreen
 import info.imdang.component.common.webview.commonWebScreen
@@ -38,6 +40,8 @@ fun ImdangNavGraph() {
             searchByMapScreen(navController = navController)
             searchByRegionScreen(navController = navController)
             searchByRegionInsightListScreen(navController = navController)
+            storageByMapScreen(navController = navController)
+            storageAddressScreen(navController = navController)
 
             commonWebScreen(navController = navController)
         }

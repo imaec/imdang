@@ -43,6 +43,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
+import info.imdang.app.ui.main.storage.address.STORAGE_ADDRESS_SCREEN
+import info.imdang.app.ui.main.storage.map.STORAGE_BY_MAP_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
 import info.imdang.component.common.modifier.isVisible
@@ -105,7 +107,7 @@ private fun StorageScreen(
             )
         },
         collapsingContent = {
-            StorageCollapsingContent()
+            StorageCollapsingContent(navController = navController)
         },
         content = {
             StorageContent()
@@ -130,7 +132,7 @@ private fun StorageTopBar(
         ) {
             Row(
                 modifier = Modifier.clickable(enabled = isCollapsed) {
-                    // todo : 보관함 지역 목록 화면으로 이동
+                    navController.navigate(STORAGE_ADDRESS_SCREEN)
                 },
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -161,8 +163,7 @@ private fun StorageTopBar(
                     )
                     .clip(shape = RoundedCornerShape(4.dp))
                     .clickable {
-                        // todo : 지도로 보기 화면으로 이동
-                        // navController.navigate(STORAGE_BY_MAP_SCREEN)
+                        navController.navigate(STORAGE_BY_MAP_SCREEN)
                     }
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -185,7 +186,7 @@ private fun StorageTopBar(
 }
 
 @Composable
-private fun StorageCollapsingContent() {
+private fun StorageCollapsingContent(navController: NavController) {
     val pagerState = rememberPagerState { 4 }
 
     Column {
@@ -215,7 +216,7 @@ private fun StorageCollapsingContent() {
             }
             Text(
                 modifier = Modifier.clickableWithoutRipple {
-                    // todo : 보관함 지역 목록 화면으로 이동
+                    navController.navigate(STORAGE_ADDRESS_SCREEN)
                 },
                 text = stringResource(R.string.see_all),
                 style = T400_14_19_6,
@@ -458,7 +459,7 @@ private fun StorageInsightFilterView(insightCount: Int) {
     }
 }
 
-@Preview(heightDp = 1500)
+@Preview
 @Composable
 private fun StorageScreenPreview() {
     ImdangTheme {
