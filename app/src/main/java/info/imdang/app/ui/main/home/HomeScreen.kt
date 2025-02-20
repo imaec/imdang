@@ -146,7 +146,9 @@ private fun HomeScreen(
         )
         if (viewModel.isShowTooltip.collectAsStateWithLifecycle().value) {
             Tooltip(
-                modifier = Modifier.padding(start = 20.dp, top = 52.dp),
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(start = 20.dp, top = 52.dp),
                 direction = TooltipDirection.UP,
                 tailStartPadding = 80.dp,
                 text = stringResource(R.string.free_pass_tooltip_message)
