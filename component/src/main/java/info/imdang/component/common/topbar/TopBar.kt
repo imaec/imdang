@@ -34,6 +34,7 @@ import info.imdang.resource.R
 @Composable
 fun TopBar(
     title: String = "",
+    hasDivider: Boolean = true,
     rightWidget: (@Composable () -> Unit)? = null,
     onClickBack: () -> Unit = {}
 ) {
@@ -65,7 +66,7 @@ fun TopBar(
             )
             rightWidget?.invoke()
         }
-        HorizontalDivider(color = Gray100)
+        if (hasDivider) HorizontalDivider(color = Gray100)
     }
 }
 
@@ -83,6 +84,7 @@ private fun TopBarPreview() {
             TopBar(title = "제목")
             TopBar(
                 title = "제목",
+                hasDivider = false,
                 rightWidget = {
                     Text(
                         modifier = Modifier

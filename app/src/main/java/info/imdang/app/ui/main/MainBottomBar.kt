@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.insight.write.WRITE_INSIGHT_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray500
@@ -61,8 +62,7 @@ fun MainBottomBar(
                         .clip(CircleShape)
                         .background(color = Gray800)
                         .clickable {
-                            // todo : 인사이트 작성 화면으로 이동
-                            // navController.navigate(WRITE_INSIGHT_SCREEN)
+                            navController.navigate(WRITE_INSIGHT_SCREEN)
                         }
                         .padding(all = 14.dp),
                     iconResource = R.drawable.ic_pen,
