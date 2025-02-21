@@ -151,8 +151,8 @@ private fun HomeSearchView(navController: NavController) {
                     .clickable {
                         navController.navigate(SEARCH_BY_MAP_SCREEN)
                     }
-                    .padding(16.dp)
-                    .size(18.dp),
+                    .padding(13.dp)
+                    .size(24.dp),
                 iconResource = R.drawable.ic_map,
                 tint = White
             )

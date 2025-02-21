@@ -90,6 +90,8 @@ private fun BottomNavigationItem(
             .size(60.dp)
             .clip(CircleShape)
             .clickable {
+                if (currentRoute == mainBottomBarType.route) return@clickable
+
                 mainNavController.navigate(mainBottomBarType.route) {
                     launchSingleTop = true
                     popUpTo(mainBottomBarType.route) { inclusive = false }
