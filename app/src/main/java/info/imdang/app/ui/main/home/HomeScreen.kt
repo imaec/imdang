@@ -92,7 +92,7 @@ private fun HomeScreen(
     val viewModel = hiltViewModel<HomeViewModel>()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val pagerState = rememberPagerState { 2 }
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var isShowBottomSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(pagerState.currentPage) {
         viewModel.hideTooltip()
@@ -102,24 +102,24 @@ private fun HomeScreen(
         viewModel.event.collectLatest {
             when (it) {
                 is HomeEvent.ShowHomeFreePassBottomSheet -> {
-                    showBottomSheet = true
+                    isShowBottomSheet = true
                 }
             }
         }
     }
 
-    if (showBottomSheet) {
+    if (isShowBottomSheet) {
         ModalBottomSheet(
             sheetState = sheetState,
             shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
             containerColor = White,
             dragHandle = null,
-            onDismissRequest = { showBottomSheet = false }
+            onDismissRequest = { isShowBottomSheet = false }
         ) {
             FreePassBottomSheet(
                 sheetState = sheetState,
                 onCloseBottomSheet = { isBack ->
-                    showBottomSheet = false
+                    isShowBottomSheet = false
                     if (isBack) {
                         navController.popBackStack(route = ONBOARDING_SCREEN, inclusive = true)
                     }

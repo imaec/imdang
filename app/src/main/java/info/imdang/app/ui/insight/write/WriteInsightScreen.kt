@@ -9,6 +9,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,10 +27,12 @@ import info.imdang.app.ui.insight.write.environment.WriteInsightComplexEnvironme
 import info.imdang.app.ui.insight.write.facility.WriteInsightComplexFacilityPage
 import info.imdang.app.ui.insight.write.goodnews.WriteInsightGoodNewsPage
 import info.imdang.app.ui.insight.write.infra.WriteInsightInfraPage
+import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.gradient.ButtonGradient
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
+import kotlinx.coroutines.delay
 
 const val WRITE_INSIGHT_SCREEN = "writeInsight"
 
@@ -38,6 +44,22 @@ fun NavGraphBuilder.writeInsightScreen(navController: NavController) {
 
 @Composable
 private fun WriteInsightScreen(navController: NavController) {
+    var isShowDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(100)
+        isShowDialog = true
+    }
+
+    if (isShowDialog) {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.write_insight_message),
+            onClickPositiveButton = { isShowDialog = false },
+            onDismiss = {}
+        )
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -84,5 +106,17 @@ private fun WriteInsightContent(contentPadding: PaddingValues) {
 private fun WriteInsightScreenPreview() {
     ImdangTheme {
         WriteInsightScreen(navController = rememberNavController())
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WriteInsightDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.write_insight_message),
+            onDismiss = {}
+        )
     }
 }
