@@ -38,19 +38,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
+import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
 import info.imdang.app.ui.insight.write.common.WriteInsightTitle
 import info.imdang.component.common.image.Icon
 import info.imdang.component.model.SelectionVo
-import info.imdang.component.system.button.SelectionButtons
 import info.imdang.component.system.textfield.CommonTextField
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray200
 import info.imdang.component.theme.Gray400
 import info.imdang.component.theme.Gray50
-import info.imdang.component.theme.Gray500
 import info.imdang.component.theme.Gray700
 import info.imdang.component.theme.ImdangTheme
-import info.imdang.component.theme.T500_12_16_8
 import info.imdang.component.theme.T500_16_22_4
 import info.imdang.component.theme.T600_12_16_8
 import info.imdang.component.theme.White
@@ -112,16 +111,55 @@ fun WriteInsightBasicInfoPage() {
             )
         }
         item {
-            VisitTimeView()
+            WriteInsightSelectionButtons(
+                title = stringResource(R.string.visit_time),
+                items = listOf(
+                    SelectionVo(name = stringResource(R.string.morning)),
+                    SelectionVo(name = stringResource(R.string.day)),
+                    SelectionVo(name = stringResource(R.string.evening)),
+                    SelectionVo(name = stringResource(R.string.night))
+                ),
+                onClickItem = {
+                    // todo : 아이템 선택
+                }
+            )
         }
         item {
-            TrafficMethodView()
+            WriteInsightSelectionButtons(
+                title = stringResource(R.string.traffic_method),
+                items = listOf(
+                    SelectionVo(name = stringResource(R.string.car)),
+                    SelectionVo(name = stringResource(R.string.public_traffic)),
+                    SelectionVo(name = stringResource(R.string.walk))
+                ),
+                onClickItem = {
+                    // todo : 아이템 선택
+                }
+            )
         }
         item {
-            AccessLimitView()
+            WriteInsightSelectionButtons(
+                title = stringResource(R.string.access_limit),
+                isMultipleSelection = false,
+                items = listOf(
+                    SelectionVo(name = stringResource(R.string.limited)),
+                    SelectionVo(name = stringResource(R.string.need_permission)),
+                    SelectionVo(name = stringResource(R.string.free_access))
+                ),
+                onClickItem = {
+                    // todo : 아이템 선택
+                }
+            )
         }
         item {
-            InsightSummaryView()
+            WriteInsightDetailContentView(
+                title = stringResource(R.string.insight_summary),
+                hintText = stringResource(R.string.insight_summary_hint),
+                isRequired = true,
+                onClick = {
+                    // todo : 인사이트 요약 작성 화면 이동
+                }
+            )
         }
     }
 }
@@ -273,147 +311,6 @@ private fun VisitDateView(onFocusChanged: (isFocused: Boolean) -> Unit) {
             // viewModel.updateTitle(title = it)
         }
     )
-}
-
-@Composable
-private fun VisitTimeView() {
-    val focusManager = LocalFocusManager.current
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WriteInsightTitle(title = stringResource(R.string.visit_time), isRequired = true)
-            Text(
-                text = stringResource(R.string.multiple_selection),
-                style = T500_12_16_8,
-                color = Gray500
-            )
-        }
-        SelectionButtons(
-            items = listOf(
-                SelectionVo(name = stringResource(R.string.morning)),
-                SelectionVo(name = stringResource(R.string.day)),
-                SelectionVo(name = stringResource(R.string.evening)),
-                SelectionVo(name = stringResource(R.string.night))
-            ),
-            onClick = {
-                focusManager.clearFocus()
-                // todo : 아이템 선택
-            }
-        )
-    }
-}
-
-@Composable
-private fun TrafficMethodView() {
-    val focusManager = LocalFocusManager.current
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WriteInsightTitle(title = stringResource(R.string.traffic_method), isRequired = true)
-            Text(
-                text = stringResource(R.string.multiple_selection),
-                style = T500_12_16_8,
-                color = Gray500
-            )
-        }
-        SelectionButtons(
-            items = listOf(
-                SelectionVo(name = stringResource(R.string.car)),
-                SelectionVo(name = stringResource(R.string.public_traffic)),
-                SelectionVo(name = stringResource(R.string.walk))
-            ),
-            onClick = {
-                focusManager.clearFocus()
-                // todo : 아이템 선택
-            }
-        )
-    }
-}
-
-@Composable
-private fun AccessLimitView() {
-    val focusManager = LocalFocusManager.current
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WriteInsightTitle(title = stringResource(R.string.access_limit), isRequired = true)
-            Text(
-                text = stringResource(R.string.single_selection),
-                style = T500_12_16_8,
-                color = Gray500
-            )
-        }
-        SelectionButtons(
-            items = listOf(
-                SelectionVo(name = stringResource(R.string.limited)),
-                SelectionVo(name = stringResource(R.string.need_permission)),
-                SelectionVo(name = stringResource(R.string.free_access))
-            ),
-            onClick = {
-                focusManager.clearFocus()
-                // todo : 아이템 선택
-            }
-        )
-    }
-}
-
-@Composable
-private fun InsightSummaryView() {
-    val focusManager = LocalFocusManager.current
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WriteInsightTitle(title = stringResource(R.string.insight_summary), isRequired = true)
-            Text(
-                text = stringResource(R.string.input_min_max_message, 30, 200),
-                style = T500_12_16_8,
-                color = Gray500
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .background(color = White, shape = RoundedCornerShape(8.dp))
-                .border(width = 1.dp, color = Gray100, shape = RoundedCornerShape(8.dp))
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    focusManager.clearFocus()
-                    // todo : 인사이트 요약 작성 화면 이동
-                }
-                .padding(all = 16.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.insight_summary_hint),
-                style = T500_16_22_4,
-                color = Gray400
-            )
-        }
-    }
 }
 
 @Preview(showBackground = true, heightDp = 1410)

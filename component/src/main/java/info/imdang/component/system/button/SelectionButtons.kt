@@ -39,6 +39,7 @@ fun SelectionButtons(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        userScrollEnabled = false,
         content = {
             items(items.size) { index ->
                 val item = items[index]
