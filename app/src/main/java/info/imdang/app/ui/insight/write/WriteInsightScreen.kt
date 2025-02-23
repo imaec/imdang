@@ -3,6 +3,7 @@ package info.imdang.app.ui.insight.write
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,7 +29,9 @@ import info.imdang.app.ui.insight.write.environment.WriteInsightComplexEnvironme
 import info.imdang.app.ui.insight.write.facility.WriteInsightComplexFacilityPage
 import info.imdang.app.ui.insight.write.goodnews.WriteInsightGoodNewsPage
 import info.imdang.app.ui.insight.write.infra.WriteInsightInfraPage
+import info.imdang.app.util.KeyboardCallback
 import info.imdang.component.common.dialog.CommonDialog
+import info.imdang.component.common.modifier.isVisible
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.gradient.ButtonGradient
 import info.imdang.component.theme.ImdangTheme
@@ -44,7 +48,9 @@ fun NavGraphBuilder.writeInsightScreen(navController: NavController) {
 
 @Composable
 private fun WriteInsightScreen(navController: NavController) {
+    val focusManager = LocalFocusManager.current
     var isShowDialog by remember { mutableStateOf(false) }
+    var isShowKeyboard by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         delay(100)
@@ -60,22 +66,45 @@ private fun WriteInsightScreen(navController: NavController) {
         )
     }
 
+    KeyboardCallback(
+        onShowKeyboard = { isShowKeyboard = true },
+        onHideKeyboard = { isShowKeyboard = false }
+    )
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         topBar = {
             WriteInsightTopBar(navController = navController)
         },
         content = { contentPadding ->
-            WriteInsightContent(contentPadding)
+            WriteInsightContent(
+                contentPadding = contentPadding,
+                isShowKeyboard = isShowKeyboard
+            )
         },
         bottomBar = {
-            CommonButton(buttonText = stringResource(R.string.next))
+            CommonButton(
+                buttonText = stringResource(
+                    if (isShowKeyboard) R.string.confirm else R.string.next
+                ),
+                isFloating = !isShowKeyboard,
+                isEnabled = isShowKeyboard,
+                isClickable = true,
+                onClick = {
+                    focusManager.clearFocus()
+                }
+            )
         }
     )
 }
 
 @Composable
-private fun WriteInsightContent(contentPadding: PaddingValues) {
+private fun WriteInsightContent(
+    contentPadding: PaddingValues,
+    isShowKeyboard: Boolean
+) {
     val viewModel = hiltViewModel<WriteInsightViewModel>()
     val pagerState = rememberPagerState { 5 }
 
@@ -97,7 +126,11 @@ private fun WriteInsightContent(contentPadding: PaddingValues) {
                 4 -> WriteInsightGoodNewsPage()
             }
         }
-        ButtonGradient(modifier = Modifier.align(Alignment.BottomCenter))
+        ButtonGradient(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .isVisible(!isShowKeyboard)
+        )
     }
 }
 

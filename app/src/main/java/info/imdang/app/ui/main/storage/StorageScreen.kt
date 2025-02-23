@@ -246,7 +246,7 @@ private fun StorageCollapsingContent(navController: NavController) {
 
 @Composable
 private fun StorageContent() {
-    val state = rememberLazyListState()
+    val listState = rememberLazyListState()
     val insights = mutableListOf<String>().apply {
         repeat(33) {
             add("초역세권 대단지 아파트 후기")
@@ -256,7 +256,7 @@ private fun StorageContent() {
     Column(modifier = Modifier.fillMaxSize()) {
         StorageInsightFilterView(insightCount = insights.size)
         LazyColumn(
-            state = state,
+            state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)

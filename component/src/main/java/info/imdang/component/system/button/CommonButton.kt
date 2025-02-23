@@ -1,5 +1,8 @@
 package info.imdang.component.system.button
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,66 +52,76 @@ fun CommonButton(
     bottomPadding: Dp = 40.dp,
     isEnabled: Boolean = true,
     isFloating: Boolean = true,
+    isClickable: Boolean = isEnabled,
     onClick: () -> Unit = {}
 ) {
+    val animatedHorizontalPadding by animateDpAsState(
+        targetValue = if (isFloating) horizontalPadding else 0.dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+    val animatedBottomPadding by animateDpAsState(
+        targetValue = if (isFloating) bottomPadding else 0.dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+    val animatedCornerSize by animateDpAsState(
+        targetValue = when (buttonType) {
+            CommonButtonType.MAIN -> if (isFloating) 8.dp else 0.dp
+            CommonButtonType.SUB -> 8.dp
+            CommonButtonType.GHOST -> 8.dp
+        },
+        animationSpec = tween(durationMillis = 300)
+    )
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = when (buttonType) {
+            CommonButtonType.MAIN -> if (isEnabled) Orange500 else Gray100
+            CommonButtonType.SUB -> White
+            CommonButtonType.GHOST -> White
+        },
+        animationSpec = tween(durationMillis = 200)
+    )
+    val animatedBorderColor by animateColorAsState(
+        targetValue = when (buttonType) {
+            CommonButtonType.MAIN -> if (isEnabled) Orange500 else Gray100
+            CommonButtonType.SUB -> if (isEnabled) Orange500 else Orange200
+            CommonButtonType.GHOST -> if (isEnabled) Gray200 else Gray100
+        },
+        animationSpec = tween(durationMillis = 200)
+    )
+    val animatedTextColor by animateColorAsState(
+        targetValue = when (buttonType) {
+            CommonButtonType.MAIN -> if (isEnabled) White else Gray500
+            CommonButtonType.SUB -> if (isEnabled) Orange500 else Orange300
+            CommonButtonType.GHOST -> if (isEnabled) Gray700 else Gray400
+        },
+        animationSpec = tween(durationMillis = 200)
+    )
+
     Box(
         modifier = modifier
             .padding(
-                start = if (isFloating) horizontalPadding else 0.dp,
-                end = if (isFloating) horizontalPadding else 0.dp,
-                bottom = if (isFloating) bottomPadding else 0.dp
+                start = animatedHorizontalPadding,
+                end = animatedHorizontalPadding,
+                bottom = animatedBottomPadding
             )
             .background(
-                color = when (buttonType) {
-                    CommonButtonType.MAIN -> if (isEnabled) Orange500 else Gray100
-                    CommonButtonType.SUB -> White
-                    CommonButtonType.GHOST -> White
-                },
-                shape = RoundedCornerShape(
-                    when (buttonType) {
-                        CommonButtonType.MAIN -> if (isFloating) 8.dp else 0.dp
-                        CommonButtonType.SUB -> 8.dp
-                        CommonButtonType.GHOST -> 8.dp
-                    }
-                )
+                color = animatedBackgroundColor,
+                shape = RoundedCornerShape(animatedCornerSize)
             )
             .border(
                 width = 1.dp,
-                color = when (buttonType) {
-                    CommonButtonType.MAIN -> if (isEnabled) Orange500 else Gray100
-                    CommonButtonType.SUB -> if (isEnabled) Orange500 else Orange200
-                    CommonButtonType.GHOST -> if (isEnabled) Gray200 else Gray100
-                },
-                shape = RoundedCornerShape(
-                    when (buttonType) {
-                        CommonButtonType.MAIN -> if (isFloating) 8.dp else 0.dp
-                        CommonButtonType.SUB -> 8.dp
-                        CommonButtonType.GHOST -> 8.dp
-                    }
-                )
+                color = animatedBorderColor,
+                shape = RoundedCornerShape(animatedCornerSize)
             )
             .fillMaxWidth()
             .height(56.dp)
-            .clip(
-                RoundedCornerShape(
-                    when (buttonType) {
-                        CommonButtonType.MAIN -> if (isFloating) 8.dp else 0.dp
-                        CommonButtonType.SUB -> 8.dp
-                        CommonButtonType.GHOST -> 8.dp
-                    }
-                )
-            )
-            .clickable(enabled = isEnabled, onClick = onClick)
+            .clip(RoundedCornerShape(animatedCornerSize))
+            .clickable(enabled = isClickable, onClick = onClick)
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = buttonText,
             style = T600_16_22_4,
-            color = when (buttonType) {
-                CommonButtonType.MAIN -> if (isEnabled) White else Gray500
-                CommonButtonType.SUB -> if (isEnabled) Orange500 else Orange300
-                CommonButtonType.GHOST -> if (isEnabled) Gray700 else Gray400
-            },
+            color = animatedTextColor,
             textAlign = TextAlign.Center
         )
     }

@@ -64,6 +64,7 @@ fun CommonTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
     title: String? = null,
+    isRequired: Boolean = false,
     minLength: Int? = null,
     maxLength: Int? = null,
     onTextChanged: (String) -> Unit = {}
@@ -94,11 +95,20 @@ fun CommonTextField(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = title,
-                        style = T600_14_19_6,
-                        color = Gray700
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = title,
+                            style = T600_14_19_6,
+                            color = Gray700
+                        )
+                        if (isRequired) {
+                            Text(
+                                text = "*",
+                                style = T600_14_19_6,
+                                color = RedE93528
+                            )
+                        }
+                    }
                     Icon(
                         modifier = Modifier
                             .isVisible(textState.text.isNotEmpty() || errorText.isNotEmpty())
@@ -229,6 +239,7 @@ private fun CommonTextFieldPreview() {
                 text = "",
                 hintText = "플레이스 홀더",
                 title = "닉네임",
+                isRequired = true,
                 minLength = 2,
                 maxLength = 10
             )

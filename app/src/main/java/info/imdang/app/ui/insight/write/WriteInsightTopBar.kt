@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,11 +42,17 @@ import info.imdang.resource.R
 fun WriteInsightTopBar(navController: NavController) {
     val viewModel = hiltViewModel<WriteInsightViewModel>()
     val selectedPage = viewModel.selectedPage.collectAsStateWithLifecycle().value
-    val pages = listOf("기본정보", "인프라", "단지환경", "단지시설", "호재")
+    val pages = listOf(
+        stringResource(R.string.basic_info),
+        stringResource(R.string.infra),
+        stringResource(R.string.complex_environment),
+        stringResource(R.string.complex_facility),
+        stringResource(R.string.good_news)
+    )
 
     Column {
         TopBar(
-            title = "인사이트 작성 및 업로드",
+            title = stringResource(R.string.write_insight_title),
             hasDivider = false,
             onClickBack = { navController.popBackStack() },
             rightWidget = {

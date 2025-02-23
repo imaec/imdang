@@ -274,8 +274,8 @@ private fun CompleteButton(
     isBirthDateFocused: Boolean
 ) {
     val focusManager = LocalFocusManager.current
-    var isKeyboardVisible by remember { mutableStateOf(false) }
-    val isButtonEnabled = if (isKeyboardVisible) {
+    var isShowKeyboard by remember { mutableStateOf(false) }
+    val isButtonEnabled = if (isShowKeyboard) {
         if (isNicknameFocused) {
             viewModel.isNicknameValid.collectAsStateWithLifecycle().value
         } else if (isBirthDateFocused) {
@@ -288,22 +288,18 @@ private fun CompleteButton(
     }
 
     KeyboardCallback(
-        onShowKeyboard = {
-            isKeyboardVisible = true
-        },
-        onHideKeyboard = {
-            isKeyboardVisible = false
-        }
+        onShowKeyboard = { isShowKeyboard = true },
+        onHideKeyboard = { isShowKeyboard = false }
     )
 
     CommonButton(
         buttonText = stringResource(
-            if (isKeyboardVisible) R.string.confirm else R.string.complete
+            if (isShowKeyboard) R.string.confirm else R.string.complete
         ),
         isEnabled = isButtonEnabled,
-        isFloating = !isKeyboardVisible,
+        isFloating = !isShowKeyboard,
         onClick = {
-            if (isKeyboardVisible) {
+            if (isShowKeyboard) {
                 if (isNicknameFocused && isButtonEnabled) {
                     focusManager.clearFocus()
                 }

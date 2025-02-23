@@ -70,10 +70,50 @@
     <string name="storage_by_map">지도로 보기</string>
     <string name="region_all">지역 전체</string>
     <string name="select_complete">선택 완료</string>
+    <string name="write_insight_title">인사이트 작성 및 업로드</string>
+    <string name="basic_info">기본 정보</string>
+    <string name="infra">인프라</string>
+    <string name="complex_environment">단지환경</string>
+    <string name="complex_facility">단지시설</string>
+    <string name="good_news">호재</string>
+    <string name="write_complete">작성 완료</string>
     <string name="write_insight_message">작성 완료시 인사이트가\n바로 업로드 돼요. 여유로운 시간에\n신중하게 작성해주세요.</string>
+    <string name="write_insight_back_message">페이지 이동 시 작성된 내용이\n저장되지 않아요. 그래도 이동할까요?</string>
+    <string name="yes_its_ok">네, 괜찮아요</string>
+    <string name="multiple_selection">복수 선택 가능</string>
+    <string name="single_selection">하나만 선택</string>
+    <string name="cover_image">표지 이미지</string>
+    <string name="image_add">이미지 추가</string>
+    <string name="image_edit">이미지 수정</string>
+    <string name="title">제목</string>
+    <string name="complex_address">단지 주소</string>
+    <string name="jibun_address">지번 주소</string>
+    <string name="complex_name">아파트 단지 명</string>
+    <string name="visit_date">다녀온 날짜</string>
+    <string name="visit_date_hint">예시) 2024.01.01</string>
+    <string name="visit_time">다녀온 시간</string>
+    <string name="traffic_method">교통 수단</string>
+    <string name="access_limit">출입 제한</string>
+    <string name="insight_summary">인사이트 요약</string>
+    <string name="insight_summary_hint">예시)\n지하철역과 도보 10분 거리로 접근성이 좋지만, 근처 공사로 소음 문제가 있을 수 있을 것 같아요. 하지만 단지 내 공원이 잘 조성되어 있어 가족 단위 거주자에게 적합할 것 같아요.</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>
     <string name="empty_reject_message">거절 내역이 없어요.</string>
     <string name="empty_exchange_complete_message">교환 완료 내역이 없어요.</string>
+
+    <!-- 인사이트 작성 항목 -->
+    <!-- 기본정보 - 다녀온 시간 -->
+    <string name="morning">아침</string>
+    <string name="day">점심</string>
+    <string name="evening">저녁</string>
+    <string name="night">밤</string>
+    <!-- 기본정보 - 교통 수단 -->
+    <string name="car">자차</string>
+    <string name="public_traffic">대중교통</string>
+    <string name="walk">도보</string>
+    <!-- 기본정보 - 출입 제한 -->
+    <string name="limited">제한됨</string>
+    <string name="need_permission">허락시 가능</string>
+    <string name="free_access">자유로움</string>
 </resources>
