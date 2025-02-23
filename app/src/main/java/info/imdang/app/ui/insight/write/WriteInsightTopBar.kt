@@ -1,5 +1,6 @@
 package info.imdang.app.ui.insight.write
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.theme.Gray100
@@ -49,12 +55,30 @@ fun WriteInsightTopBar(navController: NavController) {
         stringResource(R.string.complex_facility),
         stringResource(R.string.good_news)
     )
+    var isShowDialog by remember { mutableStateOf(false) }
+
+    if (isShowDialog) {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.write_insight_back_message),
+            positiveButtonText = stringResource(R.string.yes_its_ok),
+            negativeButtonText = stringResource(R.string.cancel),
+            onClickPositiveButton = {
+                isShowDialog = false
+                navController.popBackStack()
+            },
+            onClickNegativeButton = { isShowDialog = false },
+            onDismiss = { isShowDialog = false }
+        )
+    }
+
+    BackHandler { isShowDialog = true }
 
     Column {
         TopBar(
             title = stringResource(R.string.write_insight_title),
             hasDivider = false,
-            onClickBack = { navController.popBackStack() },
+            onClickBack = { isShowDialog = true },
             rightWidget = {
                 Text(
                     modifier = Modifier
