@@ -92,7 +92,7 @@ fun WriteInsightInfraPage() {
                     SelectionVo(name = stringResource(R.string.library)),
                     SelectionVo(name = stringResource(R.string.cinema)),
                     SelectionVo(name = stringResource(R.string.gym)),
-                    SelectionVo(name = stringResource(R.string.fitness_center)),
+                    SelectionVo(name = stringResource(R.string.health_center)),
                     SelectionVo(name = stringResource(R.string.swimming_pool)),
                     SelectionVo(name = stringResource(R.string.badminton_court)),
                     SelectionVo(name = stringResource(R.string.tennis_court)),
@@ -164,7 +164,7 @@ fun WriteInsightInfraPage() {
         }
         item {
             WriteInsightDetailContentView(
-                title = stringResource(R.string.infra_overall_review),
+                title = stringResource(R.string.complex_environment_overall_review),
                 onClick = {
                     // todo : 총평 작성 화면 이동
                 }
@@ -209,7 +209,7 @@ private fun WriteInsightInfraPagePreview2() {
                 }
             )
             WriteInsightDetailContentView(
-                title = stringResource(R.string.infra_overall_review),
+                title = stringResource(R.string.complex_environment_overall_review),
                 onClick = {
                     // todo : 총평 작성 화면 이동
                 }
