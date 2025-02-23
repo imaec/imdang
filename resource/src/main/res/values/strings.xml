@@ -105,6 +105,11 @@
     <string name="landmark">랜드마크</string>
     <string name="avoid_facility">기피시설</string>
     <string name="infra_overall_review">인프라 총평</string>
+    <string name="building">건물</string>
+    <string name="safety">안전</string>
+    <string name="children_facility">어린이 시설</string>
+    <string name="silver_facility">경로시설</string>
+    <string name="complex_environment_overall_review">단지 환경 총평</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>
@@ -125,6 +130,7 @@
     <string name="limited">제한됨</string>
     <string name="need_permission">허락시 가능</string>
     <string name="free_access">자유로움</string>
+
     <!-- 인프라 - 교통 -->
     <string name="parking_convenient">주차 편리</string>
     <string name="around_subway_station">지하철역 주변</string>
@@ -185,7 +191,13 @@
     <string name="high_rise_building">고층 건물</string>
     <string name="building_under_construction">공사중 건물</string>
 
+    <!-- 단지 환경 - 공통 -->
+    <string name="unknown">잘 모르겠어요</string>
+    <string name="best">최고예요</string>
+    <string name="good">좋아요</string>
+    <string name="normal">평범해요</string>
+    <string name="not_good">별로에요</string>
+
     <!-- 인사이트 작성 항목 공통 -->
     <string name="not_applicable">해당 없음</string>
-    <string name="unknown">잘 모르겠어요</string>
 </resources>
