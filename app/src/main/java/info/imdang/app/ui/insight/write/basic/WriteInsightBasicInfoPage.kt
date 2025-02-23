@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,58 +74,54 @@ fun WriteInsightBasicInfoPage() {
             }
     }
 
-    Column {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            contentPadding = PaddingValues(
-                start = 20.dp,
-                end = 20.dp,
-                top = 24.dp,
-                bottom = 40.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(40.dp)
-        ) {
-            item {
-                CoverImageView()
-            }
-            item {
-                TitleView(
-                    onFocusChanged = { isFocused ->
-                        coroutineScope.launch {
-                            if (isFocused) listState.animateScrollToItem(index = 1)
-                            isTitleFocused = isFocused
-                        }
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            start = 20.dp,
+            end = 20.dp,
+            top = 24.dp,
+            bottom = 40.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(40.dp)
+    ) {
+        item {
+            CoverImageView()
+        }
+        item {
+            TitleView(
+                onFocusChanged = { isFocused ->
+                    coroutineScope.launch {
+                        if (isFocused) listState.animateScrollToItem(index = 1)
+                        isTitleFocused = isFocused
                     }
-                )
-            }
-            item {
-                AddressView()
-            }
-            item {
-                VisitDateView(
-                    onFocusChanged = { isFocused ->
-                        coroutineScope.launch {
-                            if (isFocused) listState.animateScrollToItem(index = 3)
-                            isVisitDateFocused = isFocused
-                        }
+                }
+            )
+        }
+        item {
+            AddressView()
+        }
+        item {
+            VisitDateView(
+                onFocusChanged = { isFocused ->
+                    coroutineScope.launch {
+                        if (isFocused) listState.animateScrollToItem(index = 3)
+                        isVisitDateFocused = isFocused
                     }
-                )
-            }
-            item {
-                VisitTimeView()
-            }
-            item {
-                TrafficMethodView()
-            }
-            item {
-                AccessLimitView()
-            }
-            item {
-                InsightSummaryView()
-            }
+                }
+            )
+        }
+        item {
+            VisitTimeView()
+        }
+        item {
+            TrafficMethodView()
+        }
+        item {
+            AccessLimitView()
+        }
+        item {
+            InsightSummaryView()
         }
     }
 }
