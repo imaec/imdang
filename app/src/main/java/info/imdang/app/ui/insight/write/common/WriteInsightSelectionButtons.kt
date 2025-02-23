@@ -2,6 +2,7 @@ package info.imdang.app.ui.insight.write.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,13 +11,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import info.imdang.component.model.SelectionVo
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import info.imdang.app.ui.insight.write.WriteInsightInit
+import info.imdang.app.ui.insight.write.WriteInsightSelectionItems
+import info.imdang.app.ui.insight.write.WriteInsightViewModel
+import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.system.button.SelectionButtons
 import info.imdang.component.theme.Gray50
 import info.imdang.component.theme.Gray500
@@ -29,12 +39,29 @@ import info.imdang.resource.R
 @Composable
 fun WriteInsightSelectionButtons(
     title: String,
-    items: List<SelectionVo>,
-    onClickItem: (item: SelectionVo) -> Unit,
-    isMultipleSelection: Boolean = true,
-    selectionExample: String? = null
+    selectionItems: WriteInsightSelectionItems,
+    selectionExample: String? = null,
+    onClick: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
+    var isShowResetDialog by remember { mutableStateOf(false) }
+    var resetItem by remember { mutableStateOf("") }
+
+    if (isShowResetDialog) {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.write_insight_unselect_message),
+            positiveButtonText = stringResource(R.string.yes_its_ok),
+            negativeButtonText = stringResource(R.string.cancel),
+            onClickPositiveButton = {
+                isShowResetDialog = false
+                selectionItems.confirmReset(resetItem)
+            },
+            onClickNegativeButton = {
+                isShowResetDialog = false
+            }
+        )
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
@@ -47,10 +74,10 @@ fun WriteInsightSelectionButtons(
             WriteInsightTitle(title = title, isRequired = true)
             Text(
                 text = stringResource(
-                    if (isMultipleSelection) {
-                        R.string.multiple_selection
-                    } else {
+                    if (selectionItems.isSingleSelection) {
                         R.string.single_selection
+                    } else {
+                        R.string.multiple_selection
                     }
                 ),
                 style = T500_12_16_8,
@@ -68,10 +95,17 @@ fun WriteInsightSelectionButtons(
             )
         }
         SelectionButtons(
-            items = items,
-            onClick = {
+            items = selectionItems.items.collectAsStateWithLifecycle().value,
+            onClick = { item ->
                 focusManager.clearFocus()
-                onClickItem(it)
+                selectionItems.selectItem(
+                    item = item,
+                    onShowResetDialog = {
+                        resetItem = it
+                        isShowResetDialog = true
+                    }
+                )
+                onClick()
             }
         )
     }
@@ -80,39 +114,39 @@ fun WriteInsightSelectionButtons(
 @Preview(showBackground = true)
 @Composable
 private fun WriteInsightSelectionButtonsPreview() {
+    val viewModel = hiltViewModel<WriteInsightViewModel>()
+    WriteInsightInit()
     ImdangTheme {
         Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
             WriteInsightSelectionButtons(
-                title = "교통",
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.morning)),
-                    SelectionVo(name = stringResource(R.string.day)),
-                    SelectionVo(name = stringResource(R.string.evening)),
-                    SelectionVo(name = stringResource(R.string.night))
-                ),
-                selectionExample = "ex. 단지 외관 상태",
-                onClickItem = {}
+                title = stringResource(R.string.building),
+                selectionItems = viewModel.buildings,
+                selectionExample = "ex. 단지 외관 상태"
             )
             WriteInsightSelectionButtons(
-                title = "교통",
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.morning)),
-                    SelectionVo(name = stringResource(R.string.day)),
-                    SelectionVo(name = stringResource(R.string.evening)),
-                    SelectionVo(name = stringResource(R.string.night))
-                ),
-                onClickItem = {}
+                title = stringResource(R.string.traffic),
+                selectionItems = viewModel.infraTraffics
             )
-            WriteInsightSelectionButtons(
-                title = "교통",
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.morning)),
-                    SelectionVo(name = stringResource(R.string.day)),
-                    SelectionVo(name = stringResource(R.string.evening)),
-                    SelectionVo(name = stringResource(R.string.night))
-                ),
-                isMultipleSelection = false,
-                onClickItem = {}
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ResetDialogPreview() {
+    ImdangTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)
+        ) {
+            CommonDialog(
+                iconResource = R.drawable.ic_sign_for_dialog,
+                message = stringResource(R.string.write_insight_unselect_message),
+                positiveButtonText = stringResource(R.string.yes_its_ok),
+                negativeButtonText = stringResource(R.string.cancel),
+                onClickPositiveButton = {},
+                onClickNegativeButton = {}
             )
         }
     }

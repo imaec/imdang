@@ -20,11 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +34,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import info.imdang.app.ui.insight.write.WriteInsightInit
+import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
 import info.imdang.app.ui.insight.write.common.WriteInsightTitle
 import info.imdang.component.common.image.Icon
-import info.imdang.component.model.SelectionVo
 import info.imdang.component.system.textfield.CommonTextField
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray200
@@ -59,10 +58,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun WriteInsightBasicInfoPage() {
     val focusManager = LocalFocusManager.current
+    val viewModel = hiltViewModel<WriteInsightViewModel>()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    var isTitleFocused by remember { mutableStateOf(false) }
-    var isVisitDateFocused by remember { mutableStateOf(false) }
+    val isTitleFocused = viewModel.isTitleFocused.collectAsStateWithLifecycle().value
+    val isVisitDateFocused = viewModel.isVisitDateFocused.collectAsStateWithLifecycle().value
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemScrollOffset }
@@ -92,7 +92,7 @@ fun WriteInsightBasicInfoPage() {
                 onFocusChanged = { isFocused ->
                     coroutineScope.launch {
                         if (isFocused) listState.animateScrollToItem(index = 1)
-                        isTitleFocused = isFocused
+                        viewModel.updateTitleFocused(isFocused)
                     }
                 }
             )
@@ -105,7 +105,7 @@ fun WriteInsightBasicInfoPage() {
                 onFocusChanged = { isFocused ->
                     coroutineScope.launch {
                         if (isFocused) listState.animateScrollToItem(index = 3)
-                        isVisitDateFocused = isFocused
+                        viewModel.updateVisitDateFocused(isFocused)
                     }
                 }
             )
@@ -113,41 +113,33 @@ fun WriteInsightBasicInfoPage() {
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.visit_time),
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.morning)),
-                    SelectionVo(name = stringResource(R.string.day)),
-                    SelectionVo(name = stringResource(R.string.evening)),
-                    SelectionVo(name = stringResource(R.string.night))
-                ),
-                onClickItem = {
-                    // todo : 아이템 선택
+                selectionItems = viewModel.visitTimes,
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(4)
+                    }
                 }
             )
         }
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.traffic_method),
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.car)),
-                    SelectionVo(name = stringResource(R.string.public_traffic)),
-                    SelectionVo(name = stringResource(R.string.walk))
-                ),
-                onClickItem = {
-                    // todo : 아이템 선택
+                selectionItems = viewModel.trafficsMethods,
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(5)
+                    }
                 }
             )
         }
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.access_limit),
-                isMultipleSelection = false,
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.limited)),
-                    SelectionVo(name = stringResource(R.string.need_permission)),
-                    SelectionVo(name = stringResource(R.string.free_access))
-                ),
-                onClickItem = {
-                    // todo : 아이템 선택
+                selectionItems = viewModel.accessLimits,
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(6)
+                    }
                 }
             )
         }
@@ -228,20 +220,22 @@ private fun CoverImageView() {
 
 @Composable
 private fun TitleView(onFocusChanged: (isFocused: Boolean) -> Unit) {
+    val viewModel = hiltViewModel<WriteInsightViewModel>()
+
     CommonTextField(
         modifier = Modifier
             .focusRequester(FocusRequester())
             .onFocusChanged {
                 onFocusChanged(it.isFocused)
             },
-        text = "",
+        text = viewModel.title.collectAsStateWithLifecycle().value,
         imeAction = ImeAction.Next,
         title = stringResource(R.string.title),
         isRequired = true,
         minLength = 1,
         maxLength = 10,
         onTextChanged = {
-            // viewModel.updateTitle(title = it)
+            viewModel.updateTitle(title = it)
         }
     )
 }
@@ -294,13 +288,15 @@ private fun AddressView() {
 
 @Composable
 private fun VisitDateView(onFocusChanged: (isFocused: Boolean) -> Unit) {
+    val viewModel = hiltViewModel<WriteInsightViewModel>()
+
     CommonTextField(
         modifier = Modifier
             .focusRequester(FocusRequester())
             .onFocusChanged {
                 onFocusChanged(it.isFocused)
             },
-        text = "",
+        text = viewModel.visitDate.collectAsStateWithLifecycle().value,
         hintText = stringResource(R.string.visit_date_hint),
         keyboardType = KeyboardType.Number,
         imeAction = ImeAction.Done,
@@ -308,7 +304,7 @@ private fun VisitDateView(onFocusChanged: (isFocused: Boolean) -> Unit) {
         maxLength = 10,
         isRequired = true,
         onTextChanged = {
-            // viewModel.updateTitle(title = it)
+            viewModel.updateVisitDate(visitDate = it)
         }
     )
 }
@@ -316,6 +312,7 @@ private fun VisitDateView(onFocusChanged: (isFocused: Boolean) -> Unit) {
 @Preview(showBackground = true, heightDp = 1410)
 @Composable
 private fun WriteInsightBasicInfoPreview() {
+    WriteInsightInit()
     ImdangTheme {
         WriteInsightBasicInfoPage()
     }

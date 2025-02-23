@@ -2,6 +2,7 @@ package info.imdang.app.ui.join
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import info.imdang.app.base.BaseViewModel
+import info.imdang.app.common.util.reformatDate
 import info.imdang.app.model.auth.GenderType
 import info.imdang.app.util.validateBirthDate
 import info.imdang.app.util.validateNickname
@@ -104,7 +105,7 @@ class JoinViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun updateBirthDate(birthDate: String) {
-        _birthDate.value = reformatBirthDate(birthDate)
+        _birthDate.value = reformatDate(birthDate)
         validateBirthDate()
     }
 
@@ -112,17 +113,6 @@ class JoinViewModel @Inject constructor() : BaseViewModel() {
         _genders.value = genders.value.map {
             it.copy(isSelected = selection.name == it.name)
         }
-    }
-
-    private fun reformatBirthDate(birthDate: String): String {
-        var newBirthDate = birthDate.replace(".", "")
-        if (newBirthDate.length > 4) {
-            newBirthDate = newBirthDate.substring(0, 4) + "." + newBirthDate.substring(4)
-        }
-        if (newBirthDate.length > 7) {
-            newBirthDate = newBirthDate.substring(0, 7) + "." + newBirthDate.substring(7)
-        }
-        return newBirthDate
     }
 
     private fun validateNickname() {

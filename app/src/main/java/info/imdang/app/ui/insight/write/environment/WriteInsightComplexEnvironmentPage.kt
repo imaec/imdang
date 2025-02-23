@@ -6,18 +6,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
-import info.imdang.component.model.SelectionVo
+import info.imdang.app.ui.insight.write.WriteInsightInit
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun WriteInsightComplexEnvironmentPage() {
+    val viewModel = hiltViewModel<WriteInsightViewModel>()
+    val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
     LazyColumn(
@@ -34,64 +40,44 @@ fun WriteInsightComplexEnvironmentPage() {
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.building),
-                isMultipleSelection = false,
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.unknown)),
-                    SelectionVo(name = stringResource(R.string.best)),
-                    SelectionVo(name = stringResource(R.string.good)),
-                    SelectionVo(name = stringResource(R.string.normal)),
-                    SelectionVo(name = stringResource(R.string.not_good))
-                ),
-                onClickItem = {
-                    // todo : 아이템 선택
+                selectionItems = viewModel.buildings,
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(0)
+                    }
                 }
             )
         }
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.safety),
-                isMultipleSelection = false,
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.unknown)),
-                    SelectionVo(name = stringResource(R.string.best)),
-                    SelectionVo(name = stringResource(R.string.good)),
-                    SelectionVo(name = stringResource(R.string.normal)),
-                    SelectionVo(name = stringResource(R.string.not_good))
-                ),
-                onClickItem = {
-                    // todo : 아이템 선택
+                selectionItems = viewModel.safeties,
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(1)
+                    }
                 }
             )
         }
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.children_facility),
-                isMultipleSelection = false,
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.unknown)),
-                    SelectionVo(name = stringResource(R.string.best)),
-                    SelectionVo(name = stringResource(R.string.good)),
-                    SelectionVo(name = stringResource(R.string.normal)),
-                    SelectionVo(name = stringResource(R.string.not_good))
-                ),
-                onClickItem = {
-                    // todo : 아이템 선택
+                selectionItems = viewModel.childrenFacilities,
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(2)
+                    }
                 }
             )
         }
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.silver_facility),
-                isMultipleSelection = false,
-                items = listOf(
-                    SelectionVo(name = stringResource(R.string.unknown)),
-                    SelectionVo(name = stringResource(R.string.best)),
-                    SelectionVo(name = stringResource(R.string.good)),
-                    SelectionVo(name = stringResource(R.string.normal)),
-                    SelectionVo(name = stringResource(R.string.not_good))
-                ),
-                onClickItem = {
-                    // todo : 아이템 선택
+                selectionItems = viewModel.silverFacilities,
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(3)
+                    }
                 }
             )
         }
@@ -109,6 +95,7 @@ fun WriteInsightComplexEnvironmentPage() {
 @Preview(showBackground = true, heightDp = 1233)
 @Composable
 private fun WriteInsightComplexEnvironmentPreview() {
+    WriteInsightInit()
     ImdangTheme {
         WriteInsightComplexEnvironmentPage()
     }

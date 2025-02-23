@@ -13,8 +13,12 @@ import javax.inject.Inject
 @HiltViewModel
 open class BaseViewModel @Inject constructor() : ViewModel() {
 
-    internal fun <T> StateFlow<T?>.isCheckVisible() = map {
-        if (it is Set<*>) it.isNotEmpty() else it != null
+    internal fun <T> Flow<T?>.isCheckVisible() = map {
+        when (it) {
+            is List<*> -> it.isNotEmpty()
+            is String -> it.isNotBlank()
+            else -> it != null
+        }
     }.toStateFlow(false)
 
     internal fun StateFlow<String>.isBlank() = map { it.isBlank() }.toStateFlow(false)

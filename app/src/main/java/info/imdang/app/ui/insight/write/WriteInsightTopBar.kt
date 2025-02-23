@@ -56,6 +56,7 @@ fun WriteInsightTopBar(navController: NavController) {
         stringResource(R.string.good_news)
     )
     var isShowDialog by remember { mutableStateOf(false) }
+    val progress by viewModel.progress.collectAsStateWithLifecycle()
 
     if (isShowDialog) {
         CommonDialog(
@@ -84,7 +85,7 @@ fun WriteInsightTopBar(navController: NavController) {
                     modifier = Modifier
                         .background(color = Orange50, shape = CircleShape)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
-                    text = "00%",
+                    text = progress,
                     style = T600_14_19_6,
                     color = Orange500
                 )

@@ -9,6 +9,7 @@
     <string name="onboarding_description2">양질의 인사이트를 주고받으며\n가치 있는 임장 인사이트를 교환하세요</string>
     <string name="onboarding_title3">다양한 인사이트 모으기</string>
     <string name="onboarding_description3">작성한 인사이트와 교환한 인사이트를\n보관함에서 편리하게 관리하세요</string>
+    <string name="previous">이전</string>
     <string name="next">다음</string>
     <string name="join_title">기본 정보 입력</string>
     <string name="join_description">추후 진행할 이벤트를 위해 조사하고 있어요\n개인정보는 유출되지 않으니 걱정 마세요</string>
@@ -76,7 +77,7 @@
     <string name="complex_environment">단지환경</string>
     <string name="complex_facility">단지시설</string>
     <string name="good_news">호재</string>
-    <string name="write_complete">작성 완료</string>
+    <string name="write_complete_and_upload">작성완료 및 업로드</string>
     <string name="write_insight_message">작성 완료시 인사이트가\n바로 업로드 돼요. 여유로운 시간에\n신중하게 작성해주세요.</string>
     <string name="write_insight_back_message">페이지 이동 시 작성된 내용이\n저장되지 않아요. 그래도 이동할까요?</string>
     <string name="write_insight_input_required_message">필수 항목을 모두 작성해주세요</string>
@@ -122,6 +123,7 @@
     <string name="industry">산업</string>
     <string name="policy">정책</string>
     <string name="good_news_overall_review">호재 총평</string>
+    <string name="write_insight_unselect_message">해당 없음, 잘 모르겠어요\n선택시 다른 항목들은\n선택이 해제돼요. 괜찮으신가요?</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>
