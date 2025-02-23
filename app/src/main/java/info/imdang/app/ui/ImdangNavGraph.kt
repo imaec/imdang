@@ -18,6 +18,7 @@ import info.imdang.app.ui.main.storage.address.storageAddressScreen
 import info.imdang.app.ui.main.storage.map.storageByMapScreen
 import info.imdang.app.ui.onboarding.onboardingScreen
 import info.imdang.app.ui.splash.splashScreen
+import info.imdang.component.common.snackbar.Snackbar
 import info.imdang.component.common.webview.commonWebScreen
 import info.imdang.component.theme.ImdangTheme
 
@@ -47,5 +48,6 @@ fun ImdangNavGraph() {
 
             commonWebScreen(navController = navController)
         }
+        Snackbar()
     }
 }

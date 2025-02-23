@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,11 +33,13 @@ import info.imdang.app.ui.insight.write.infra.WriteInsightInfraPage
 import info.imdang.app.util.KeyboardCallback
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.modifier.isVisible
+import info.imdang.component.common.snackbar.showSnackbar
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.gradient.ButtonGradient
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 const val WRITE_INSIGHT_SCREEN = "writeInsight"
 
@@ -49,6 +52,7 @@ fun NavGraphBuilder.writeInsightScreen(navController: NavController) {
 @Composable
 private fun WriteInsightScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
     var isShowDialog by remember { mutableStateOf(false) }
     var isShowKeyboard by remember { mutableStateOf(false) }
 
@@ -85,6 +89,7 @@ private fun WriteInsightScreen(navController: NavController) {
             )
         },
         bottomBar = {
+            val message = stringResource(R.string.write_insight_input_required_message)
             CommonButton(
                 buttonText = stringResource(
                     if (isShowKeyboard) R.string.confirm else R.string.next
@@ -94,6 +99,11 @@ private fun WriteInsightScreen(navController: NavController) {
                 isClickable = true,
                 onClick = {
                     focusManager.clearFocus()
+                    if (!isShowKeyboard) {
+                        coroutineScope.launch {
+                            showSnackbar(message = message)
+                        }
+                    }
                 }
             )
         }

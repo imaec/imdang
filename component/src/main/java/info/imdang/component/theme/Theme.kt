@@ -1,5 +1,7 @@
 package info.imdang.component.theme
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -13,11 +15,13 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ImdangTheme(
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) {
     MaterialTheme(
         colorScheme = LightColorScheme,
         typography = Typography,
-        content = content
+        content = {
+            Box { content() }
+        }
     )
 }
