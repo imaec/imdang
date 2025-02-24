@@ -13,16 +13,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
 import info.imdang.app.ui.insight.write.WriteInsightInit
+import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_OVERALL_REVIEW_SCREEN
+import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_REVIEW_TYPE
+import info.imdang.app.ui.insight.write.common.WriteInsightReviewType
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteInsightComplexFacilityPage() {
+fun WriteInsightComplexFacilityPage(navController: NavController = rememberNavController()) {
     val viewModel = hiltViewModel<WriteInsightViewModel>()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -87,7 +92,11 @@ fun WriteInsightComplexFacilityPage() {
                 title = stringResource(R.string.complex_facility_overall_review),
                 text = viewModel.complexFacilityReview.collectAsStateWithLifecycle().value,
                 onClick = {
-                    // todo : 총평 작성 화면 이동
+                    navController.navigate(
+                        route = WRITE_INSIGHT_OVERALL_REVIEW_SCREEN +
+                            "?$WRITE_INSIGHT_REVIEW_TYPE=" +
+                            WriteInsightReviewType.COMPLEX_FACILITY.name
+                    )
                 }
             )
         }

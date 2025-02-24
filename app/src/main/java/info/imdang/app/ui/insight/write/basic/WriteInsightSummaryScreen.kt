@@ -69,8 +69,8 @@ private fun WriteInsightSummaryScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val originSummary = viewModel.summary.collectAsStateWithLifecycle().value
-    var isShowKeyboard by remember { mutableStateOf(false) }
     var summary by remember { mutableStateOf(originSummary) }
+    var isShowKeyboard by remember { mutableStateOf(false) }
 
     KeyboardCallback(
         onShowKeyboard = { isShowKeyboard = true },
@@ -97,12 +97,10 @@ private fun WriteInsightSummaryScreen(
         },
         content = { contentPadding ->
             WriteInsightSummaryContent(
-                summary = summary,
                 contentPadding = contentPadding,
+                summary = summary,
                 isShowKeyboard = isShowKeyboard,
-                onSummaryChanged = {
-                    summary = it
-                }
+                onSummaryChanged = { summary = it }
             )
         },
         bottomBar = {
@@ -123,8 +121,8 @@ private fun WriteInsightSummaryScreen(
 
 @Composable
 private fun WriteInsightSummaryContent(
-    summary: String,
     contentPadding: PaddingValues,
+    summary: String,
     isShowKeyboard: Boolean,
     onSummaryChanged: (String) -> Unit
 ) {

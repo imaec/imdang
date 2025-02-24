@@ -146,10 +146,10 @@ private fun WriteInsightContent(
                     navController = navController,
                     viewModel = viewModel
                 )
-                1 -> WriteInsightInfraPage()
-                2 -> WriteInsightComplexEnvironmentPage()
-                3 -> WriteInsightComplexFacilityPage()
-                4 -> WriteInsightGoodNewsPage()
+                1 -> WriteInsightInfraPage(navController = navController)
+                2 -> WriteInsightComplexEnvironmentPage(navController = navController)
+                3 -> WriteInsightComplexFacilityPage(navController = navController)
+                4 -> WriteInsightGoodNewsPage(navController = navController)
             }
         }
         ButtonGradient(

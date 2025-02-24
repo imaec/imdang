@@ -307,4 +307,20 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
     fun updateSummary(summary: String) {
         _summary.value = summary
     }
+
+    fun updateInfraReview(review: String) {
+        _infraReview.value = review
+    }
+
+    fun updateComplexEnvironmentReview(review: String) {
+        _complexEnvironmentReview.value = review
+    }
+
+    fun updateComplexFacilityReview(review: String) {
+        _complexFacilityReview.value = review
+    }
+
+    fun updateGoodNewsReview(review: String) {
+        _goodNewsReview.value = review
+    }
 }
