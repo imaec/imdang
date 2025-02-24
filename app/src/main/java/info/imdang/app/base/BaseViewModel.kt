@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 open class BaseViewModel @Inject constructor() : ViewModel() {
 
-    internal fun <T> Flow<T?>.isCheckVisible() = map {
+    internal fun <T> Flow<T?>.isValid() = map {
         when (it) {
             is List<*> -> it.isNotEmpty()
             is String -> it.isNotBlank()

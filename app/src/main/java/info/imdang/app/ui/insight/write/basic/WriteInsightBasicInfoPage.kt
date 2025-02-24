@@ -129,7 +129,10 @@ fun WriteInsightBasicInfoPage(
             )
         }
         item {
-            AddressView()
+            AddressView(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         item {
             VisitDateView(
@@ -444,11 +447,20 @@ private fun TitleView(
 }
 
 @Composable
-private fun AddressView() {
+private fun AddressView(
+    navController: NavController,
+    viewModel: WriteInsightViewModel
+) {
     val focusManager = LocalFocusManager.current
+    val address by viewModel.address.collectAsStateWithLifecycle()
+    val complexName by viewModel.complexName.collectAsStateWithLifecycle()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        WriteInsightTitle(title = stringResource(R.string.complex_address), isRequired = true)
+        WriteInsightTitle(
+            title = stringResource(R.string.complex_address),
+            isRequired = true,
+            isValid = address.isNotBlank() && complexName.isNotBlank()
+        )
         Box(
             modifier = Modifier
                 .height(52.dp)
@@ -457,7 +469,7 @@ private fun AddressView() {
                 .clip(RoundedCornerShape(8.dp))
                 .clickable {
                     focusManager.clearFocus()
-                    // todo : 지번 검색
+                    navController.navigate(KAKAO_ADDRESS_WEB_SCREEN)
                 }
                 .padding(horizontal = 16.dp)
         ) {
@@ -465,9 +477,9 @@ private fun AddressView() {
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxWidth(),
-                text = stringResource(R.string.jibun_address),
+                text = address.ifEmpty { stringResource(R.string.jibun_address) },
                 style = T500_16_22_4,
-                color = Gray400
+                color = if (address.isNotEmpty()) Gray900 else Gray400
             )
         }
         Box(
@@ -481,9 +493,9 @@ private fun AddressView() {
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxWidth(),
-                text = stringResource(R.string.complex_name),
+                text = complexName.ifEmpty { stringResource(R.string.complex_name) },
                 style = T500_16_22_4,
-                color = Gray400
+                color = if (complexName.isNotEmpty()) Gray900 else Gray400
             )
         }
     }

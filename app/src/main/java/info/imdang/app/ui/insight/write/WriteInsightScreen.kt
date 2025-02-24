@@ -1,5 +1,6 @@
 package info.imdang.app.ui.insight.write
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.common.ext.sharedViewModel
@@ -54,18 +56,19 @@ import kotlinx.coroutines.launch
 
 const val WRITE_INSIGHT_SCREEN = "writeInsight"
 
-fun NavGraphBuilder.writeInsightScreen(navController: NavController) {
+fun NavGraphBuilder.writeInsightScreen(navController: NavHostController) {
     composable(route = WRITE_INSIGHT_SCREEN) {
         WriteInsightScreen(
             navController = navController,
-            viewModel = navController.sharedViewModel(WRITE_INSIGHT_SCREEN)
+            viewModel = it.sharedViewModel(navController, WRITE_INSIGHT_SCREEN)
         )
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 private fun WriteInsightScreen(
-    navController: NavController,
+    navController: NavHostController,
     viewModel: WriteInsightViewModel = hiltViewModel()
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { 5 }

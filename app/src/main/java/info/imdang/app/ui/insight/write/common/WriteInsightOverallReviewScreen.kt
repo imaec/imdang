@@ -66,7 +66,7 @@ fun NavGraphBuilder.writeInsightOverallReviewScreen(navController: NavController
         if (reviewType != null) {
             WriteInsightOverallReviewScreen(
                 navController = navController,
-                viewModel = navController.sharedViewModel(WRITE_INSIGHT_SCREEN),
+                viewModel = it.sharedViewModel(navController, WRITE_INSIGHT_SCREEN),
                 reviewType = reviewType
             )
         } else {

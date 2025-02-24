@@ -58,8 +58,11 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
         it.first().validateVisitDate()
     }.toStateFlow("")
 
-    private val visitDateValid = combine(visitDateErrorMessage) {
-        it.first().isEmpty()
+    private val visitDateValid = combine(
+        visitDate,
+        visitDateErrorMessage
+    ) { visitDate, visitDateErrorMessage ->
+        visitDate.isNotEmpty() && visitDateErrorMessage.isEmpty()
     }.toStateFlow(false)
 
     private val _isVisitDateFocused = MutableStateFlow(false)
@@ -127,15 +130,15 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
 
     /** 페이지별 작성 완료 여부 **/
     private val basicInfoValid = combine(
-        coverImageFile.isCheckVisible(),
-//        coverImageUrl.isCheckVisible(),
+        coverImageFile.isValid(),
+//        coverImageUrl.isValid(),
         titleValid,
-//        address.isCheckVisible(),
-//        complexName.isCheckVisible(),
+        address.isValid(),
+        complexName.isValid(),
         visitDateValid,
-        visitTimes.selectedItems.isCheckVisible(),
-        trafficsMethods.selectedItems.isCheckVisible(),
-        accessLimits.selectedItems.isCheckVisible(),
+        visitTimes.selectedItems.isValid(),
+        trafficsMethods.selectedItems.isValid(),
+        accessLimits.selectedItems.isValid(),
         summary.map { it.length in 30..200 }.toStateFlow(false)
     ) { valid ->
         valid[0] && valid.takeLast(valid.size - 2).all { it }
@@ -145,43 +148,43 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
     }.toStateFlow(false)
 
     private val infraValid = combine(
-        infraTraffics.selectedItems.isCheckVisible(),
-        schools.selectedItems.isCheckVisible(),
-        livingFacilities.selectedItems.isCheckVisible(),
-        cultureFacilities.selectedItems.isCheckVisible(),
-        surroundingEnvironments.selectedItems.isCheckVisible(),
-        landmarks.selectedItems.isCheckVisible(),
-        avoidFacilities.selectedItems.isCheckVisible()
+        infraTraffics.selectedItems.isValid(),
+        schools.selectedItems.isValid(),
+        livingFacilities.selectedItems.isValid(),
+        cultureFacilities.selectedItems.isValid(),
+        surroundingEnvironments.selectedItems.isValid(),
+        landmarks.selectedItems.isValid(),
+        avoidFacilities.selectedItems.isValid()
     ) { valid ->
         valid.all { it }
     }.toStateFlow(false)
 
     private val complexEnvironmentValid = combine(
-        buildings.selectedItems.isCheckVisible(),
-        safeties.selectedItems.isCheckVisible(),
-        childrenFacilities.selectedItems.isCheckVisible(),
-        silverFacilities.selectedItems.isCheckVisible()
+        buildings.selectedItems.isValid(),
+        safeties.selectedItems.isValid(),
+        childrenFacilities.selectedItems.isValid(),
+        silverFacilities.selectedItems.isValid()
     ) { valid ->
         valid.all { it }
     }.toStateFlow(false)
 
     private val complexFacilityValid = combine(
-        familyFacilities.selectedItems.isCheckVisible(),
-        multipurposeFacilities.selectedItems.isCheckVisible(),
-        leisureFacilities.selectedItems.isCheckVisible(),
-        environments.selectedItems.isCheckVisible()
+        familyFacilities.selectedItems.isValid(),
+        multipurposeFacilities.selectedItems.isValid(),
+        leisureFacilities.selectedItems.isValid(),
+        environments.selectedItems.isValid()
     ) { valid ->
         valid.all { it }
     }.toStateFlow(false)
 
     private val goodNewsValid = combine(
-        goodNewsTraffics.selectedItems.isCheckVisible(),
-        developments.selectedItems.isCheckVisible(),
-        educations.selectedItems.isCheckVisible(),
-        naturalEnvironments.selectedItems.isCheckVisible(),
-        cultures.selectedItems.isCheckVisible(),
-        industries.selectedItems.isCheckVisible(),
-        policies.selectedItems.isCheckVisible()
+        goodNewsTraffics.selectedItems.isValid(),
+        developments.selectedItems.isValid(),
+        educations.selectedItems.isValid(),
+        naturalEnvironments.selectedItems.isValid(),
+        cultures.selectedItems.isValid(),
+        industries.selectedItems.isValid(),
+        policies.selectedItems.isValid()
     ) { valid ->
         valid.all { it }
     }.toStateFlow(false)
@@ -263,13 +266,13 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
     fun updateProgress() {
         var progress = if (basicInfoValid.value) 20 else 0
         progress += if (infraValid.value) 10 else 0
-        progress += if (infraReview.isCheckVisible().value) 10 else 0
+        progress += if (infraReview.isValid().value) 10 else 0
         progress += if (complexEnvironmentValid.value) 10 else 0
-        progress += if (complexEnvironmentReview.isCheckVisible().value) 10 else 0
+        progress += if (complexEnvironmentReview.isValid().value) 10 else 0
         progress += if (complexFacilityValid.value) 10 else 0
-        progress += if (complexFacilityReview.isCheckVisible().value) 10 else 0
+        progress += if (complexFacilityReview.isValid().value) 10 else 0
         progress += if (goodNewsValid.value) 10 else 0
-        progress += if (goodNewsReview.isCheckVisible().value) 10 else 0
+        progress += if (goodNewsReview.isValid().value) 10 else 0
         _progress.value = "${String.format(Locale.KOREA, "%02d", progress)}%"
     }
 

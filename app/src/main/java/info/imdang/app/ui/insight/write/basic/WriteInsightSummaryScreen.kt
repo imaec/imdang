@@ -57,7 +57,7 @@ fun NavGraphBuilder.writeInsightSummaryScreen(navController: NavController) {
     composable(route = WRITE_INSIGHT_SUMMARY_SCREEN) {
         WriteInsightSummaryScreen(
             navController = navController,
-            viewModel = navController.sharedViewModel(WRITE_INSIGHT_SCREEN)
+            viewModel = it.sharedViewModel(navController, WRITE_INSIGHT_SCREEN)
         )
     }
 }
