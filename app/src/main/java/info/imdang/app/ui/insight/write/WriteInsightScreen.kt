@@ -145,13 +145,12 @@ private fun WriteInsightBottomBar(pagerState: PagerState, isShowKeyboard: Boolea
     val focusManager = LocalFocusManager.current
     val inputRequiredMessage = stringResource(R.string.write_insight_input_required_message)
     val coroutineScope = rememberCoroutineScope()
-    val isButtonEnabled = viewModel.isButtonEnabled.collectAsStateWithLifecycle().value
-    val isValidButtonEnabled =
-        viewModel.isValidButtonEnabled.collectAsStateWithLifecycle().value
     val animatedHorizontalPadding by animateDpAsState(
         targetValue = if (isShowKeyboard) 0.dp else 20.dp,
         animationSpec = tween(durationMillis = 300)
     )
+    val isButtonEnabled by viewModel.isButtonEnabled.collectAsStateWithLifecycle()
+    val isValidButtonEnabled by viewModel.isValidButtonEnabled.collectAsStateWithLifecycle()
 
     Row(
         modifier = Modifier.padding(horizontal = animatedHorizontalPadding),

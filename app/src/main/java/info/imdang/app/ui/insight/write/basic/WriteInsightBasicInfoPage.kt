@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -61,8 +62,8 @@ fun WriteInsightBasicInfoPage() {
     val viewModel = hiltViewModel<WriteInsightViewModel>()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val isTitleFocused = viewModel.isTitleFocused.collectAsStateWithLifecycle().value
-    val isVisitDateFocused = viewModel.isVisitDateFocused.collectAsStateWithLifecycle().value
+    val isTitleFocused by viewModel.isTitleFocused.collectAsStateWithLifecycle()
+    val isVisitDateFocused by viewModel.isVisitDateFocused.collectAsStateWithLifecycle()
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemScrollOffset }

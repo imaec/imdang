@@ -283,9 +283,8 @@ private fun StorageContent() {
 private fun StorageInsightFilterView(insightCount: Int) {
     val sheetState = rememberModalBottomSheetState()
     val viewModel = hiltViewModel<StorageViewModel>()
-    val selectedComplex = viewModel.selectedComplex.collectAsStateWithLifecycle().value
-
     var showBottomSheet by remember { mutableStateOf(false) }
+    val selectedComplex by viewModel.selectedComplex.collectAsStateWithLifecycle()
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -426,13 +425,16 @@ private fun StorageComplexBottomSheet(
     sheetState: SheetState,
     onCloseBottomSheet: () -> Unit
 ) {
-    val config = LocalConfiguration.current
-    val screenHeight = config.screenHeightDp.dp
-    val statusBarHeight = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
-    val navigationBarHeight = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
-    val coroutineScope = rememberCoroutineScope()
     val viewModel = hiltViewModel<StorageViewModel>()
-    val complexes = viewModel.complexes.collectAsStateWithLifecycle().value
+    val config = LocalConfiguration.current
+    val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
+    val coroutineScope = rememberCoroutineScope()
+    val screenHeight by remember { mutableStateOf(config.screenHeightDp.dp) }
+    val statusBarHeight by remember { mutableStateOf(systemBarPadding.calculateTopPadding()) }
+    val navigationBarHeight by remember {
+        mutableStateOf(systemBarPadding.calculateBottomPadding())
+    }
+    val complexes by viewModel.complexes.collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = Modifier.heightIn(

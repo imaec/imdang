@@ -47,7 +47,7 @@ import info.imdang.resource.R
 @Composable
 fun WriteInsightTopBar(navController: NavController) {
     val viewModel = hiltViewModel<WriteInsightViewModel>()
-    val selectedPage = viewModel.selectedPage.collectAsStateWithLifecycle().value
+    val selectedPage by viewModel.selectedPage.collectAsStateWithLifecycle()
     val pages = listOf(
         stringResource(R.string.basic_info),
         stringResource(R.string.infra),

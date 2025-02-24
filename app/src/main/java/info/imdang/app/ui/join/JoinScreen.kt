@@ -225,7 +225,8 @@ private fun JoinContent(
                 )
             }
             item {
-                val genders = viewModel.genders.collectAsStateWithLifecycle().value
+                val genders by viewModel.genders.collectAsStateWithLifecycle()
+
                 Column(
                     modifier = Modifier.padding(vertical = 32.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -275,16 +276,16 @@ private fun CompleteButton(
 ) {
     val focusManager = LocalFocusManager.current
     var isShowKeyboard by remember { mutableStateOf(false) }
-    val isButtonEnabled = if (isShowKeyboard) {
+    val isButtonEnabled by if (isShowKeyboard) {
         if (isNicknameFocused) {
-            viewModel.isNicknameValid.collectAsStateWithLifecycle().value
+            viewModel.isNicknameValid.collectAsStateWithLifecycle()
         } else if (isBirthDateFocused) {
-            viewModel.isBirthDateValid.collectAsStateWithLifecycle().value
+            viewModel.isBirthDateValid.collectAsStateWithLifecycle()
         } else {
-            false
+            viewModel.isButtonEnabled.collectAsStateWithLifecycle()
         }
     } else {
-        viewModel.isButtonEnabled.collectAsStateWithLifecycle().value
+        viewModel.isButtonEnabled.collectAsStateWithLifecycle()
     }
 
     KeyboardCallback(
@@ -325,11 +326,11 @@ private fun ServiceTermBottomSheet(
     val viewModel = hiltViewModel<JoinViewModel>()
     val coroutineScope = rememberCoroutineScope()
 
-    val isAgreeAndContinueButtonEnabled =
-        viewModel.isAgreeAndContinueButtonEnabled.collectAsStateWithLifecycle().value
-    val isAgreeTerm = viewModel.isAgreeTerm.collectAsStateWithLifecycle().value
-    val isAgreePrivacy = viewModel.isAgreePrivacy.collectAsStateWithLifecycle().value
-    val isAgreeMarketing = viewModel.isAgreeMarketing.collectAsStateWithLifecycle().value
+    val isAgreeAndContinueButtonEnabled by viewModel.isAgreeAndContinueButtonEnabled
+        .collectAsStateWithLifecycle()
+    val isAgreeTerm by viewModel.isAgreeTerm.collectAsStateWithLifecycle()
+    val isAgreePrivacy by viewModel.isAgreePrivacy.collectAsStateWithLifecycle()
+    val isAgreeMarketing by viewModel.isAgreeMarketing.collectAsStateWithLifecycle()
     val isAgreeAll = isAgreeTerm && isAgreePrivacy && isAgreeMarketing
 
     BackHandler {

@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -113,8 +114,9 @@ private fun SearchByRegionContent(
     contentPadding: PaddingValues
 ) {
     val viewModel = hiltViewModel<SearchByRegionViewModel>()
-    val guList = viewModel.guList.collectAsStateWithLifecycle().value
-    val dongList = viewModel.dongList.collectAsStateWithLifecycle().value
+    val guList by viewModel.guList.collectAsStateWithLifecycle()
+    val dongList by viewModel.dongList.collectAsStateWithLifecycle()
+
     Row(
         modifier = Modifier
             .padding(contentPadding)
