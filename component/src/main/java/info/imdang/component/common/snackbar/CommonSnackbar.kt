@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -45,7 +44,7 @@ fun BoxScope.Snackbar() {
 
     SnackbarHost(
         modifier = Modifier.align(Alignment.BottomCenter),
-        hostState = snackbarHostState
+        hostState = snackbarHostState,
     ) { data ->
         Snackbar(data = data)
     }
@@ -53,28 +52,21 @@ fun BoxScope.Snackbar() {
 
 @Composable
 private fun Snackbar(data: SnackbarData) {
-    Snackbar(
+    Box(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, bottom = 108.dp)
+            .background(color = Gray800_95, shape = RoundedCornerShape(8.dp))
             .height(56.dp)
-            .clickable {
-                data.dismiss()
-            },
-        containerColor = Gray800_95,
-        shape = RoundedCornerShape(8.dp),
-        content = {
-            SnackbarContent(message = data.visuals.message)
-        }
-    )
+            .padding(horizontal = 16.dp)
+            .clickable {}
+    ) {
+        SnackbarContent(message = data.visuals.message)
+    }
 }
 
 @Composable
 private fun SnackbarContent(message: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = message,
