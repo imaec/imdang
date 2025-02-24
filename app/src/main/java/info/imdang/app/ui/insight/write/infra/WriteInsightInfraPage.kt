@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import info.imdang.app.ui.insight.write.InfraItems
 import info.imdang.app.ui.insight.write.WriteInsightSelectionItems
 import info.imdang.app.ui.insight.write.WriteInsightViewModel
@@ -120,7 +121,8 @@ fun WriteInsightInfraPage() {
         }
         item {
             WriteInsightDetailContentView(
-                title = stringResource(R.string.complex_environment_overall_review),
+                title = stringResource(R.string.infra_overall_review),
+                text = viewModel.infraReview.collectAsStateWithLifecycle().value,
                 onClick = {
                     // todo : 총평 작성 화면 이동
                 }
@@ -157,6 +159,7 @@ private fun WriteInsightInfraPagePreview2() {
             )
             WriteInsightDetailContentView(
                 title = stringResource(R.string.complex_environment_overall_review),
+                text = "",
                 onClick = {
                     // todo : 총평 작성 화면 이동
                 }

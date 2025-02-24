@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
@@ -84,6 +85,7 @@ fun WriteInsightComplexFacilityPage() {
         item {
             WriteInsightDetailContentView(
                 title = stringResource(R.string.complex_facility_overall_review),
+                text = viewModel.complexFacilityReview.collectAsStateWithLifecycle().value,
                 onClick = {
                     // todo : 총평 작성 화면 이동
                 }

@@ -37,6 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.insight.write.WriteInsightInit
 import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
@@ -57,9 +59,11 @@ import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteInsightBasicInfoPage() {
+fun WriteInsightBasicInfoPage(
+    navController: NavController = rememberNavController(),
+    viewModel: WriteInsightViewModel = hiltViewModel()
+) {
     val focusManager = LocalFocusManager.current
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val isTitleFocused by viewModel.isTitleFocused.collectAsStateWithLifecycle()
@@ -90,6 +94,7 @@ fun WriteInsightBasicInfoPage() {
         }
         item {
             TitleView(
+                viewModel = viewModel,
                 onFocusChanged = { isFocused ->
                     coroutineScope.launch {
                         if (isFocused) listState.animateScrollToItem(index = 1)
@@ -103,6 +108,7 @@ fun WriteInsightBasicInfoPage() {
         }
         item {
             VisitDateView(
+                viewModel = viewModel,
                 onFocusChanged = { isFocused ->
                     coroutineScope.launch {
                         if (isFocused) listState.animateScrollToItem(index = 3)
@@ -145,12 +151,15 @@ fun WriteInsightBasicInfoPage() {
             )
         }
         item {
+            val summary by viewModel.summary.collectAsStateWithLifecycle()
             WriteInsightDetailContentView(
                 title = stringResource(R.string.insight_summary),
+                text = summary,
                 hintText = stringResource(R.string.insight_summary_hint),
                 isRequired = true,
+                isValid = summary.length in 30..200,
                 onClick = {
-                    // todo : 인사이트 요약 작성 화면 이동
+                    navController.navigate(WRITE_INSIGHT_SUMMARY_SCREEN)
                 }
             )
         }
@@ -220,9 +229,10 @@ private fun CoverImageView() {
 }
 
 @Composable
-private fun TitleView(onFocusChanged: (isFocused: Boolean) -> Unit) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
-
+private fun TitleView(
+    viewModel: WriteInsightViewModel,
+    onFocusChanged: (isFocused: Boolean) -> Unit
+) {
     CommonTextField(
         modifier = Modifier
             .focusRequester(FocusRequester())
@@ -288,9 +298,10 @@ private fun AddressView() {
 }
 
 @Composable
-private fun VisitDateView(onFocusChanged: (isFocused: Boolean) -> Unit) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
-
+private fun VisitDateView(
+    viewModel: WriteInsightViewModel,
+    onFocusChanged: (isFocused: Boolean) -> Unit
+) {
     CommonTextField(
         modifier = Modifier
             .focusRequester(FocusRequester())

@@ -10,6 +10,7 @@ import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -130,8 +131,8 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
         visitDateValid,
         visitTimes.selectedItems.isCheckVisible(),
         trafficsMethods.selectedItems.isCheckVisible(),
-        accessLimits.selectedItems.isCheckVisible()
-//        summary.isCheckVisible()
+        accessLimits.selectedItems.isCheckVisible(),
+        summary.map { it.length in 30..200 }.toStateFlow(false)
     ) { valid ->
         // todo : coverImage 업로드 구현 후 사용
 //        (valid[0] || valid[1]) && valid.takeLast(valid.size - 2).all { it }
@@ -301,5 +302,9 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
 
     fun updateVisitDateFocused(isFocused: Boolean) {
         _isVisitDateFocused.value = isFocused
+    }
+
+    fun updateSummary(summary: String) {
+        _summary.value = summary
     }
 }

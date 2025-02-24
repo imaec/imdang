@@ -19,6 +19,9 @@ class WriteInsightSelectionItems(val isSingleSelection: Boolean = false) {
     val selectedItems: Flow<List<SelectionVo>>
         get() = items.map { it.filter { item -> item.isSelected } }
 
+    val isValid: Flow<Boolean>
+        get() = selectedItems.map { it.isNotEmpty() }
+
     fun isInit() = items.value.isNotEmpty()
 
     fun setItems(items: List<SelectionVo>) {

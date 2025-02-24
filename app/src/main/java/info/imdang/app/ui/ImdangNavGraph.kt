@@ -3,6 +3,7 @@ package info.imdang.app.ui
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.insight.write.basic.writeInsightSummaryScreen
 import info.imdang.app.ui.insight.write.writeInsightScreen
 import info.imdang.app.ui.join.complete.joinCompleteScreen
 import info.imdang.app.ui.join.joinScreen
@@ -45,6 +46,7 @@ fun ImdangNavGraph() {
             storageByMapScreen(navController = navController)
             storageAddressScreen(navController = navController)
             writeInsightScreen(navController = navController)
+            writeInsightSummaryScreen(navController = navController)
 
             commonWebScreen(navController = navController)
         }

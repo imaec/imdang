@@ -65,6 +65,7 @@ fun CommonTextField(
     imeAction: ImeAction = ImeAction.Done,
     title: String? = null,
     isRequired: Boolean = false,
+    isVisibleValidIcon: Boolean = true,
     minLength: Int? = null,
     maxLength: Int? = null,
     onTextChanged: (String) -> Unit = {}
@@ -74,7 +75,9 @@ fun CommonTextField(
             mutableStateOf(TextFieldValue(text = text, selection = TextRange(text.length)))
         }
     } else {
-        remember { mutableStateOf(TextFieldValue(text = text)) }
+        remember {
+            mutableStateOf(TextFieldValue(text = text, selection = TextRange(text.length)))
+        }
     }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -111,7 +114,15 @@ fun CommonTextField(
                     }
                     Icon(
                         modifier = Modifier
-                            .isVisible(textState.text.isNotEmpty() || errorText.isNotEmpty())
+                            .isVisible(
+                                isVisibleValidIcon && if (minLength != null && maxLength != null) {
+                                    textState.text.length in minLength..maxLength
+                                } else if (maxLength != null) {
+                                    textState.text.length in 1..maxLength
+                                } else {
+                                    errorText.isNotEmpty()
+                                }
+                            )
                             .size(20.dp),
                         iconResource = if (errorText.isNotEmpty()) {
                             R.drawable.ic_info_red
@@ -161,7 +172,10 @@ fun CommonTextField(
                     },
                     shape = RoundedCornerShape(8.dp)
                 )
-                .padding(horizontal = 16.dp),
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = if (isSingleLine) 0.dp else 16.dp
+                ),
             value = textState,
             onValueChange = {
                 if (it.text.length <= (maxLength ?: Int.MAX_VALUE)) {
@@ -183,7 +197,11 @@ fun CommonTextField(
                         Modifier
                             .weight(1f)
                             .fillMaxHeight(),
-                        contentAlignment = Alignment.CenterStart
+                        contentAlignment = if (isSingleLine) {
+                            Alignment.CenterStart
+                        } else {
+                            Alignment.TopStart
+                        }
                     ) {
                         if (textState.text.isEmpty()) {
                             Text(
@@ -195,7 +213,7 @@ fun CommonTextField(
                         innerTextField()
                     }
 
-                    if (textState.text.isNotEmpty()) {
+                    if (textState.text.isNotEmpty() && isSingleLine) {
                         Icon(
                             modifier = Modifier
                                 .size(20.dp)
@@ -254,6 +272,14 @@ private fun CommonTextFieldPreview() {
             CommonTextField(
                 text = "입력",
                 hintText = "플레이스 홀더",
+                title = "닉네임",
+                minLength = 2,
+                maxLength = 10
+            )
+            CommonTextField(
+                text = "",
+                hintText = "플레이스 홀더",
+                isSingleLine = false,
                 title = "닉네임",
                 minLength = 2,
                 maxLength = 10

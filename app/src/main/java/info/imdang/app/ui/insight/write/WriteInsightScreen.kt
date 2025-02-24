@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.common.ext.sharedViewModel
 import info.imdang.app.ui.insight.write.basic.WriteInsightBasicInfoPage
 import info.imdang.app.ui.insight.write.environment.WriteInsightComplexEnvironmentPage
 import info.imdang.app.ui.insight.write.facility.WriteInsightComplexFacilityPage
@@ -54,21 +56,31 @@ const val WRITE_INSIGHT_SCREEN = "writeInsight"
 
 fun NavGraphBuilder.writeInsightScreen(navController: NavController) {
     composable(route = WRITE_INSIGHT_SCREEN) {
-        WriteInsightScreen(navController = navController)
+        WriteInsightScreen(
+            navController = navController,
+            viewModel = navController.sharedViewModel(WRITE_INSIGHT_SCREEN)
+        )
     }
 }
 
 @Composable
-private fun WriteInsightScreen(navController: NavController) {
+private fun WriteInsightScreen(
+    navController: NavController,
+    viewModel: WriteInsightViewModel = hiltViewModel()
+) {
     val pagerState = rememberPagerState(initialPage = 0) { 5 }
+    var isInit by rememberSaveable { mutableStateOf(false) }
     var isShowDialog by remember { mutableStateOf(false) }
     var isShowKeyboard by remember { mutableStateOf(false) }
 
-    WriteInsightInit()
+    WriteInsightInit(viewModel)
 
     LaunchedEffect(Unit) {
         delay(100)
-        isShowDialog = true
+        if (!isInit) {
+            isInit = true
+            isShowDialog = true
+        }
     }
 
     KeyboardCallback(
@@ -94,25 +106,31 @@ private fun WriteInsightScreen(navController: NavController) {
         },
         content = { contentPadding ->
             WriteInsightContent(
+                navController = navController,
+                viewModel = viewModel,
                 contentPadding = contentPadding,
                 pagerState = pagerState,
                 isVisibleGradient = !isShowKeyboard
             )
         },
         bottomBar = {
-            WriteInsightBottomBar(pagerState = pagerState, isShowKeyboard = isShowKeyboard)
+            WriteInsightBottomBar(
+                viewModel = viewModel,
+                pagerState = pagerState,
+                isShowKeyboard = isShowKeyboard
+            )
         }
     )
 }
 
 @Composable
 private fun WriteInsightContent(
+    navController: NavController,
+    viewModel: WriteInsightViewModel,
     contentPadding: PaddingValues,
     pagerState: PagerState,
     isVisibleGradient: Boolean
 ) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
-
     LaunchedEffect(pagerState.currentPage) {
         viewModel.updateSelectedPage(pagerState.currentPage)
     }
@@ -124,7 +142,10 @@ private fun WriteInsightContent(
     ) {
         HorizontalPager(state = pagerState) { page ->
             when (page) {
-                0 -> WriteInsightBasicInfoPage()
+                0 -> WriteInsightBasicInfoPage(
+                    navController = navController,
+                    viewModel = viewModel
+                )
                 1 -> WriteInsightInfraPage()
                 2 -> WriteInsightComplexEnvironmentPage()
                 3 -> WriteInsightComplexFacilityPage()
@@ -140,8 +161,11 @@ private fun WriteInsightContent(
 }
 
 @Composable
-private fun WriteInsightBottomBar(pagerState: PagerState, isShowKeyboard: Boolean) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
+private fun WriteInsightBottomBar(
+    viewModel: WriteInsightViewModel,
+    pagerState: PagerState,
+    isShowKeyboard: Boolean
+) {
     val focusManager = LocalFocusManager.current
     val inputRequiredMessage = stringResource(R.string.write_insight_input_required_message)
     val coroutineScope = rememberCoroutineScope()
@@ -221,8 +245,7 @@ private fun WriteInsightBottomBar(pagerState: PagerState, isShowKeyboard: Boolea
 }
 
 @Composable
-fun WriteInsightInit() {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
+fun WriteInsightInit(viewModel: WriteInsightViewModel = hiltViewModel()) {
     viewModel.initSelectionItems(
         visitTimes = BasicInfoItems.visitTimes(),
         trafficsMethods = BasicInfoItems.traffics(),

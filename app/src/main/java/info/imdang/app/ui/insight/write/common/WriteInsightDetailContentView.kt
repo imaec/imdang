@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray400
 import info.imdang.component.theme.Gray500
+import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.component.theme.T500_12_16_8
 import info.imdang.component.theme.T500_16_22_4
@@ -32,9 +33,11 @@ import info.imdang.resource.R
 @Composable
 fun WriteInsightDetailContentView(
     title: String,
+    text: String,
     onClick: () -> Unit,
     isRequired: Boolean = false,
-    hintText: String? = null
+    isValid: Boolean = false,
+    hintText: String = ""
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -46,7 +49,7 @@ fun WriteInsightDetailContentView(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            WriteInsightTitle(title = title, isRequired = isRequired)
+            WriteInsightTitle(title = title, isRequired = isRequired, isValid = isValid)
             Text(
                 text = stringResource(R.string.input_min_max_message, 30, 200),
                 style = T500_12_16_8,
@@ -66,13 +69,11 @@ fun WriteInsightDetailContentView(
                 }
                 .padding(all = 16.dp)
         ) {
-            if (hintText != null) {
-                Text(
-                    text = hintText,
-                    style = T500_16_22_4,
-                    color = Gray400
-                )
-            }
+            Text(
+                text = text.ifBlank { hintText },
+                style = T500_16_22_4,
+                color = if (text.isNotBlank()) Gray900 else Gray400
+            )
         }
     }
 }
@@ -84,12 +85,14 @@ private fun WriteInsightDetailContentViewPreview() {
         Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
             WriteInsightDetailContentView(
                 title = stringResource(R.string.insight_summary),
+                text = "",
                 hintText = stringResource(R.string.insight_summary_hint),
                 isRequired = true,
                 onClick = {}
             )
             WriteInsightDetailContentView(
                 title = stringResource(R.string.infra_overall_review),
+                text = "내용",
                 onClick = {}
             )
         }

@@ -71,7 +71,11 @@ fun WriteInsightSelectionButtons(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            WriteInsightTitle(title = title, isRequired = true)
+            WriteInsightTitle(
+                title = title,
+                isRequired = true,
+                isValid = selectionItems.isValid.collectAsStateWithLifecycle(false).value
+            )
             Text(
                 text = stringResource(
                     if (selectionItems.isSingleSelection) {
