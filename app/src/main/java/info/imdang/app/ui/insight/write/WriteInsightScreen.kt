@@ -42,7 +42,7 @@ import info.imdang.app.ui.insight.write.goodnews.WriteInsightGoodNewsPage
 import info.imdang.app.ui.insight.write.infra.WriteInsightInfraPage
 import info.imdang.app.util.KeyboardCallback
 import info.imdang.component.common.dialog.CommonDialog
-import info.imdang.component.common.modifier.isVisible
+import info.imdang.component.common.modifier.visible
 import info.imdang.component.common.snackbar.showSnackbar
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.button.CommonButtonType
@@ -155,7 +155,7 @@ private fun WriteInsightContent(
         ButtonGradient(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .isVisible(isVisibleGradient)
+                .visible(isVisibleGradient)
         )
     }
 }

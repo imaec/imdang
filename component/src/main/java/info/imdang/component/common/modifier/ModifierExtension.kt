@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @SuppressLint("UnnecessaryComposedModifier")
-fun Modifier.isVisible(isVisible: Boolean): Modifier = composed {
+fun Modifier.visible(isVisible: Boolean): Modifier = composed {
     if (isVisible) this else size(0.dp)
 }
 

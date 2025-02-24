@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import info.imdang.component.common.image.Icon
-import info.imdang.component.common.modifier.isVisible
+import info.imdang.component.common.modifier.visible
 import info.imdang.component.theme.Gray700
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.component.theme.RedE93528
@@ -45,7 +45,7 @@ fun WriteInsightTitle(
         }
         Icon(
             modifier = Modifier
-                .isVisible(isValid)
+                .visible(isValid)
                 .size(20.dp),
             iconResource = R.drawable.ic_check
         )

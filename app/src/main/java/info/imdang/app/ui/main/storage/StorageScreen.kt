@@ -58,7 +58,7 @@ import info.imdang.app.ui.main.storage.address.STORAGE_ADDRESS_SCREEN
 import info.imdang.app.ui.main.storage.map.STORAGE_BY_MAP_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
-import info.imdang.component.common.modifier.isVisible
+import info.imdang.component.common.modifier.visible
 import info.imdang.component.common.topbar.CollapsingScaffold
 import info.imdang.component.common.topbar.exitUntilCollapsedScrollBehavior
 import info.imdang.component.theme.Gray100
@@ -158,7 +158,7 @@ private fun StorageTopBar(
                 )
                 Icon(
                     modifier = Modifier
-                        .isVisible(isCollapsed)
+                        .visible(isCollapsed)
                         .size(20.dp),
                     iconResource = R.drawable.ic_down,
                     tint = Gray900

@@ -127,7 +127,7 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
 
     /** 페이지별 작성 완료 여부 **/
     private val basicInfoValid = combine(
-//        coverImageFile.isCheckVisible(),
+        coverImageFile.isCheckVisible(),
 //        coverImageUrl.isCheckVisible(),
         titleValid,
 //        address.isCheckVisible(),
@@ -138,8 +138,9 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
         accessLimits.selectedItems.isCheckVisible(),
         summary.map { it.length in 30..200 }.toStateFlow(false)
     ) { valid ->
-        // todo : coverImage 업로드 구현 후 사용
-//        (valid[0] || valid[1]) && valid.takeLast(valid.size - 2).all { it }
+        valid[0] && valid.takeLast(valid.size - 2).all { it }
+        // todo : coverImage 수정 구현 후 사용
+        // (valid[0] || valid[1]) && valid.takeLast(valid.size - 2).all { it }
         valid.all { it }
     }.toStateFlow(false)
 
@@ -274,6 +275,10 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
 
     fun updateSelectedPage(page: Int) {
         _selectedPage.value = page
+    }
+
+    fun updateCoverImageFile(file: File?) {
+        _coverImageFile.value = file
     }
 
     fun updateTitle(title: String) {

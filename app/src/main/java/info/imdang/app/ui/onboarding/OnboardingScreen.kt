@@ -34,7 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.join.JOIN_SCREEN
 import info.imdang.component.common.image.Icon
-import info.imdang.component.common.modifier.isVisible
+import info.imdang.component.common.modifier.visible
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray25
@@ -106,7 +106,7 @@ private fun OnboardingContent(
         }
         Icon(
             modifier = Modifier
-                .isVisible(pagerState.currentPage == 0)
+                .visible(pagerState.currentPage == 0)
                 .padding(all = 12.dp)
                 .size(40.dp)
                 .clip(CircleShape)

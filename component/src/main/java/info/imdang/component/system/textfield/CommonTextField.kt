@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import info.imdang.component.common.image.Icon
-import info.imdang.component.common.modifier.isVisible
+import info.imdang.component.common.modifier.visible
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray400
 import info.imdang.component.theme.Gray500
@@ -114,7 +114,7 @@ fun CommonTextField(
                     }
                     Icon(
                         modifier = Modifier
-                            .isVisible(
+                            .visible(
                                 isVisibleValidIcon && if (minLength != null && maxLength != null) {
                                     textState.text.length in minLength..maxLength ||
                                         errorText.isNotEmpty()
@@ -228,7 +228,7 @@ fun CommonTextField(
             }
         )
         Text(
-            modifier = Modifier.isVisible(errorText.isNotEmpty()),
+            modifier = Modifier.visible(errorText.isNotEmpty()),
             text = errorText,
             style = T500_12_16_8,
             color = RedE93528

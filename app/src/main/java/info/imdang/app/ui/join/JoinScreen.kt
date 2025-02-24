@@ -56,7 +56,7 @@ import info.imdang.app.ui.join.complete.JOIN_COMPLETE_SCREEN
 import info.imdang.app.ui.onboarding.ONBOARDING_SCREEN
 import info.imdang.app.util.KeyboardCallback
 import info.imdang.component.common.image.Icon
-import info.imdang.component.common.modifier.isVisible
+import info.imdang.component.common.modifier.visible
 import info.imdang.component.common.webview.COMMON_WEB_SCREEN
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.button.SelectionButtons
@@ -243,7 +243,7 @@ private fun JoinContent(
                         )
                         Icon(
                             modifier = Modifier
-                                .isVisible(genders.any { it.isSelected })
+                                .visible(genders.any { it.isSelected })
                                 .size(20.dp),
                             iconResource = R.drawable.ic_check
                         )
