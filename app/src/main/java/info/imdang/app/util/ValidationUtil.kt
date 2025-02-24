@@ -45,6 +45,7 @@ fun String.validateBirthDate(): String {
 }
 
 fun String.validateVisitDate(): String {
+    if (isEmpty()) return ""
     if (!matches(Regex("\\d{4}\\.\\d{2}\\.\\d{2}"))) return "올바른 형식이 아니에요"
 
     val calendar = Calendar.getInstance()

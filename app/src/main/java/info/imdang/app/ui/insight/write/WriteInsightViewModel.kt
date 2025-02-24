@@ -54,8 +54,12 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
     private val _visitDate = MutableStateFlow("")
     val visitDate = _visitDate.asStateFlow()
 
-    private val visitDateValid = combine(visitDate) {
-        it.first().validateVisitDate().isEmpty()
+    val visitDateErrorMessage = combine(visitDate) {
+        it.first().validateVisitDate()
+    }.toStateFlow("")
+
+    private val visitDateValid = combine(visitDateErrorMessage) {
+        it.first().isEmpty()
     }.toStateFlow(false)
 
     private val _isVisitDateFocused = MutableStateFlow(false)

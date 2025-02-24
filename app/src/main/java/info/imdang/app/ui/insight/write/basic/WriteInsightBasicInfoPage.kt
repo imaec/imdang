@@ -310,6 +310,7 @@ private fun VisitDateView(
             },
         text = viewModel.visitDate.collectAsStateWithLifecycle().value,
         hintText = stringResource(R.string.visit_date_hint),
+        errorText = viewModel.visitDateErrorMessage.collectAsStateWithLifecycle().value,
         keyboardType = KeyboardType.Number,
         imeAction = ImeAction.Done,
         title = stringResource(R.string.visit_date),

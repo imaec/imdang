@@ -116,11 +116,10 @@ fun CommonTextField(
                         modifier = Modifier
                             .isVisible(
                                 isVisibleValidIcon && if (minLength != null && maxLength != null) {
-                                    textState.text.length in minLength..maxLength
-                                } else if (maxLength != null) {
-                                    textState.text.length in 1..maxLength
+                                    textState.text.length in minLength..maxLength ||
+                                        errorText.isNotEmpty()
                                 } else {
-                                    errorText.isNotEmpty()
+                                    textState.text.isNotEmpty() || errorText.isNotEmpty()
                                 }
                             )
                             .size(20.dp),
