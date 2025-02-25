@@ -123,6 +123,7 @@ private fun WriteInsightScreen(
             },
             bottomBar = {
                 WriteInsightBottomBar(
+                    navController = navController,
                     viewModel = viewModel,
                     pagerState = pagerState,
                     isShowKeyboard = isShowKeyboard
@@ -160,7 +161,10 @@ private fun WriteInsightContent(
             .padding(contentPadding)
             .fillMaxSize()
     ) {
-        HorizontalPager(state = pagerState) { page ->
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false
+        ) { page ->
             when (page) {
                 0 -> WriteInsightBasicInfoPage(
                     navController = navController,
@@ -185,6 +189,7 @@ private fun WriteInsightContent(
 
 @Composable
 private fun WriteInsightBottomBar(
+    navController: NavController,
     viewModel: WriteInsightViewModel,
     pagerState: PagerState,
     isShowKeyboard: Boolean
@@ -198,6 +203,25 @@ private fun WriteInsightBottomBar(
     )
     val isButtonEnabled by viewModel.isButtonEnabled.collectAsStateWithLifecycle()
     val isValidButtonEnabled by viewModel.isValidButtonEnabled.collectAsStateWithLifecycle()
+    var isShowWriteCompleteDialog by remember { mutableStateOf(false) }
+
+    if (isShowWriteCompleteDialog) {
+        CommonDialog(
+            message = stringResource(R.string.write_insight_complete_message),
+            subButtonText = stringResource(R.string.check_storage),
+            onClickPositiveButton = {
+                // todo : 인사이트 상세로 이동
+                isShowWriteCompleteDialog = false
+                navController.popBackStack()
+            },
+            onClickSubButton = {
+                // todo : 보관함 화면으로 이동
+                isShowWriteCompleteDialog = false
+                navController.popBackStack()
+            },
+            onDismiss = {}
+        )
+    }
 
     Row(
         modifier = Modifier.padding(horizontal = animatedHorizontalPadding),
@@ -254,6 +278,7 @@ private fun WriteInsightBottomBar(
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             } else {
                                 // todo : 인사이트 작성
+                                isShowWriteCompleteDialog = true
                             }
                         }
                     } else {
@@ -313,6 +338,18 @@ private fun WriteInsightDialogPreview() {
         CommonDialog(
             iconResource = R.drawable.ic_sign_for_dialog,
             message = stringResource(R.string.write_insight_message),
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WriteInsightCompleteDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            message = stringResource(R.string.write_insight_complete_message),
+            subButtonText = stringResource(R.string.check_storage),
             onDismiss = {}
         )
     }

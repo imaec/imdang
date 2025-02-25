@@ -168,9 +168,7 @@ private fun WriteInsightInfraPagePreview2() {
             WriteInsightDetailContentView(
                 title = stringResource(R.string.complex_environment_overall_review),
                 text = "",
-                onClick = {
-                    // todo : 총평 작성 화면 이동
-                }
+                onClick = {}
             )
         }
     }

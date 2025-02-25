@@ -128,6 +128,8 @@
     <string name="write_insight_unselect_message">해당 없음, 잘 모르겠어요\n선택시 다른 항목들은\n선택이 해제돼요. 괜찮으신가요?</string>
     <string name="write_insight_summary_message">교환을 위해 미리 공개하는 내용이에요. 잘 작성할수록 교환 성공률이 올라가요. 작성시 장점과 단점을 균형있게 작성해주세요.</string>
     <string name="write_insight_complete_tooltip_message">작성 완료 시 인사이트가 바로 업로드돼요</string>
+    <string name="write_insight_complete_message">인사이트 업로드가 완료되었어요.\n작성한 내 인사이트는 보관함에서\n확인할 수 있어요.</string>
+    <string name="check_storage">보관함 확인하기</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>
