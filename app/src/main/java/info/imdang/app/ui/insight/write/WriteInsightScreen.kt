@@ -45,7 +45,9 @@ import info.imdang.app.ui.insight.write.infra.WriteInsightInfraPage
 import info.imdang.app.util.KeyboardCallback
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.modifier.visible
+import info.imdang.component.common.shape.TooltipDirection
 import info.imdang.component.common.snackbar.showSnackbar
+import info.imdang.component.common.tooltip.Tooltip
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.button.CommonButtonType
 import info.imdang.component.system.gradient.ButtonGradient
@@ -75,6 +77,7 @@ private fun WriteInsightScreen(
     var isInit by rememberSaveable { mutableStateOf(false) }
     var isShowDialog by remember { mutableStateOf(false) }
     var isShowKeyboard by remember { mutableStateOf(false) }
+    var isShowTooltip by rememberSaveable { mutableStateOf(true) }
 
     WriteInsightInit(viewModel)
 
@@ -100,30 +103,43 @@ private fun WriteInsightScreen(
         )
     }
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding(),
-        topBar = {
-            WriteInsightTopBar(navController = navController)
-        },
-        content = { contentPadding ->
-            WriteInsightContent(
-                navController = navController,
-                viewModel = viewModel,
-                contentPadding = contentPadding,
-                pagerState = pagerState,
-                isVisibleGradient = !isShowKeyboard
-            )
-        },
-        bottomBar = {
-            WriteInsightBottomBar(
-                viewModel = viewModel,
-                pagerState = pagerState,
-                isShowKeyboard = isShowKeyboard
+    Box {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding(),
+            topBar = {
+                WriteInsightTopBar(navController = navController)
+            },
+            content = { contentPadding ->
+                WriteInsightContent(
+                    navController = navController,
+                    viewModel = viewModel,
+                    contentPadding = contentPadding,
+                    pagerState = pagerState,
+                    isVisibleGradient = !isShowKeyboard,
+                    onHideTooltip = { isShowTooltip = false }
+                )
+            },
+            bottomBar = {
+                WriteInsightBottomBar(
+                    viewModel = viewModel,
+                    pagerState = pagerState,
+                    isShowKeyboard = isShowKeyboard
+                )
+            }
+        )
+        if (isShowTooltip && pagerState.currentPage == 4) {
+            Tooltip(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 116.dp),
+                direction = TooltipDirection.DOWN,
+                text = stringResource(R.string.write_insight_complete_tooltip_message),
+                elevation = 4.dp
             )
         }
-    )
+    }
 }
 
 @Composable
@@ -132,7 +148,8 @@ private fun WriteInsightContent(
     viewModel: WriteInsightViewModel,
     contentPadding: PaddingValues,
     pagerState: PagerState,
-    isVisibleGradient: Boolean
+    isVisibleGradient: Boolean,
+    onHideTooltip: () -> Unit
 ) {
     LaunchedEffect(pagerState.currentPage) {
         viewModel.updateSelectedPage(pagerState.currentPage)
@@ -152,7 +169,10 @@ private fun WriteInsightContent(
                 1 -> WriteInsightInfraPage(navController = navController)
                 2 -> WriteInsightComplexEnvironmentPage(navController = navController)
                 3 -> WriteInsightComplexFacilityPage(navController = navController)
-                4 -> WriteInsightGoodNewsPage(navController = navController)
+                4 -> WriteInsightGoodNewsPage(
+                    navController = navController,
+                    onHideTooltip = onHideTooltip
+                )
             }
         }
         ButtonGradient(
@@ -294,6 +314,21 @@ private fun WriteInsightDialogPreview() {
             iconResource = R.drawable.ic_sign_for_dialog,
             message = stringResource(R.string.write_insight_message),
             onDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WriteInsightTooltipPreview() {
+    ImdangTheme {
+        Tooltip(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 116.dp),
+            direction = TooltipDirection.DOWN,
+            text = stringResource(R.string.write_insight_complete_tooltip_message),
+            elevation = 3.dp
         )
     }
 }

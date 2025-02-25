@@ -44,7 +44,7 @@ fun BoxScope.Snackbar() {
 
     SnackbarHost(
         modifier = Modifier.align(Alignment.BottomCenter),
-        hostState = snackbarHostState,
+        hostState = snackbarHostState
     ) { data ->
         Snackbar(data = data)
     }

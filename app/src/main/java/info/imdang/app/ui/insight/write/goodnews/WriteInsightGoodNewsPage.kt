@@ -15,19 +15,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import info.imdang.app.ui.insight.write.WriteInsightViewModel
-import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
-import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
 import info.imdang.app.ui.insight.write.WriteInsightInit
+import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_OVERALL_REVIEW_SCREEN
 import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_REVIEW_TYPE
+import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightReviewType
+import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteInsightGoodNewsPage(navController: NavController = rememberNavController()) {
+fun WriteInsightGoodNewsPage(
+    navController: NavController = rememberNavController(),
+    onHideTooltip: () -> Unit
+) {
     val viewModel = hiltViewModel<WriteInsightViewModel>()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -48,6 +51,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.traffic),
                 selectionItems = viewModel.goodNewsTraffics,
                 onClick = {
+                    onHideTooltip()
                     coroutineScope.launch {
                         listState.animateScrollToItem(0)
                     }
@@ -59,6 +63,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.development),
                 selectionItems = viewModel.developments,
                 onClick = {
+                    onHideTooltip()
                     coroutineScope.launch {
                         listState.animateScrollToItem(1)
                     }
@@ -70,6 +75,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.education),
                 selectionItems = viewModel.educations,
                 onClick = {
+                    onHideTooltip()
                     coroutineScope.launch {
                         listState.animateScrollToItem(2)
                     }
@@ -81,6 +87,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.natural_environment),
                 selectionItems = viewModel.naturalEnvironments,
                 onClick = {
+                    onHideTooltip()
                     coroutineScope.launch {
                         listState.animateScrollToItem(3)
                     }
@@ -92,6 +99,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.culture),
                 selectionItems = viewModel.cultures,
                 onClick = {
+                    onHideTooltip()
                     coroutineScope.launch {
                         listState.animateScrollToItem(4)
                     }
@@ -103,6 +111,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.industry),
                 selectionItems = viewModel.industries,
                 onClick = {
+                    onHideTooltip()
                     coroutineScope.launch {
                         listState.animateScrollToItem(5)
                     }
@@ -114,6 +123,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.policy),
                 selectionItems = viewModel.policies,
                 onClick = {
+                    onHideTooltip()
                     coroutineScope.launch {
                         listState.animateScrollToItem(6)
                     }
@@ -125,6 +135,7 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
                 title = stringResource(R.string.good_news_overall_review),
                 text = viewModel.goodNewsReview.collectAsStateWithLifecycle().value,
                 onClick = {
+                    onHideTooltip()
                     navController.navigate(
                         route = WRITE_INSIGHT_OVERALL_REVIEW_SCREEN +
                             "?$WRITE_INSIGHT_REVIEW_TYPE=${WriteInsightReviewType.GOOD_NEWS.name}"
@@ -140,6 +151,8 @@ fun WriteInsightGoodNewsPage(navController: NavController = rememberNavControlle
 private fun WriteInsightGoodNewsPagePreview() {
     WriteInsightInit()
     ImdangTheme {
-        WriteInsightGoodNewsPage()
+        WriteInsightGoodNewsPage(
+            onHideTooltip = {}
+        )
     }
 }

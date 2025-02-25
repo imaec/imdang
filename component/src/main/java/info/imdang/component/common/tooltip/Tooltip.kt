@@ -29,6 +29,7 @@ fun Tooltip(
     direction: TooltipDirection,
     text: String,
     modifier: Modifier = Modifier,
+    elevation: Dp = 8.dp,
     radius: Dp = 8.dp,
     tailWidth: Dp = 16.dp,
     tailHeight: Dp = 10.dp,
@@ -44,7 +45,7 @@ fun Tooltip(
     Box(
         modifier = modifier
             .shadow(
-                elevation = 8.dp,
+                elevation = elevation,
                 shape = tooltipShape
             )
             .clip(tooltipShape)
