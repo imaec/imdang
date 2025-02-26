@@ -3,6 +3,8 @@ package info.imdang.app.ui
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
+import info.imdang.app.ui.insight.detail.insightDetailScreen
 import info.imdang.app.ui.insight.write.basic.kakaoAddressWebScreen
 import info.imdang.app.ui.insight.write.basic.writeInsightSummaryScreen
 import info.imdang.app.ui.insight.write.common.writeInsightOverallReviewScreen
@@ -13,7 +15,6 @@ import info.imdang.app.ui.list.new.newInsightScreen
 import info.imdang.app.ui.list.region.searchByRegionInsightListScreen
 import info.imdang.app.ui.list.visitcomplex.visitComplexInsightScreen
 import info.imdang.app.ui.login.loginScreen
-import info.imdang.app.ui.main.MAIN_SCREEN
 import info.imdang.app.ui.main.home.search.map.searchByMapScreen
 import info.imdang.app.ui.main.home.search.region.searchByRegionScreen
 import info.imdang.app.ui.main.mainScreen
@@ -32,7 +33,7 @@ fun ImdangNavGraph() {
     ImdangTheme {
         NavHost(
             navController = navController,
-            startDestination = MAIN_SCREEN
+            startDestination = INSIGHT_DETAIL_SCREEN
         ) {
             splashScreen(navController = navController)
             loginScreen(navController = navController)
@@ -51,6 +52,7 @@ fun ImdangNavGraph() {
             writeInsightSummaryScreen(navController = navController)
             writeInsightOverallReviewScreen(navController = navController)
             kakaoAddressWebScreen(navController = navController)
+            insightDetailScreen(navController = navController)
 
             commonWebScreen(navController = navController)
         }

@@ -35,26 +35,30 @@ import info.imdang.resource.R
 fun TopBar(
     title: String = "",
     hasDivider: Boolean = true,
+    hasStatusBarsPadding: Boolean = true,
     rightWidget: (@Composable () -> Unit)? = null,
     onClickBack: () -> Unit = {}
 ) {
     Column {
         Row(
-            modifier = Modifier
-                .statusBarsPadding()
+            modifier = if (hasStatusBarsPadding) {
+                Modifier.statusBarsPadding()
+            } else {
+                Modifier
+            }
                 .fillMaxWidth()
                 .height(65.dp)
                 .background(color = Gray25)
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 14.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(36.dp)
                     .clip(CircleShape)
                     .clickable(onClick = onClickBack)
-                    .padding(8.dp),
+                    .padding(6.dp),
                 iconResource = R.drawable.ic_back,
                 tint = Gray900
             )
@@ -88,6 +92,7 @@ private fun TopBarPreview() {
                 rightWidget = {
                     Text(
                         modifier = Modifier
+                            .padding(end = 6.dp)
                             .background(color = Orange50, shape = CircleShape)
                             .padding(horizontal = 8.dp, vertical = 4.dp),
                         text = "00%",

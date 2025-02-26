@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
 import info.imdang.app.ui.list.new.NEW_INSIGHT_LIST_SCREEN
@@ -100,7 +101,7 @@ fun HomeSearchPage(navController: NavController) {
                 HomeSearchNewInsightsView(navController = navController)
             }
             item {
-                HomeSearchRecommendInsightsView()
+                HomeSearchRecommendInsightsView(navController = navController)
             }
         }
     }
@@ -249,7 +250,7 @@ private fun HomeSearchVisitComplexView(navController: NavController) {
                         title = it,
                         nickname = "홍길동",
                         onClick = {
-                            // todo : 인사이트 상세로 이동
+                            navController.navigate(INSIGHT_DETAIL_SCREEN)
                         }
                     )
                 }
@@ -342,7 +343,7 @@ fun HomeSearchNewInsightsView(navController: NavController) {
                     title = insight,
                     nickname = "홍길동",
                     onClick = {
-                        // todo : 인사이트 상세로 이동
+                        navController.navigate(INSIGHT_DETAIL_SCREEN)
                     }
                 )
             }
@@ -356,7 +357,7 @@ fun HomeSearchNewInsightsView(navController: NavController) {
 }
 
 @Composable
-private fun HomeSearchRecommendInsightsView() {
+private fun HomeSearchRecommendInsightsView(navController: NavController) {
     val recommendInsights = listOf(
         "초역세권 대단지 아파트 후기",
         "초역세권 대단지 아파트 후기",
@@ -420,7 +421,7 @@ private fun HomeSearchRecommendInsightsView() {
                         title = it,
                         nickname = "홍길동",
                         onClick = {
-                            // todo : 인사이트 상세로 이동
+                            navController.navigate(INSIGHT_DETAIL_SCREEN)
                         }
                     )
                 }

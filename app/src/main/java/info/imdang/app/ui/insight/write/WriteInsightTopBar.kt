@@ -83,6 +83,7 @@ fun WriteInsightTopBar(navController: NavController) {
             rightWidget = {
                 Text(
                     modifier = Modifier
+                        .padding(end = 6.dp)
                         .background(color = Orange50, shape = CircleShape)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                     text = progress,
