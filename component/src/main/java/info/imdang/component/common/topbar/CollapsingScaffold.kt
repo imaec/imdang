@@ -233,7 +233,7 @@ fun exitUntilCollapsedScrollBehavior(
     snapAnimationSpec: AnimationSpec<Float>? = spring(stiffness = Spring.StiffnessMediumLow),
     flingAnimationSpec: DecayAnimationSpec<Float>? = rememberSplineBasedDecay(),
     isEnableFling: Boolean = false
-): TopAppBarScrollBehavior =
+): ExitUntilCollapsedScrollBehavior =
     ExitUntilCollapsedScrollBehavior(
         state = state,
         snapAnimationSpec = snapAnimationSpec,
@@ -243,13 +243,35 @@ fun exitUntilCollapsedScrollBehavior(
     )
 
 @OptIn(ExperimentalMaterial3Api::class)
-private class ExitUntilCollapsedScrollBehavior(
+class ExitUntilCollapsedScrollBehavior(
     override val state: TopAppBarState,
     override val snapAnimationSpec: AnimationSpec<Float>?,
     override val flingAnimationSpec: DecayAnimationSpec<Float>?,
     val canScroll: () -> Boolean = { true },
     isEnableFling: Boolean
 ) : TopAppBarScrollBehavior {
+    suspend fun collapse() {
+        if (snapAnimationSpec != null) {
+            AnimationState(initialValue = state.heightOffset).animateTo(
+                state.heightOffsetLimit,
+                animationSpec = snapAnimationSpec
+            ) { state.heightOffset = value }
+        } else {
+            state.heightOffset = state.heightOffsetLimit
+        }
+    }
+
+    suspend fun expand() {
+        if (snapAnimationSpec != null) {
+            AnimationState(initialValue = state.heightOffset).animateTo(
+                0f,
+                animationSpec = snapAnimationSpec
+            ) { state.heightOffset = value }
+        } else {
+            state.heightOffset = 0f
+        }
+    }
+
     override val isPinned: Boolean = false
     override var nestedScrollConnection =
         object : NestedScrollConnection {

@@ -13,10 +13,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +38,7 @@ import info.imdang.app.ui.insight.write.GoodNewsItems
 import info.imdang.app.ui.insight.write.InfraItems
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.CollapsingScaffold
+import info.imdang.component.common.topbar.ExitUntilCollapsedScrollBehavior
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.common.topbar.exitUntilCollapsedScrollBehavior
 import info.imdang.component.system.button.CommonButton
@@ -42,6 +47,7 @@ import info.imdang.component.system.tab.ScrollableTabs
 import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
+import kotlinx.coroutines.launch
 
 const val INSIGHT_DETAIL_SCREEN = "insightDetail"
 
@@ -68,7 +74,7 @@ private fun InsightDetailScreen(navController: NavController) {
             InsightDetailCollapsingContent()
         },
         content = {
-            InsightDetailContent()
+            InsightDetailContent(scrollBehavior = scrollBehavior)
         },
         bottomBar = {
             InsightDetailBottomBar()
@@ -113,9 +119,11 @@ private fun InsightDetailTopBar(navController: NavController) {
 }
 
 @Composable
-private fun InsightDetailContent() {
+private fun InsightDetailContent(scrollBehavior: ExitUntilCollapsedScrollBehavior) {
+    val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var isUserScrolling by remember { mutableStateOf(false) }
     val tabs = listOf(
         stringResource(R.string.basic_info),
         stringResource(R.string.infra),
@@ -124,13 +132,41 @@ private fun InsightDetailContent() {
         stringResource(R.string.good)
     )
 
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .collect {
+                if (!isUserScrolling) {
+                    selectedTabIndex = it
+                }
+            }
+    }
+
+    LaunchedEffect(selectedTabIndex) {
+        if (isUserScrolling) {
+            listState.animateScrollToItem(selectedTabIndex)
+            isUserScrolling = false
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             ScrollableTabs(
                 selectedTabIndex = selectedTabIndex,
                 tabs = tabs,
                 onTabSelected = {
-                    selectedTabIndex = it
+                    if (selectedTabIndex == it) {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(selectedTabIndex)
+                        }
+                    } else {
+                        if (it > 0) {
+                            coroutineScope.launch {
+                                scrollBehavior.collapse()
+                            }
+                        }
+                        isUserScrolling = true
+                        selectedTabIndex = it
+                    }
                 }
             )
             LazyColumn(
