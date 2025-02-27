@@ -20,10 +20,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,10 +32,10 @@ import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
 import info.imdang.component.common.image.Icon
 import info.imdang.component.system.chip.CommonChip
+import info.imdang.component.system.tab.Tabs
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray25
 import info.imdang.component.theme.Gray50
-import info.imdang.component.theme.Gray500
 import info.imdang.component.theme.Gray600
 import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
@@ -62,7 +58,7 @@ fun HomeExchangePage() {
         HorizontalDivider(color = Gray100)
         Spacer(modifier = Modifier.height(24.dp))
         OwnedPassView()
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         ExchangeTabRow(pagerState = pagerState)
         HorizontalPager(state = pagerState) { page ->
             when (page) {
@@ -121,43 +117,16 @@ private fun ExchangeTabRow(pagerState: PagerState) {
         stringResource(R.string.requested_exchange_history)
     )
 
-    Column {
-        TabRow(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            selectedTabIndex = pagerState.currentPage,
-            containerColor = Gray25,
-            indicator = {
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier
-                        .tabIndicatorOffset(it[pagerState.currentPage])
-                        .padding(horizontal = 12.dp),
-                    height = 2.dp,
-                    color = Gray900
-                )
-            },
-            divider = {}
-        ) {
-            tabs.forEachIndexed { index, title ->
-                val isSelected = pagerState.currentPage == index
-                Tab(
-                    selected = isSelected,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    },
-                    text = {
-                        Text(
-                            text = title,
-                            style = T600_16_22_4,
-                            color = if (isSelected) Gray900 else Gray500
-                        )
-                    }
-                )
+    Tabs(
+        selectedTabIndex = pagerState.currentPage,
+        tabs = tabs,
+        divider = { HorizontalDivider(color = Gray100) },
+        onTabSelected = {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(it)
             }
         }
-    }
-    HorizontalDivider(color = Gray100)
+    )
 }
 
 @Composable

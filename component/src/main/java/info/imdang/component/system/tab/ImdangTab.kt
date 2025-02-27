@@ -37,6 +37,7 @@ import info.imdang.component.theme.Gray500
 import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.component.theme.T600_14_19_6
+import kotlin.math.abs
 import kotlin.math.max
 
 @Composable
@@ -46,6 +47,7 @@ internal fun ImdangTab(
     enabled: Boolean = true,
     selectedContentColor: Color = Gray900,
     unselectedContentColor: Color = Gray500,
+    height: Dp = SmallTabHeight,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit,
     tab: @Composable (() -> Unit)? = null,
@@ -62,7 +64,8 @@ internal fun ImdangTab(
         content = {
             TabBaselineLayout(
                 icon = icon,
-                text = tab
+                text = tab,
+                height = height
             )
         }
     )
@@ -134,7 +137,8 @@ private fun TabTransition(
 @Composable
 private fun TabBaselineLayout(
     text: @Composable (() -> Unit)?,
-    icon: @Composable (() -> Unit)?
+    icon: @Composable (() -> Unit)?,
+    height: Dp
 ) {
     Layout(
         modifier = Modifier.padding(horizontal = HorizontalTabPadding),
@@ -162,12 +166,13 @@ private fun TabBaselineLayout(
         }
 
         val tabWidth = max(textPlaceable?.width ?: 0, iconPlaceable?.width ?: 0)
-
-        val tabHeight = if (textPlaceable != null && iconPlaceable != null) {
-            LargeTabHeight
+        val tabHeight = height.roundToPx()
+        if (textPlaceable != null && iconPlaceable != null) {
+            height.roundToPx() +
+                (LargeTabHeight.roundToPx() - abs((height - SmallTabHeight).roundToPx()))
         } else {
-            SmallTabHeight
-        }.roundToPx()
+            height.roundToPx()
+        }
         val indicatorGap = IndicatorGap.roundToPx()
 
         val firstBaseline = textPlaceable?.get(FirstBaseline)
