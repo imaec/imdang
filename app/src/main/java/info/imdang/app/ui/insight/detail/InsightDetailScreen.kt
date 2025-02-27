@@ -1,7 +1,7 @@
 package info.imdang.app.ui.insight.detail
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -27,12 +28,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import info.imdang.app.ui.insight.InsightItem
-import info.imdang.app.ui.insight.InsightItemType
+import info.imdang.app.ui.insight.write.ComplexEnvironmentItems
+import info.imdang.app.ui.insight.write.ComplexFacilityItems
+import info.imdang.app.ui.insight.write.GoodNewsItems
+import info.imdang.app.ui.insight.write.InfraItems
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.CollapsingScaffold
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.common.topbar.exitUntilCollapsedScrollBehavior
+import info.imdang.component.system.button.CommonButton
+import info.imdang.component.system.gradient.ButtonGradient
 import info.imdang.component.system.tab.ScrollableTabs
 import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
@@ -64,6 +69,9 @@ private fun InsightDetailScreen(navController: NavController) {
         },
         content = {
             InsightDetailContent()
+        },
+        bottomBar = {
+            InsightDetailBottomBar()
         }
     )
 }
@@ -116,35 +124,116 @@ private fun InsightDetailContent() {
         stringResource(R.string.good)
     )
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        ScrollableTabs(
-            selectedTabIndex = selectedTabIndex,
-            tabs = tabs,
-            onTabSelected = {
-                selectedTabIndex = it
-            }
-        )
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(20) {
-                InsightItem(
-                    itemType = InsightItemType.HORIZONTAL,
-                    coverImage = "",
-                    region = "강남구 신논현동",
-                    recommendCount = 24,
-                    title = "123",
-                    nickname = "홍길동",
-                    onClick = {
-                        // todo : 인사이트 상세로 이동
-                    }
-                )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            ScrollableTabs(
+                selectedTabIndex = selectedTabIndex,
+                tabs = tabs,
+                onTabSelected = {
+                    selectedTabIndex = it
+                }
+            )
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 40.dp)
+            ) {
+                item {
+                    InsightDetailBasicInfoItems(
+                        address = "서울특별시 영등포구 당산 2동 123-467",
+                        complexName = "당산아이파크1차",
+                        visitDate = "2024.01.01",
+                        visitTimes = listOf("아침", "저녁"),
+                        trafficMethods = listOf("자차", "도보"),
+                        accessLimit = "자유로움",
+                        summary = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
+                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
+                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
+                    )
+                }
+                item {
+                    InsightDetailInfraItems(
+                        traffics = InfraItems.traffics().map { it.name },
+                        schools = InfraItems.schools().map { it.name },
+                        livingFacilities = InfraItems.livingFacilities().map { it.name },
+                        cultureFacilities = InfraItems.cultureFacilities().map { it.name },
+                        surroundingEnvironments = InfraItems.surroundingEnvironments()
+                            .map { it.name },
+                        landmarks = InfraItems.landmarks().map { it.name },
+                        avoidFacilities = InfraItems.avoidFacilities().map { it.name },
+                        infraReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
+                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
+                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
+                    )
+                }
+                item {
+                    InsightDetailComplexEnvironmentItems(
+                        building = ComplexEnvironmentItems.buildings().first().name,
+                        safety = ComplexEnvironmentItems.safeties().first().name,
+                        childrenFacility = ComplexEnvironmentItems.childrenFacilities()
+                            .first().name,
+                        silverFacility = ComplexEnvironmentItems.silverFacilities().first().name,
+                        complexEnvironmentReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
+                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
+                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
+                    )
+                }
+                item {
+                    InsightDetailComplexFacilityItems(
+                        familyFacilities = ComplexFacilityItems.familyFacilities().map { it.name },
+                        multipurposeFacilities = ComplexFacilityItems.multipurposeFacilities()
+                            .map { it.name },
+                        leisureFacilities = ComplexFacilityItems.leisureFacilities()
+                            .map { it.name },
+                        environments = ComplexFacilityItems.environments().map { it.name },
+                        complexFacilityReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
+                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
+                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
+                    )
+                }
+                item {
+                    InsightDetailGoodNewsItems(
+                        traffics = GoodNewsItems.traffics().map { it.name },
+                        developments = GoodNewsItems.developments().map { it.name },
+                        educations = GoodNewsItems.educations().map { it.name },
+                        naturalEnvironments = GoodNewsItems.naturalEnvironments().map { it.name },
+                        cultures = GoodNewsItems.cultures().map { it.name },
+                        industries = GoodNewsItems.industries().map { it.name },
+                        policies = GoodNewsItems.policies().map { it.name },
+                        goodNewsReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
+                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
+                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
+                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
+                    )
+                }
             }
         }
+        ButtonGradient(modifier = Modifier.align(Alignment.BottomCenter))
     }
+}
+
+@Composable
+private fun InsightDetailBottomBar() {
+    CommonButton(
+        buttonText = stringResource(R.string.request_exchange),
+        onClick = {
+            // todo : 교환 요청
+        }
+    )
 }
 
 @Preview

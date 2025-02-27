@@ -58,6 +58,7 @@
     <string name="requested_exchange_history">요청 받은 내역</string>
     <string name="waiting">대기중</string>
     <string name="reject">거절</string>
+    <string name="accept">수락</string>
     <string name="exchange_complete">교환 완료</string>
     <string name="waiting_message">대기 중 내역은 최근 7일간의 기록만 표시돼요.</string>
     <string name="reject_message">거절 내역은 최근 7일간의 기록만 표시돼요.</string>
@@ -109,8 +110,11 @@
     <string name="avoid_facility">기피시설</string>
     <string name="infra_overall_review">인프라 총평</string>
     <string name="building">건물</string>
+    <string name="building_example">ex. 단지 외관 상태, 엘리베이터, 계단의 청결</string>
     <string name="safety">안전</string>
+    <string name="safety_example">ex. CCTV, 경비원 상주 및 태도, 가로등</string>
     <string name="children_facility">어린이 시설</string>
+    <string name="children_facility_example">ex. 놀이터, 어린이 보호 구역</string>
     <string name="silver_facility">경로시설</string>
     <string name="complex_environment_overall_review">단지 환경 총평</string>
     <string name="family">가족</string>
@@ -130,6 +134,8 @@
     <string name="write_insight_complete_tooltip_message">작성 완료 시 인사이트가 바로 업로드돼요</string>
     <string name="write_insight_complete_message">인사이트 업로드가 완료되었어요.\n작성한 내 인사이트는 보관함에서\n확인할 수 있어요.</string>
     <string name="check_storage">보관함 확인하기</string>
+    <string name="request_exchange">교환 요청</string>
+    <string name="visit_date_and_time">임장 날짜 및 시간</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>

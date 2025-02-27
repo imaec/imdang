@@ -46,6 +46,7 @@ fun WriteInsightComplexEnvironmentPage(navController: NavController = rememberNa
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.building),
+                selectionExample = stringResource(R.string.building_example),
                 selectionItems = viewModel.buildings,
                 onClick = {
                     coroutineScope.launch {
@@ -57,6 +58,7 @@ fun WriteInsightComplexEnvironmentPage(navController: NavController = rememberNa
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.safety),
+                selectionExample = stringResource(R.string.safety_example),
                 selectionItems = viewModel.safeties,
                 onClick = {
                     coroutineScope.launch {
@@ -68,6 +70,7 @@ fun WriteInsightComplexEnvironmentPage(navController: NavController = rememberNa
         item {
             WriteInsightSelectionButtons(
                 title = stringResource(R.string.children_facility),
+                selectionExample = stringResource(R.string.children_facility_example),
                 selectionItems = viewModel.childrenFacilities,
                 onClick = {
                     coroutineScope.launch {
@@ -103,7 +106,7 @@ fun WriteInsightComplexEnvironmentPage(navController: NavController = rememberNa
     }
 }
 
-@Preview(showBackground = true, heightDp = 1233)
+@Preview(showBackground = true, heightDp = 1353)
 @Composable
 private fun WriteInsightComplexEnvironmentPreview() {
     WriteInsightInit()
