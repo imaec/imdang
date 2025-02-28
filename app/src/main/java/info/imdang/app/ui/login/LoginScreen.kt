@@ -17,6 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +35,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.onboarding.ONBOARDING_SCREEN
+import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray900
@@ -42,13 +47,42 @@ import info.imdang.resource.R
 const val LOGIN_SCREEN = "login"
 
 fun NavGraphBuilder.loginScreen(navController: NavController) {
-    composable(route = LOGIN_SCREEN) {
-        LoginScreen(navController = navController)
+    composable(route = "$LOGIN_SCREEN?isLogout={isLogout}&isWithdraw={isWithdraw}") {
+        val isLogout = it.arguments?.getString("isLogout")?.toBoolean() ?: false
+        val isWithdraw = it.arguments?.getString("isWithdraw")?.toBoolean() ?: false
+        LoginScreen(
+            navController = navController,
+            isLogout = isLogout,
+            isWithdraw = isWithdraw
+        )
     }
 }
 
 @Composable
-private fun LoginScreen(navController: NavController) {
+private fun LoginScreen(
+    navController: NavController,
+    isLogout: Boolean,
+    isWithdraw: Boolean
+) {
+    var isShowLogoutDialog by remember { mutableStateOf(isLogout) }
+    var isShowWithdrawDialog by remember { mutableStateOf(isWithdraw) }
+
+    if (isShowLogoutDialog) {
+        CommonDialog(
+            message = stringResource(R.string.logout_success_message),
+            onClickPositiveButton = { isShowLogoutDialog = false },
+            onDismiss = { isShowLogoutDialog = false }
+        )
+    }
+
+    if (isShowWithdrawDialog) {
+        CommonDialog(
+            message = stringResource(R.string.withdraw_success_message),
+            onClickPositiveButton = { isShowWithdrawDialog = false },
+            onDismiss = { isShowWithdrawDialog = false }
+        )
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { contentPadding ->
@@ -149,6 +183,30 @@ private fun LoginButton(
 @Composable
 private fun LoginScreenPreview() {
     ImdangTheme {
-        LoginScreen(navController = rememberNavController())
+        LoginScreen(
+            navController = rememberNavController(),
+            isLogout = false,
+            isWithdraw = false
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LogoutDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            message = stringResource(R.string.logout_success_message)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WithdrawDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            message = stringResource(R.string.withdraw_success_message)
+        )
     }
 }

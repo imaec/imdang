@@ -19,6 +19,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,7 +33,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.login.LOGIN_SCREEN
 import info.imdang.app.ui.my.term.SERVICE_TERM_SCREEN
+import info.imdang.app.ui.my.withdraw.WITHDRAW_SCREEN
+import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.theme.Gray100
@@ -80,6 +87,25 @@ private fun MyContent(
     navController: NavController,
     contentPadding: PaddingValues
 ) {
+    var isShowLogoutDialog by remember { mutableStateOf(false) }
+
+    if (isShowLogoutDialog) {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.logout_info_message),
+            positiveButtonText = stringResource(R.string.logout),
+            negativeButtonText = stringResource(R.string.cancel),
+            onClickPositiveButton = {
+                isShowLogoutDialog = false
+                navController.navigate("$LOGIN_SCREEN?isLogout=true") {
+                    popUpTo(0) { inclusive = true }
+                }
+            },
+            onClickNegativeButton = { isShowLogoutDialog = false },
+            onDismiss = { isShowLogoutDialog = false }
+        )
+    }
+
     Column(
         modifier = Modifier
             .padding(contentPadding)
@@ -112,9 +138,7 @@ private fun MyContent(
                     .background(color = White, shape = RoundedCornerShape(6.dp))
                     .border(width = 1.dp, color = Gray100, shape = RoundedCornerShape(6.dp))
                     .clip(RoundedCornerShape(6.dp))
-                    .clickable {
-                        // todo : 로그아웃
-                    }
+                    .clickable { isShowLogoutDialog = true }
                     .padding(horizontal = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -251,7 +275,7 @@ private fun MyContent(
                 .border(width = 1.dp, color = Gray100, shape = RoundedCornerShape(8.dp))
                 .clip(RoundedCornerShape(8.dp))
                 .clickable {
-                    // todo : 회원 탈퇴 화면으로 이동
+                    navController.navigate(WITHDRAW_SCREEN)
                 }
                 .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center
@@ -270,5 +294,18 @@ private fun MyContent(
 private fun MyScreenPreview() {
     ImdangTheme {
         MyScreen(navController = rememberNavController())
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LogoutDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.logout_info_message),
+            positiveButtonText = stringResource(R.string.logout),
+            negativeButtonText = stringResource(R.string.cancel)
+        )
     }
 }
