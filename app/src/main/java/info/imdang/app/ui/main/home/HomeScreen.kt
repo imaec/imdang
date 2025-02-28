@@ -48,6 +48,7 @@ import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.main.home.exchange.HomeExchangePage
 import info.imdang.app.ui.main.home.search.HomeSearchPage
 import info.imdang.app.ui.my.MY_SCREEN
+import info.imdang.app.ui.notification.NOTIFICATION_SCREEN
 import info.imdang.app.ui.onboarding.ONBOARDING_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
@@ -199,11 +200,17 @@ private fun HomeTabBar(
             }
         }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate(route = NOTIFICATION_SCREEN)
+                    }
+                    .padding(8.dp)
+                    .size(24.dp),
                 iconResource = R.drawable.ic_alarm,
                 tint = Gray900
             )

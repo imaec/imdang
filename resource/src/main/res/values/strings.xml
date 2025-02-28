@@ -161,11 +161,19 @@
     <string name="withdraw_success_message">계정이 정상적으로 탈퇴되었어요.</string>
     <string name="logout_info_message">로그아웃 시 서비스 사용이\n제한돼요. 그래도 로그아웃할까요?</string>
     <string name="logout_success_message">정상적으로 로그아웃 되었어요.</string>
+    <string name="notification">알림</string>
+    <string name="new_notification">신규 알림</string>
+    <string name="last_notification">지난 알림</string>
+    <string name="check_insight">인사이트 확인하기</string>
+    <string name="retry_request">다시 요청하기</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>
     <string name="empty_reject_message">거절 내역이 없어요.</string>
     <string name="empty_exchange_complete_message">교환 완료 내역이 없어요.</string>
+    <string name="empty_notification_message">최근 1년간 도착한 알림이 없어요</string>
+    <string name="empty_new_notification_message">오늘 도착한 신규 알림이 없어요</string>
+    <string name="empty_last_notification_message">지난 알림이 없어요</string>
 
     <!-- 인사이트 작성 항목 -->
     <!-- 기본정보 - 다녀온 시간 -->
