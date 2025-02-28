@@ -24,6 +24,7 @@ import info.imdang.app.ui.my.myScreen
 import info.imdang.app.ui.my.term.serviceTermScreen
 import info.imdang.app.ui.my.withdraw.withdrawScreen
 import info.imdang.app.ui.onboarding.onboardingScreen
+import info.imdang.app.ui.serviceintroduction.serviceIntroductionScreen
 import info.imdang.app.ui.splash.splashScreen
 import info.imdang.component.common.snackbar.Snackbar
 import info.imdang.component.common.webview.commonWebScreen
@@ -59,6 +60,7 @@ fun ImdangNavGraph() {
             myScreen(navController = navController)
             serviceTermScreen(navController = navController)
             withdrawScreen(navController = navController)
+            serviceIntroductionScreen(navController = navController)
 
             commonWebScreen(navController = navController)
         }

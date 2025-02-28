@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.login.LOGIN_SCREEN
 import info.imdang.app.ui.my.term.SERVICE_TERM_SCREEN
 import info.imdang.app.ui.my.withdraw.WITHDRAW_SCREEN
+import info.imdang.app.ui.serviceintroduction.SERVICE_INTRODUCTION_SCREEN
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.TopBar
@@ -205,7 +206,7 @@ private fun MyContent(
                 .fillMaxWidth()
                 .height(64.dp)
                 .clickable {
-                    // todo : 서비스 소개 화면으로 이동
+                    navController.navigate(SERVICE_INTRODUCTION_SCREEN)
                 }
                 .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,

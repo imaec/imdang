@@ -50,6 +50,7 @@ fun NavGraphBuilder.loginScreen(navController: NavController) {
     composable(route = "$LOGIN_SCREEN?isLogout={isLogout}&isWithdraw={isWithdraw}") {
         val isLogout = it.arguments?.getString("isLogout")?.toBoolean() ?: false
         val isWithdraw = it.arguments?.getString("isWithdraw")?.toBoolean() ?: false
+
         LoginScreen(
             navController = navController,
             isLogout = isLogout,

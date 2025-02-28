@@ -45,6 +45,7 @@ import info.imdang.app.ui.list.visitcomplex.VISIT_COMPLEX_INSIGHT_LIST_SCREEN
 import info.imdang.app.ui.main.home.HomeViewModel
 import info.imdang.app.ui.main.home.search.map.SEARCH_BY_MAP_SCREEN
 import info.imdang.app.ui.main.home.search.region.SEARCH_BY_REGION_SCREEN
+import info.imdang.app.ui.serviceintroduction.SERVICE_INTRODUCTION_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
 import info.imdang.component.common.modifier.dashedBorder
@@ -92,7 +93,7 @@ fun HomeSearchPage(navController: NavController) {
             contentPadding = PaddingValues(bottom = 56.dp)
         ) {
             item {
-                HomeSearchBannerView()
+                HomeSearchBannerView(navController = navController)
             }
             item {
                 HomeSearchVisitComplexView(navController = navController)
@@ -163,13 +164,13 @@ private fun HomeSearchView(navController: NavController) {
 }
 
 @Composable
-private fun HomeSearchBannerView() {
+private fun HomeSearchBannerView(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Orange50)
             .clickable {
-                // todo : 서비스 소개 화면으로 이동
+                navController.navigate("$SERVICE_INTRODUCTION_SCREEN?selectedIndex=1")
             }
             .padding(all = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
