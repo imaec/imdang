@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,10 +35,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.insight.detail.bottomsheet.ExchangeBottomSheet
 import info.imdang.app.ui.insight.write.ComplexEnvironmentItems
 import info.imdang.app.ui.insight.write.ComplexFacilityItems
 import info.imdang.app.ui.insight.write.GoodNewsItems
 import info.imdang.app.ui.insight.write.InfraItems
+import info.imdang.component.common.bottomsheet.BottomSheetHandle
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.CollapsingScaffold
@@ -47,6 +52,7 @@ import info.imdang.component.system.gradient.ButtonGradient
 import info.imdang.component.system.tab.ScrollableTabs
 import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
+import info.imdang.component.theme.White
 import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
@@ -263,9 +269,12 @@ private fun InsightDetailContent(scrollBehavior: ExitUntilCollapsedScrollBehavio
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun InsightDetailBottomBar() {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isShowExchangeInfoDialog by remember { mutableStateOf(false) }
+    var isShowExchangeBottomSheet by remember { mutableStateOf(false) }
 
     if (isShowExchangeInfoDialog) {
         CommonDialog(
@@ -279,11 +288,26 @@ private fun InsightDetailBottomBar() {
         )
     }
 
+    if (isShowExchangeBottomSheet) {
+        ModalBottomSheet(
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            containerColor = White,
+            dragHandle = { BottomSheetHandle() },
+            onDismissRequest = { isShowExchangeBottomSheet = false }
+        ) {
+            ExchangeBottomSheet(
+                sheetState = sheetState,
+                onCloseBottomSheet = { isShowExchangeBottomSheet = false }
+            )
+        }
+    }
+
     CommonButton(
         buttonText = stringResource(R.string.request_exchange),
         onClick = {
             // todo : 교환 요청
-            isShowExchangeInfoDialog = true
+            isShowExchangeBottomSheet = true
         }
     )
 }

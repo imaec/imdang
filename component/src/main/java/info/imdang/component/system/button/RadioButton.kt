@@ -22,7 +22,7 @@ import info.imdang.component.theme.Orange500
 @Composable
 fun RadioButton(
     isSelected: Boolean,
-    isEnabled: Boolean,
+    isEnabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     val radioButtonSize = 24.dp

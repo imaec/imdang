@@ -40,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -56,6 +55,7 @@ import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
 import info.imdang.app.ui.main.storage.address.STORAGE_ADDRESS_SCREEN
 import info.imdang.app.ui.main.storage.map.STORAGE_BY_MAP_SCREEN
+import info.imdang.component.common.bottomsheet.BottomSheetHandle
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
 import info.imdang.component.common.modifier.visible
@@ -291,18 +291,7 @@ private fun StorageInsightFilterView(insightCount: Int) {
             sheetState = sheetState,
             shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
             containerColor = White,
-            dragHandle = {
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .width(52.dp)
-                        .height(6.dp)
-                        .background(
-                            color = Color(0xFFD9D9D9),
-                            shape = CircleShape
-                        )
-                )
-            },
+            dragHandle = { BottomSheetHandle() },
             onDismissRequest = { showBottomSheet = false }
         ) {
             StorageComplexBottomSheet(
