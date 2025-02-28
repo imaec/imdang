@@ -36,6 +36,7 @@ import info.imdang.app.ui.insight.write.ComplexEnvironmentItems
 import info.imdang.app.ui.insight.write.ComplexFacilityItems
 import info.imdang.app.ui.insight.write.GoodNewsItems
 import info.imdang.app.ui.insight.write.InfraItems
+import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.CollapsingScaffold
 import info.imdang.component.common.topbar.ExitUntilCollapsedScrollBehavior
@@ -264,10 +265,25 @@ private fun InsightDetailContent(scrollBehavior: ExitUntilCollapsedScrollBehavio
 
 @Composable
 private fun InsightDetailBottomBar() {
+    var isShowExchangeInfoDialog by remember { mutableStateOf(false) }
+
+    if (isShowExchangeInfoDialog) {
+        CommonDialog(
+            message = stringResource(R.string.exchange_info_message),
+            onClickPositiveButton = {
+                isShowExchangeInfoDialog = false
+            },
+            onDismiss = {
+                isShowExchangeInfoDialog = false
+            }
+        )
+    }
+
     CommonButton(
         buttonText = stringResource(R.string.request_exchange),
         onClick = {
             // todo : 교환 요청
+            isShowExchangeInfoDialog = true
         }
     )
 }
@@ -277,5 +293,47 @@ private fun InsightDetailBottomBar() {
 private fun InsightDetailScreenPreview() {
     ImdangTheme {
         InsightDetailScreen(navController = rememberNavController())
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExchangeInfoDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            message = stringResource(R.string.exchange_info_message)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExchangeRequestCompleteDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            message = stringResource(R.string.exchange_request_complete_message),
+            subButtonText = stringResource(R.string.check_exchange)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExchangeAcceptDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            message = stringResource(R.string.exchange_accept_message),
+            subButtonText = stringResource(R.string.check_storage)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExchangeRejectDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            message = stringResource(R.string.exchange_reject_message)
+        )
     }
 }

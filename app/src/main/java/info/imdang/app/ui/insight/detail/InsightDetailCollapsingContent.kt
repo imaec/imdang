@@ -15,13 +15,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray700
@@ -32,10 +38,24 @@ import info.imdang.component.theme.T500_16_22_4
 import info.imdang.component.theme.T700_22_30_8
 import info.imdang.component.theme.White
 import info.imdang.resource.R
-import timber.log.Timber
 
 @Composable
 fun InsightDetailCollapsingContent() {
+    var isShowRecommendInfoDialog by remember { mutableStateOf(false) }
+
+    if (isShowRecommendInfoDialog) {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.recommend_info_message),
+            onClickPositiveButton = {
+                isShowRecommendInfoDialog = false
+            },
+            onDismiss = {
+                isShowRecommendInfoDialog = false
+            }
+        )
+    }
+
     Column {
         Image(
             modifier = Modifier
@@ -79,7 +99,7 @@ fun InsightDetailCollapsingContent() {
                         .clip(RoundedCornerShape(4.dp))
                         .clickable {
                             // todo : 추천
-                            Timber.d("  ## 추천")
+                            isShowRecommendInfoDialog = true
                         }
                         .padding(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -112,5 +132,16 @@ fun InsightDetailCollapsingContent() {
 private fun InsightDetailCollapsingContentPreview() {
     ImdangTheme {
         InsightDetailCollapsingContent()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RecommendInfoDialogPreview() {
+    ImdangTheme {
+        CommonDialog(
+            iconResource = R.drawable.ic_sign_for_dialog,
+            message = stringResource(R.string.recommend_info_message)
+        )
     }
 }

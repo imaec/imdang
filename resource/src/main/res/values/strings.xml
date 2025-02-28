@@ -136,6 +136,12 @@
     <string name="check_storage">보관함 확인하기</string>
     <string name="request_exchange">교환 요청</string>
     <string name="visit_date_and_time">임장 날짜 및 시간</string>
+    <string name="recommend_info_message">인사이트 추천은 교환 후 가능해요</string>
+    <string name="exchange_info_message">교환할 인사이트가 없어요.\n임장을 다녀온 후 인사이트를\n작성해주세요.</string>
+    <string name="exchange_request_complete_message">교환 요청을 완료했어요.\n교환 내역은 교환소에서 확인해보세요.</string>
+    <string name="exchange_accept_message">교환을 수락했어요.\n교환한 인사이트는 보관함에서\n확인할 수 있어요.</string>
+    <string name="exchange_reject_message">교환을 거절했어요.</string>
+    <string name="check_exchange">교환소 확인하기</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>
