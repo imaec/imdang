@@ -143,6 +143,13 @@
     <string name="exchange_reject_message">교환을 거절했어요.</string>
     <string name="check_exchange">교환소 확인하기</string>
     <string name="exchange_select_message">어떤 인사이트와 교환할까요?</string>
+    <string name="my_page">MY 페이지</string>
+    <string name="logout">로그아웃</string>
+    <string name="written_insight">작성한 인사이트</string>
+    <string name="total_exchange">누적 교환</string>
+    <string name="service_introduction">서비스 소개</string>
+    <string name="version_info">버전 정보</string>
+    <string name="account_withdraw">계정 탈퇴</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>

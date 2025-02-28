@@ -47,6 +47,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.main.home.exchange.HomeExchangePage
 import info.imdang.app.ui.main.home.search.HomeSearchPage
+import info.imdang.app.ui.my.MY_SCREEN
 import info.imdang.app.ui.onboarding.ONBOARDING_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
@@ -134,7 +135,10 @@ private fun HomeScreen(
                 .statusBarsPadding()
                 .fillMaxSize(),
             topBar = {
-                HomeTabBar(pagerState = pagerState)
+                HomeTabBar(
+                    navController = navController,
+                    pagerState = pagerState
+                )
             },
             content = { contentPadding ->
                 HomeContent(
@@ -158,7 +162,10 @@ private fun HomeScreen(
 }
 
 @Composable
-private fun HomeTabBar(pagerState: PagerState) {
+private fun HomeTabBar(
+    navController: NavController,
+    pagerState: PagerState
+) {
     val coroutineScope = rememberCoroutineScope()
 
     Row(
@@ -201,7 +208,12 @@ private fun HomeTabBar(pagerState: PagerState) {
                 tint = Gray900
             )
             Icon(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate(route = MY_SCREEN)
+                    },
                 iconResource = R.drawable.ic_profile
             )
         }

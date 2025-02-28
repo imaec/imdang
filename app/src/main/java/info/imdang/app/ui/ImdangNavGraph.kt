@@ -20,6 +20,7 @@ import info.imdang.app.ui.main.home.search.region.searchByRegionScreen
 import info.imdang.app.ui.main.mainScreen
 import info.imdang.app.ui.main.storage.address.storageAddressScreen
 import info.imdang.app.ui.main.storage.map.storageByMapScreen
+import info.imdang.app.ui.my.myScreen
 import info.imdang.app.ui.onboarding.onboardingScreen
 import info.imdang.app.ui.splash.splashScreen
 import info.imdang.component.common.snackbar.Snackbar
@@ -53,6 +54,7 @@ fun ImdangNavGraph() {
             writeInsightOverallReviewScreen(navController = navController)
             kakaoAddressWebScreen(navController = navController)
             insightDetailScreen(navController = navController)
+            myScreen(navController = navController)
 
             commonWebScreen(navController = navController)
         }
