@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.my.term.SERVICE_TERM_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.theme.Gray100
@@ -66,13 +67,19 @@ private fun MyScreen(navController: NavController) {
             )
         },
         content = { contentPadding ->
-            MyContent(contentPadding)
+            MyContent(
+                navController = navController,
+                contentPadding = contentPadding
+            )
         }
     )
 }
 
 @Composable
-private fun MyContent(contentPadding: PaddingValues) {
+private fun MyContent(
+    navController: NavController,
+    contentPadding: PaddingValues
+) {
     Column(
         modifier = Modifier
             .padding(contentPadding)
@@ -197,7 +204,7 @@ private fun MyContent(contentPadding: PaddingValues) {
                 .fillMaxWidth()
                 .height(64.dp)
                 .clickable {
-                    // todo : 서비스 이용 약관 화면으로 이동
+                    navController.navigate(SERVICE_TERM_SCREEN)
                 }
                 .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,

@@ -150,6 +150,8 @@
     <string name="service_introduction">서비스 소개</string>
     <string name="version_info">버전 정보</string>
     <string name="account_withdraw">계정 탈퇴</string>
+    <string name="privacy_term">개인 정보 수집 및 이용</string>
+    <string name="use_term">이용 약관</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>

@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.common.ext.encodeUtf8
 import info.imdang.app.const.MARKETING_URL
 import info.imdang.app.const.PRIVACY_URL
 import info.imdang.app.const.SERVICE_TERM_URL
@@ -75,7 +76,6 @@ import info.imdang.component.theme.T600_20_28
 import info.imdang.component.theme.T700_26_36_4
 import info.imdang.component.theme.White
 import info.imdang.resource.R
-import java.net.URLEncoder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -476,8 +476,9 @@ private fun TermItem(
                 .clickable {
                     coroutineScope.launch {
                         sheetState.hide()
-                        val url = URLEncoder.encode(termDetailUrl, Charsets.UTF_8.name())
-                        navController.navigate("$COMMON_WEB_SCREEN?url=$url")
+                        navController.navigate(
+                            "$COMMON_WEB_SCREEN?url=${termDetailUrl.encodeUtf8()}"
+                        )
                     }
                 }
                 .padding(4.dp),

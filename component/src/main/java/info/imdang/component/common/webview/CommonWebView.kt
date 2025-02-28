@@ -2,6 +2,7 @@ package info.imdang.component.common.webview
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -62,7 +63,9 @@ private fun CommonWebScreen(
                 },
                 chromeClient = object : AccompanistWebChromeClient() {
                 },
-                modifier = Modifier.padding(contentPadding),
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .fillMaxSize(),
                 onCreated = { webView ->
                     webView.settings.javaScriptEnabled = true
                     webView.settings.domStorageEnabled = true
