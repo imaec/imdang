@@ -90,9 +90,21 @@ android {
     productFlavors {
         create("dev") {
             dimension = "server"
+            addManifestPlaceholders(mapOf("KAKAO_NATIVE_KEY" to DevConfig.KAKAO_NATIVE_KEY))
+            buildConfigField(
+                "String",
+                "KAKAO_NATIVE_KEY",
+                "\"${DevConfig.KAKAO_NATIVE_KEY}\""
+            )
         }
         create("product") {
             dimension = "server"
+            addManifestPlaceholders(mapOf("KAKAO_NATIVE_KEY" to ProductConfig.KAKAO_NATIVE_KEY))
+            buildConfigField(
+                "String",
+                "KAKAO_NATIVE_KEY",
+                "\"${ProductConfig.KAKAO_NATIVE_KEY}\""
+            )
         }
     }
 }
@@ -100,6 +112,10 @@ android {
 dependencies {
     implementation(project(":resource"))
     implementation(project(":component"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":remote"))
+    implementation(project(":local"))
 
     // android
     implementation(libs.androidx.core.ktx)
@@ -126,6 +142,19 @@ dependencies {
     implementation(libs.accompanist.pager.indicator)
     implementation(libs.accompanist.webview)
     implementation(libs.accompanist.systemuicontroller)
+
+    // firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.messaging)
+
+    // google
+    implementation(libs.play.services.auth)
+
+    // kakao
+    implementation(libs.kakao.login)
+    implementation(libs.kakao.share)
 
     // gson
     implementation(libs.gson)

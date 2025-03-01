@@ -166,6 +166,8 @@
     <string name="last_notification">지난 알림</string>
     <string name="check_insight">인사이트 확인하기</string>
     <string name="retry_request">다시 요청하기</string>
+    <string name="kakao_login_failure">카카오 로그인 실패</string>
+    <string name="google_login_failure">구글 로그인 실패</string>
 
     <string name="empty_home_insight_message">아직 작성한 내역이 없어요.\n임장을 다녀온 후 인사이트를 작성해보세요</string>
     <string name="empty_waiting_message">대기 중인 내역이 없어요.</string>

@@ -16,6 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = java.net.URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
     }
 }
 
@@ -23,3 +24,7 @@ rootProject.name = "imdang"
 include(":app")
 include(":component")
 include(":resource")
+include(":remote")
+include(":data")
+include(":domain")
+include(":local")

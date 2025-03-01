@@ -12,29 +12,44 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.login.LOGIN_SCREEN
+import info.imdang.app.ui.main.MAIN_SCREEN
+import info.imdang.app.ui.splash.preview.FakeSplashViewModel
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 const val SPLASH_SCREEN = "splash"
 
 fun NavGraphBuilder.splashScreen(navController: NavController) {
     composable(route = SPLASH_SCREEN) {
-        SplashScreen(navController = navController)
+        SplashScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun SplashScreen(navController: NavController) {
+private fun SplashScreen(
+    navController: NavController,
+    viewModel: SplashViewModel
+) {
     LaunchedEffect(Unit) {
-        delay(2000)
-        navController.navigate(route = LOGIN_SCREEN) {
-            popUpTo(SPLASH_SCREEN) { inclusive = true }
+        viewModel.event.collectLatest {
+            when (it) {
+                SplashEvent.MoveLoginScreen -> navController.navigate(route = LOGIN_SCREEN) {
+                    popUpTo(SPLASH_SCREEN) { inclusive = true }
+                }
+                SplashEvent.MoveMainScreen -> navController.navigate(route = MAIN_SCREEN) {
+                    popUpTo(SPLASH_SCREEN) { inclusive = true }
+                }
+            }
         }
     }
 
@@ -65,6 +80,9 @@ private fun SplashContent(contentPadding: PaddingValues) {
 @Composable
 private fun SplashScreenPreview() {
     ImdangTheme {
-        SplashScreen(navController = rememberNavController())
+        SplashScreen(
+            navController = rememberNavController(),
+            viewModel = FakeSplashViewModel()
+        )
     }
 }

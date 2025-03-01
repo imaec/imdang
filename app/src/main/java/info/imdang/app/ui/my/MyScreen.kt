@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,11 +30,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.login.LOGIN_SCREEN
+import info.imdang.app.ui.my.fake.FakeMyVieModel
 import info.imdang.app.ui.my.term.SERVICE_TERM_SCREEN
 import info.imdang.app.ui.my.withdraw.WITHDRAW_SCREEN
 import info.imdang.app.ui.serviceintroduction.SERVICE_INTRODUCTION_SCREEN
@@ -55,17 +58,24 @@ import info.imdang.component.theme.T600_16_22_4
 import info.imdang.component.theme.T600_18_25_2
 import info.imdang.component.theme.White
 import info.imdang.resource.R
+import kotlinx.coroutines.flow.collectLatest
 
 const val MY_SCREEN = "my"
 
 fun NavGraphBuilder.myScreen(navController: NavController) {
     composable(route = MY_SCREEN) {
-        MyScreen(navController = navController)
+        MyScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun MyScreen(navController: NavController) {
+private fun MyScreen(
+    navController: NavController,
+    viewModel: MyViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -77,6 +87,7 @@ private fun MyScreen(navController: NavController) {
         content = { contentPadding ->
             MyContent(
                 navController = navController,
+                viewModel = viewModel,
                 contentPadding = contentPadding
             )
         }
@@ -86,6 +97,7 @@ private fun MyScreen(navController: NavController) {
 @Composable
 private fun MyContent(
     navController: NavController,
+    viewModel: MyViewModel,
     contentPadding: PaddingValues
 ) {
     var isShowLogoutDialog by remember { mutableStateOf(false) }
@@ -98,13 +110,21 @@ private fun MyContent(
             negativeButtonText = stringResource(R.string.cancel),
             onClickPositiveButton = {
                 isShowLogoutDialog = false
-                navController.navigate("$LOGIN_SCREEN?isLogout=true") {
-                    popUpTo(0) { inclusive = true }
-                }
+                viewModel.logout()
             },
             onClickNegativeButton = { isShowLogoutDialog = false },
             onDismiss = { isShowLogoutDialog = false }
         )
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest {
+            when (it) {
+                MyEvent.MoveLoginScreen -> navController.navigate("$LOGIN_SCREEN?isLogout=true") {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
     }
 
     Column(
@@ -294,7 +314,10 @@ private fun MyContent(
 @Composable
 private fun MyScreenPreview() {
     ImdangTheme {
-        MyScreen(navController = rememberNavController())
+        MyScreen(
+            navController = rememberNavController(),
+            viewModel = FakeMyVieModel()
+        )
     }
 }
 

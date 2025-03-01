@@ -17,32 +17,42 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.common.util.kakaoLogin
+import info.imdang.app.ui.login.preview.FakeLoginViewModel
+import info.imdang.app.ui.main.MAIN_SCREEN
 import info.imdang.app.ui.onboarding.ONBOARDING_SCREEN
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
+import info.imdang.component.common.snackbar.showSnackbar
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.component.theme.T600_16_22_4
 import info.imdang.component.theme.White
 import info.imdang.resource.R
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 const val LOGIN_SCREEN = "login"
 
@@ -53,6 +63,7 @@ fun NavGraphBuilder.loginScreen(navController: NavController) {
 
         LoginScreen(
             navController = navController,
+            viewModel = hiltViewModel(),
             isLogout = isLogout,
             isWithdraw = isWithdraw
         )
@@ -62,6 +73,7 @@ fun NavGraphBuilder.loginScreen(navController: NavController) {
 @Composable
 private fun LoginScreen(
     navController: NavController,
+    viewModel: LoginViewModel,
     isLogout: Boolean,
     isWithdraw: Boolean
 ) {
@@ -89,6 +101,7 @@ private fun LoginScreen(
         content = { contentPadding ->
             LoginContent(
                 navController = navController,
+                viewModel = viewModel,
                 contentPadding = contentPadding
             )
         }
@@ -98,8 +111,23 @@ private fun LoginScreen(
 @Composable
 private fun LoginContent(
     navController: NavController,
+    viewModel: LoginViewModel,
     contentPadding: PaddingValues
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val kakaoLoginFailureMessage = stringResource(R.string.kakao_login_failure)
+    val googleLoginFailureMessage = stringResource(R.string.google_login_failure)
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest {
+            when (it) {
+                LoginEvent.MoveMainScreen -> navController.navigate(MAIN_SCREEN)
+                LoginEvent.MoveOnboardingScreen -> navController.navigate(ONBOARDING_SCREEN)
+            }
+        }
+    }
+
     Column(
         modifier = Modifier.padding(contentPadding),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -126,7 +154,17 @@ private fun LoginContent(
                 buttonIcon = R.drawable.ic_kakao,
                 buttonText = stringResource(id = R.string.kakao_login),
                 onClick = {
-                    navController.navigate(route = ONBOARDING_SCREEN)
+                    kakaoLogin(
+                        context = context,
+                        onSuccess = {
+                            viewModel.kakaoLogin(it)
+                        },
+                        onFailure = {
+                            coroutineScope.launch {
+                                showSnackbar(it.message ?: kakaoLoginFailureMessage)
+                            }
+                        }
+                    )
                 }
             )
             LoginButton(
@@ -186,6 +224,7 @@ private fun LoginScreenPreview() {
     ImdangTheme {
         LoginScreen(
             navController = rememberNavController(),
+            viewModel = FakeLoginViewModel(),
             isLogout = false,
             isWithdraw = false
         )

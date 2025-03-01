@@ -14,7 +14,6 @@ import info.imdang.app.ui.list.new.newInsightScreen
 import info.imdang.app.ui.list.region.searchByRegionInsightListScreen
 import info.imdang.app.ui.list.visitcomplex.visitComplexInsightScreen
 import info.imdang.app.ui.login.loginScreen
-import info.imdang.app.ui.main.MAIN_SCREEN
 import info.imdang.app.ui.main.home.search.map.searchByMapScreen
 import info.imdang.app.ui.main.home.search.region.searchByRegionScreen
 import info.imdang.app.ui.main.mainScreen
@@ -26,6 +25,7 @@ import info.imdang.app.ui.my.withdraw.withdrawScreen
 import info.imdang.app.ui.notification.notificationScreen
 import info.imdang.app.ui.onboarding.onboardingScreen
 import info.imdang.app.ui.serviceintroduction.serviceIntroductionScreen
+import info.imdang.app.ui.splash.SPLASH_SCREEN
 import info.imdang.app.ui.splash.splashScreen
 import info.imdang.component.common.snackbar.Snackbar
 import info.imdang.component.common.webview.commonWebScreen
@@ -38,7 +38,7 @@ fun ImdangNavGraph() {
     ImdangTheme {
         NavHost(
             navController = navController,
-            startDestination = MAIN_SCREEN
+            startDestination = SPLASH_SCREEN
         ) {
             splashScreen(navController = navController)
             loginScreen(navController = navController)
