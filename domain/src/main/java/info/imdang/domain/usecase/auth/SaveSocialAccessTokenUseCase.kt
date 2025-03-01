@@ -6,10 +6,10 @@ import info.imdang.domain.usecase.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
-class SaveOriginAccessTokenUseCase @Inject constructor(
+class SaveSocialAccessTokenUseCase @Inject constructor(
     private val repository: AuthRepository,
     @IoDispatcher dispatcher: CoroutineDispatcher
 ) : UseCase<String, Unit>(coroutineDispatcher = dispatcher) {
 
-    override suspend fun execute(parameters: String) = repository.saveOriginAccessToken(parameters)
+    override suspend fun execute(parameters: String) = repository.saveSocialAccessToken(parameters)
 }

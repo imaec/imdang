@@ -1,5 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package info.imdang.app.ui.login
 
+import android.app.Activity.RESULT_OK
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,8 +25,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +43,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import info.imdang.app.common.util.googleLogin
 import info.imdang.app.common.util.kakaoLogin
 import info.imdang.app.ui.login.preview.FakeLoginViewModel
 import info.imdang.app.ui.main.MAIN_SCREEN
@@ -77,8 +85,8 @@ private fun LoginScreen(
     isLogout: Boolean,
     isWithdraw: Boolean
 ) {
-    var isShowLogoutDialog by remember { mutableStateOf(isLogout) }
-    var isShowWithdrawDialog by remember { mutableStateOf(isWithdraw) }
+    var isShowLogoutDialog by rememberSaveable { mutableStateOf(isLogout) }
+    var isShowWithdrawDialog by rememberSaveable { mutableStateOf(isWithdraw) }
 
     if (isShowLogoutDialog) {
         CommonDialog(
@@ -118,6 +126,25 @@ private fun LoginContent(
     val coroutineScope = rememberCoroutineScope()
     val kakaoLoginFailureMessage = stringResource(R.string.kakao_login_failure)
     val googleLoginFailureMessage = stringResource(R.string.google_login_failure)
+    val googleLoginLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val googleSignInAccount = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            googleSignInAccount.getResult(ApiException::class.java).serverAuthCode?.let {
+                viewModel.getGoogleAccessToken(
+                    authCode = it,
+                    onSuccess = { accessToken ->
+                        viewModel.googleLogin(token = accessToken)
+                    }
+                )
+            }
+        } else {
+            coroutineScope.launch {
+                showSnackbar(googleLoginFailureMessage)
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest {
@@ -182,7 +209,15 @@ private fun LoginContent(
                 buttonIcon = R.drawable.ic_google,
                 buttonText = stringResource(id = R.string.google_login),
                 onClick = {
-                    navController.navigate(route = ONBOARDING_SCREEN)
+                    googleLogin(
+                        context = context,
+                        googleLoginLauncher = googleLoginLauncher,
+                        onFailure = {
+                            coroutineScope.launch {
+                                showSnackbar(it.message ?: googleLoginFailureMessage)
+                            }
+                        }
+                    )
                 }
             )
         }

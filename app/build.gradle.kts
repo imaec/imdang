@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.google.services)
     alias(libs.plugins.parcelize)
 }
 
@@ -96,6 +97,11 @@ android {
                 "KAKAO_NATIVE_KEY",
                 "\"${DevConfig.KAKAO_NATIVE_KEY}\""
             )
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                "\"${DevConfig.GOOGLE_WEB_CLIENT_ID}\""
+            )
         }
         create("product") {
             dimension = "server"
@@ -104,6 +110,11 @@ android {
                 "String",
                 "KAKAO_NATIVE_KEY",
                 "\"${ProductConfig.KAKAO_NATIVE_KEY}\""
+            )
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                "\"${ProductConfig.GOOGLE_WEB_CLIENT_ID}\""
             )
         }
     }

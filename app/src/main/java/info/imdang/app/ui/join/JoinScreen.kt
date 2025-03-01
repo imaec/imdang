@@ -37,6 +37,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -50,6 +51,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.common.ext.encodeUtf8
+import info.imdang.app.common.util.logout
 import info.imdang.app.const.MARKETING_URL
 import info.imdang.app.const.PRIVACY_URL
 import info.imdang.app.const.SERVICE_TERM_URL
@@ -90,6 +92,7 @@ fun NavGraphBuilder.joinScreen(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun JoinScreen(navController: NavController) {
+    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(confirmValueChange = { false })
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -112,6 +115,7 @@ private fun JoinScreen(navController: NavController) {
                 onClickClose = { isBack ->
                     showBottomSheet = false
                     if (isBack) {
+                        logout(context)
                         navController.popBackStack(route = ONBOARDING_SCREEN, inclusive = true)
                     }
                 }

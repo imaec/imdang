@@ -7,5 +7,5 @@ class GetOriginAccessTokenUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
 
-    operator fun invoke(): String = repository.getOriginAccessToken()
+    operator fun invoke(): String = repository.getSocialAccessToken()
 }

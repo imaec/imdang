@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "765519430598",
+    "project_id": "imdang-compose",
+    "storage_bucket": "imdang-compose.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765519430598:android:8d22b821d6f4ceef2068c7",
+        "android_client_info": {
+          "package_name": "info.imdang.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADxX6kVvaVTmO-5_4vD_MU2_lzB1gkF1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

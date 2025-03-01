@@ -1,5 +1,6 @@
 package info.imdang.app.ui.onboarding
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +34,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.common.util.logout
 import info.imdang.app.ui.join.JOIN_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.visible
@@ -57,6 +60,13 @@ fun NavGraphBuilder.onboardingScreen(navController: NavController) {
 
 @Composable
 private fun OnboardingScreen(navController: NavController) {
+    val context = LocalContext.current
+
+    BackHandler {
+        logout(context)
+        navController.popBackStack()
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { contentPadding ->
@@ -73,6 +83,7 @@ private fun OnboardingContent(
     navController: NavController,
     contentPadding: PaddingValues
 ) {
+    val context = LocalContext.current
     val pagerState = rememberPagerState { 3 }
     val coroutineScope = rememberCoroutineScope()
 
@@ -111,6 +122,7 @@ private fun OnboardingContent(
                 .size(40.dp)
                 .clip(CircleShape)
                 .clickable {
+                    logout(context)
                     navController.popBackStack()
                 }
                 .padding(8.dp),

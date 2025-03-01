@@ -20,7 +20,7 @@ open class KakaoLoginUseCase @Inject constructor(
         authRepository.saveRefreshToken(loginDto.refreshToken)
         authRepository.saveMemberId(loginDto.memberId)
         authRepository.saveLoginType("KAKAO")
-        authRepository.saveOriginAccessToken(parameters)
+        authRepository.saveSocialAccessToken(parameters)
         return loginDto
     }
 }
@@ -87,11 +87,11 @@ class FakeKakaoLoginUseCase : KakaoLoginUseCase(
             TODO("Not yet implemented")
         }
 
-        override fun saveOriginAccessToken(accessToken: String) {
+        override fun saveSocialAccessToken(accessToken: String) {
             TODO("Not yet implemented")
         }
 
-        override fun getOriginAccessToken(): String {
+        override fun getSocialAccessToken(): String {
             TODO("Not yet implemented")
         }
     },

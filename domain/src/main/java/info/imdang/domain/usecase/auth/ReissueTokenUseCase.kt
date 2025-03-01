@@ -86,11 +86,11 @@ class FakeReissueTokenUseCase : ReissueTokenUseCase(
             TODO("Not yet implemented")
         }
 
-        override fun saveOriginAccessToken(accessToken: String) {
+        override fun saveSocialAccessToken(accessToken: String) {
             TODO("Not yet implemented")
         }
 
-        override fun getOriginAccessToken(): String {
+        override fun getSocialAccessToken(): String {
             TODO("Not yet implemented")
         }
     },

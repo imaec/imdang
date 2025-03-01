@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.common.util.logout
 import info.imdang.app.ui.login.LOGIN_SCREEN
 import info.imdang.app.ui.my.fake.FakeMyVieModel
 import info.imdang.app.ui.my.term.SERVICE_TERM_SCREEN
@@ -100,6 +102,7 @@ private fun MyContent(
     viewModel: MyViewModel,
     contentPadding: PaddingValues
 ) {
+    val context = LocalContext.current
     var isShowLogoutDialog by remember { mutableStateOf(false) }
 
     if (isShowLogoutDialog) {
@@ -110,6 +113,7 @@ private fun MyContent(
             negativeButtonText = stringResource(R.string.cancel),
             onClickPositiveButton = {
                 isShowLogoutDialog = false
+                logout(context)
                 viewModel.logout()
             },
             onClickNegativeButton = { isShowLogoutDialog = false },

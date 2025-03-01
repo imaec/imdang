@@ -5,12 +5,20 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import info.imdang.data.repository.AuthRepositoryImpl
+import info.imdang.data.repository.GoogleRepositoryImpl
 import info.imdang.domain.repository.AuthRepository
+import info.imdang.domain.repository.GoogleRepository
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindGoogleRepository(
+        googleRepositoryImpl: GoogleRepositoryImpl
+    ): GoogleRepository
 
     @Binds
     @Singleton

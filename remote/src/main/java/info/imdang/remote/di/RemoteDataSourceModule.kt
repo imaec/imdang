@@ -5,12 +5,20 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import info.imdang.data.datasource.remote.AuthRemoteDataSource
+import info.imdang.data.datasource.remote.GoogleRemoteDataSource
 import info.imdang.remote.datasource.AuthRemoteDataSourceImpl
+import info.imdang.remote.datasource.GoogleRemoteDataSourceImpl
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class RemoteDataSourceModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindGoogleRemoteDatasource(
+        googleRemoteDataSourceImpl: GoogleRemoteDataSourceImpl
+    ): GoogleRemoteDataSource
 
     @Binds
     @Singleton

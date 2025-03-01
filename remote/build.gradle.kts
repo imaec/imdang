@@ -59,6 +59,16 @@ android {
                 "API_SERVER",
                 "\"${DevConfig.API_SERVER}\""
             )
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                "\"${DevConfig.GOOGLE_WEB_CLIENT_ID}\""
+            )
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_SECRET",
+                "\"${localProperties["GOOGLE_WEB_CLIENT_SECRET_DEV"]}\""
+            )
         }
         create("product") {
             dimension = "server"
@@ -66,6 +76,16 @@ android {
                 "String",
                 "API_SERVER",
                 "\"${ProductConfig.API_SERVER}\""
+            )
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                "\"${ProductConfig.GOOGLE_WEB_CLIENT_ID}\""
+            )
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_SECRET",
+                "\"${localProperties["GOOGLE_WEB_CLIENT_SECRET"]}\""
             )
         }
     }

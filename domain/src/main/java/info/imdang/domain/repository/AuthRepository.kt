@@ -36,7 +36,7 @@ interface AuthRepository {
 
     fun getLoginType(): String
 
-    fun saveOriginAccessToken(accessToken: String)
+    fun saveSocialAccessToken(accessToken: String)
 
-    fun getOriginAccessToken(): String
+    fun getSocialAccessToken(): String
 }
