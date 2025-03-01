@@ -50,16 +50,19 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.messaging.FirebaseMessaging
 import info.imdang.app.common.ext.encodeUtf8
 import info.imdang.app.common.util.logout
 import info.imdang.app.const.MARKETING_URL
 import info.imdang.app.const.PRIVACY_URL
 import info.imdang.app.const.SERVICE_TERM_URL
 import info.imdang.app.ui.join.complete.JOIN_COMPLETE_SCREEN
+import info.imdang.app.ui.join.preview.FakeJoinViewModel
 import info.imdang.app.ui.onboarding.ONBOARDING_SCREEN
 import info.imdang.app.util.KeyboardCallback
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.visible
+import info.imdang.component.common.snackbar.showSnackbar
 import info.imdang.component.common.webview.COMMON_WEB_SCREEN
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.button.SelectionButtons
@@ -79,19 +82,26 @@ import info.imdang.component.theme.T700_26_36_4
 import info.imdang.component.theme.White
 import info.imdang.resource.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val JOIN_SCREEN = "join"
 
 fun NavGraphBuilder.joinScreen(navController: NavController) {
     composable(route = JOIN_SCREEN) {
-        JoinScreen(navController = navController)
+        JoinScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun JoinScreen(navController: NavController) {
+private fun JoinScreen(
+    navController: NavController,
+    viewModel: JoinViewModel
+) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(confirmValueChange = { false })
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -111,10 +121,12 @@ private fun JoinScreen(navController: NavController) {
         ) {
             ServiceTermBottomSheet(
                 navController = navController,
+                viewModel = viewModel,
                 sheetState = sheetState,
                 onClickClose = { isBack ->
                     showBottomSheet = false
                     if (isBack) {
+                        viewModel.logout()
                         logout(context)
                         navController.popBackStack(route = ONBOARDING_SCREEN, inclusive = true)
                     }
@@ -145,6 +157,7 @@ private fun JoinScreen(navController: NavController) {
         content = { contentPadding ->
             JoinContent(
                 navController = navController,
+                viewModel = viewModel,
                 contentPadding = contentPadding
             )
         }
@@ -154,9 +167,9 @@ private fun JoinScreen(navController: NavController) {
 @Composable
 private fun JoinContent(
     navController: NavController,
+    viewModel: JoinViewModel,
     contentPadding: PaddingValues
 ) {
-    val viewModel = hiltViewModel<JoinViewModel>()
     val focusManager = LocalFocusManager.current
     val nicknameFocusRequest = remember { FocusRequester() }
     val birthDateFocusRequester = remember { FocusRequester() }
@@ -279,6 +292,7 @@ private fun CompleteButton(
     isBirthDateFocused: Boolean
 ) {
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
     var isShowKeyboard by remember { mutableStateOf(false) }
     val isButtonEnabled by if (isShowKeyboard) {
         if (isNicknameFocused) {
@@ -290,6 +304,16 @@ private fun CompleteButton(
         }
     } else {
         viewModel.isButtonEnabled.collectAsStateWithLifecycle()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest {
+            when (it) {
+                JoinEvent.MoveJoinCompleteScreen -> navController.navigate(JOIN_COMPLETE_SCREEN) {
+                    popUpTo(ONBOARDING_SCREEN) { inclusive = true }
+                }
+            }
+        }
     }
 
     KeyboardCallback(
@@ -312,8 +336,16 @@ private fun CompleteButton(
                     focusManager.clearFocus()
                 }
             } else {
-                navController.navigate(JOIN_COMPLETE_SCREEN) {
-                    popUpTo(ONBOARDING_SCREEN) { inclusive = true }
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        viewModel.join(deviceToken = task.result)
+                    } else {
+                        coroutineScope.launch {
+                            showSnackbar(
+                                message = task.exception?.message ?: "FCM registration token failed"
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -324,10 +356,10 @@ private fun CompleteButton(
 @Composable
 private fun ServiceTermBottomSheet(
     navController: NavController,
+    viewModel: JoinViewModel,
     sheetState: SheetState,
     onClickClose: (isBack: Boolean) -> Unit
 ) {
-    val viewModel = hiltViewModel<JoinViewModel>()
     val coroutineScope = rememberCoroutineScope()
 
     val isAgreeAndContinueButtonEnabled by viewModel.isAgreeAndContinueButtonEnabled
@@ -496,7 +528,10 @@ private fun TermItem(
 @Composable
 private fun JoinScreenPreview() {
     ImdangTheme {
-        JoinScreen(navController = rememberNavController())
+        JoinScreen(
+            navController = rememberNavController(),
+            viewModel = FakeJoinViewModel()
+        )
     }
 }
 
@@ -507,6 +542,7 @@ private fun ServiceTermBottomSheetPreview() {
     ImdangTheme {
         ServiceTermBottomSheet(
             navController = rememberNavController(),
+            viewModel = FakeJoinViewModel(),
             sheetState = rememberModalBottomSheetState(),
             onClickClose = {}
         )

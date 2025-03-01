@@ -30,12 +30,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.common.util.logout
 import info.imdang.app.ui.join.JOIN_SCREEN
+import info.imdang.app.ui.onboarding.preview.FakeOnboardingViewModel
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.visible
 import info.imdang.component.system.button.CommonButton
@@ -54,15 +56,22 @@ const val ONBOARDING_SCREEN = "onboarding"
 
 fun NavGraphBuilder.onboardingScreen(navController: NavController) {
     composable(route = ONBOARDING_SCREEN) {
-        OnboardingScreen(navController = navController)
+        OnboardingScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun OnboardingScreen(navController: NavController) {
+private fun OnboardingScreen(
+    navController: NavController,
+    viewModel: OnboardingViewModel
+) {
     val context = LocalContext.current
 
     BackHandler {
+        viewModel.logout()
         logout(context)
         navController.popBackStack()
     }
@@ -72,6 +81,7 @@ private fun OnboardingScreen(navController: NavController) {
         content = { contentPadding ->
             OnboardingContent(
                 navController = navController,
+                viewModel = viewModel,
                 contentPadding = contentPadding
             )
         }
@@ -81,6 +91,7 @@ private fun OnboardingScreen(navController: NavController) {
 @Composable
 private fun OnboardingContent(
     navController: NavController,
+    viewModel: OnboardingViewModel,
     contentPadding: PaddingValues
 ) {
     val context = LocalContext.current
@@ -122,6 +133,7 @@ private fun OnboardingContent(
                 .size(40.dp)
                 .clip(CircleShape)
                 .clickable {
+                    viewModel.logout()
                     logout(context)
                     navController.popBackStack()
                 }
@@ -206,6 +218,9 @@ private fun OnboardingPage(
 @Composable
 private fun OnboardingScreenPreview() {
     ImdangTheme {
-        OnboardingScreen(navController = rememberNavController())
+        OnboardingScreen(
+            navController = rememberNavController(),
+            viewModel = FakeOnboardingViewModel()
+        )
     }
 }

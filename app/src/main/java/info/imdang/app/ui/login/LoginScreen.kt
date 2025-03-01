@@ -149,7 +149,11 @@ private fun LoginContent(
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest {
             when (it) {
-                LoginEvent.MoveMainScreen -> navController.navigate(MAIN_SCREEN)
+                LoginEvent.MoveMainScreen -> {
+                    navController.navigate(MAIN_SCREEN) {
+                        popUpTo(LOGIN_SCREEN) { inclusive = true }
+                    }
+                }
                 LoginEvent.MoveOnboardingScreen -> navController.navigate(ONBOARDING_SCREEN)
             }
         }

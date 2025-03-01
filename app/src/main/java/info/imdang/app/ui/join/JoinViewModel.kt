@@ -1,5 +1,6 @@
 package info.imdang.app.ui.join
 
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import info.imdang.app.base.BaseViewModel
 import info.imdang.app.common.util.reformatDate
@@ -7,14 +8,26 @@ import info.imdang.app.model.auth.GenderType
 import info.imdang.app.util.validateBirthDate
 import info.imdang.app.util.validateNickname
 import info.imdang.component.model.SelectionVo
+import info.imdang.domain.usecase.auth.JoinParams
+import info.imdang.domain.usecase.auth.JoinUseCase
+import info.imdang.domain.usecase.auth.RemoveTokenUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class JoinViewModel @Inject constructor() : BaseViewModel() {
+open class JoinViewModel @Inject constructor(
+    private val joinUseCase: JoinUseCase,
+    private val removeTokenUseCase: RemoveTokenUseCase
+) : BaseViewModel() {
+
+    private val _event = MutableSharedFlow<JoinEvent>()
+    val event = _event.asSharedFlow()
 
     private val _isAgreeTerm = MutableStateFlow(false)
     val isAgreeTerm = _isAgreeTerm.asStateFlow()
@@ -121,5 +134,25 @@ class JoinViewModel @Inject constructor() : BaseViewModel() {
 
     private fun validateBirthDate() {
         _birthDateErrorMessage.value = birthDate.value.validateBirthDate()
+    }
+
+    fun join(deviceToken: String) {
+        viewModelScope.launch {
+            joinUseCase(
+                parameters = JoinParams(
+                    nickname = nickname.value,
+                    birthDate = birthDate.value,
+                    gender = genders.value.first { it.isSelected }.name,
+                    deviceToken = deviceToken
+                )
+            )
+            _event.emit(JoinEvent.MoveJoinCompleteScreen)
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            removeTokenUseCase(Unit)
+        }
     }
 }
