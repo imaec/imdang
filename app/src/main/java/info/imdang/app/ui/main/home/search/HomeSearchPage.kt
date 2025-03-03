@@ -34,15 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
 import info.imdang.app.ui.list.new.NEW_INSIGHT_LIST_SCREEN
 import info.imdang.app.ui.list.visitcomplex.VISIT_COMPLEX_INSIGHT_LIST_SCREEN
 import info.imdang.app.ui.main.home.HomeViewModel
+import info.imdang.app.ui.main.home.preview.FakeHomeViewModel
 import info.imdang.app.ui.main.home.search.map.SEARCH_BY_MAP_SCREEN
 import info.imdang.app.ui.main.home.search.region.SEARCH_BY_REGION_SCREEN
 import info.imdang.app.ui.serviceintroduction.SERVICE_INTRODUCTION_SCREEN
@@ -71,14 +71,16 @@ import info.imdang.resource.R
 import kotlin.math.ceil
 
 @Composable
-fun HomeSearchPage(navController: NavController) {
-    val homeViewModel = hiltViewModel<HomeViewModel>()
+fun HomeSearchPage(
+    navController: NavController,
+    viewModel: HomeViewModel
+) {
     val listState = rememberLazyListState()
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemScrollOffset }
             .collect {
-                homeViewModel.hideTooltip()
+                viewModel.hideTooltip()
             }
     }
 
@@ -96,7 +98,10 @@ fun HomeSearchPage(navController: NavController) {
                 HomeSearchBannerView(navController = navController)
             }
             item {
-                HomeSearchVisitComplexView(navController = navController)
+                HomeSearchVisitComplexView(
+                    navController = navController,
+                    viewModel = viewModel
+                )
             }
             item {
                 HomeSearchNewInsightsView(navController = navController)
@@ -189,8 +194,10 @@ private fun HomeSearchBannerView(navController: NavController) {
 }
 
 @Composable
-private fun HomeSearchVisitComplexView(navController: NavController) {
-    val homeViewModel = hiltViewModel<HomeViewModel>()
+private fun HomeSearchVisitComplexView(
+    navController: NavController,
+    viewModel: HomeViewModel
+) {
     val complexes = listOf("신논현 더 센트럴 푸르지오", "신논현 더 센트럴 푸르지오", "신논현 더 센트럴 푸르지오")
     val visitComplexInsights = listOf(
         "초역세권 대단지 아파트 후기",
@@ -230,7 +237,7 @@ private fun HomeSearchVisitComplexView(navController: NavController) {
                         text = complex,
                         isSelected = index == 0,
                         onClick = {
-                            homeViewModel.hideTooltip()
+                            viewModel.hideTooltip()
                             // todo : 칩 선택
                         }
                     )
@@ -450,7 +457,10 @@ private fun HomeSearchRecommendInsightsView(navController: NavController) {
 @Composable
 private fun HomeSearchPagePreview() {
     ImdangTheme {
-        HomeSearchPage(navController = rememberNavController())
+        HomeSearchPage(
+            navController = rememberNavController(),
+            viewModel = FakeHomeViewModel()
+        )
     }
 }
 

@@ -5,12 +5,22 @@ import info.imdang.domain.model.coupon.CouponDto
 import info.imdang.domain.repository.MyCouponRepository
 import info.imdang.domain.usecase.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class GetCouponUseCase @Inject constructor(
-    private val myCouponRepository: MyCouponRepository,
+open class GetCouponUseCase @Inject constructor(
+    private val repository: MyCouponRepository,
     @IoDispatcher dispatcher: CoroutineDispatcher
 ) : UseCase<Unit, CouponDto>(coroutineDispatcher = dispatcher) {
 
-    override suspend fun execute(parameters: Unit): CouponDto = myCouponRepository.getCoupon()
+    override suspend fun execute(parameters: Unit): CouponDto = repository.getCoupon()
 }
+
+class FakeGetCouponUseCase : GetCouponUseCase(
+    repository = object : MyCouponRepository {
+        override suspend fun getCoupon(): CouponDto {
+            TODO("Not yet implemented")
+        }
+    },
+    dispatcher = Dispatchers.IO
+)

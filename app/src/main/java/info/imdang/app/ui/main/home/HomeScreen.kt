@@ -46,6 +46,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.main.home.exchange.HomeExchangePage
+import info.imdang.app.ui.main.home.preview.FakeHomeViewModel
 import info.imdang.app.ui.main.home.search.HomeSearchPage
 import info.imdang.app.ui.my.MY_SCREEN
 import info.imdang.app.ui.notification.NOTIFICATION_SCREEN
@@ -80,7 +81,8 @@ fun NavGraphBuilder.homeScreen(
     composable(route = HOME_SCREEN) {
         HomeScreen(
             navController = navController,
-            mainNavController = mainNavController
+            mainNavController = mainNavController,
+            viewModel = hiltViewModel()
         )
     }
 }
@@ -89,9 +91,9 @@ fun NavGraphBuilder.homeScreen(
 @Composable
 private fun HomeScreen(
     navController: NavController,
-    mainNavController: NavController
+    mainNavController: NavController,
+    viewModel: HomeViewModel
 ) {
-    val viewModel = hiltViewModel<HomeViewModel>()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val pagerState = rememberPagerState { 2 }
     var isShowBottomSheet by remember { mutableStateOf(false) }
@@ -119,6 +121,7 @@ private fun HomeScreen(
             onDismissRequest = { isShowBottomSheet = false }
         ) {
             FreePassBottomSheet(
+                viewModel = viewModel,
                 sheetState = sheetState,
                 onCloseBottomSheet = { isBack ->
                     isShowBottomSheet = false
@@ -144,6 +147,7 @@ private fun HomeScreen(
             content = { contentPadding ->
                 HomeContent(
                     navController = navController,
+                    viewModel = viewModel,
                     pagerState = pagerState,
                     contentPadding = contentPadding
                 )
@@ -230,6 +234,7 @@ private fun HomeTabBar(
 @Composable
 private fun HomeContent(
     navController: NavController,
+    viewModel: HomeViewModel,
     contentPadding: PaddingValues,
     pagerState: PagerState
 ) {
@@ -240,7 +245,10 @@ private fun HomeContent(
             .fillMaxSize()
     ) { page ->
         when (page) {
-            0 -> HomeSearchPage(navController = navController)
+            0 -> HomeSearchPage(
+                navController = navController,
+                viewModel = viewModel
+            )
             1 -> HomeExchangePage()
         }
     }
@@ -249,10 +257,10 @@ private fun HomeContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FreePassBottomSheet(
+    viewModel: HomeViewModel,
     sheetState: SheetState,
     onCloseBottomSheet: (isBack: Boolean) -> Unit
 ) {
-    val viewModel = hiltViewModel<HomeViewModel>()
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.padding(top = 16.dp, bottom = 40.dp)) {
@@ -333,6 +341,7 @@ private fun FreePassBottomSheet(
                     horizontalPadding = 0.dp,
                     buttonText = stringResource(R.string.not_show_today),
                     onClick = {
+                        viewModel.setCloseTimeOfHomeFreePass()
                         coroutineScope.launch {
                             sheetState.hide()
                             delay(100)
@@ -365,7 +374,8 @@ private fun HomeScreenPreview() {
     ImdangTheme {
         HomeScreen(
             navController = rememberNavController(),
-            mainNavController = rememberNavController()
+            mainNavController = rememberNavController(),
+            viewModel = FakeHomeViewModel()
         )
     }
 }
@@ -376,6 +386,7 @@ private fun HomeScreenPreview() {
 private fun FreePassBottomSheetPreview() {
     ImdangTheme {
         FreePassBottomSheet(
+            viewModel = FakeHomeViewModel(),
             sheetState = rememberModalBottomSheetState(),
             onCloseBottomSheet = {}
         )
