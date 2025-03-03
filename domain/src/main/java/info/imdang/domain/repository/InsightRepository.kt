@@ -1,7 +1,7 @@
 package info.imdang.domain.repository
 
 import androidx.paging.PagingData
-import info.imdang.domain.model.aptcomplex.VisitAptComplexDto
+import info.imdang.domain.model.complex.VisitedComplexDto
 import info.imdang.domain.model.common.PagingDto
 import info.imdang.domain.model.insight.InsightDetailDto
 import info.imdang.domain.model.insight.InsightDto
@@ -40,23 +40,23 @@ interface InsightRepository {
     /**
      * 단지별 인사이트 목록 조회 (paging x)
      */
-    suspend fun getInsightsByAptComplex(
+    suspend fun getInsightsByComplex(
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?,
-        aptComplex: String
+        complexName: String
     ): PagingDto<InsightDto>
 
     /**
      * 단지별 인사이트 목록 조회 (paging o)
      */
-    suspend fun getInsightsByAptComplexWithPaging(
+    suspend fun getInsightsByComplexWithPaging(
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?,
-        aptComplex: String,
+        complexName: String,
         totalCountListener: ((Int) -> Unit)?
     ): Flow<PagingData<InsightDto>>
 
@@ -100,5 +100,5 @@ interface InsightRepository {
         memberId: String
     ): InsightIdDto
 
-    suspend fun getVisitedAptComplexes(): List<VisitAptComplexDto>
+    suspend fun getVisitedComplexes(): List<VisitedComplexDto>
 }

@@ -42,6 +42,8 @@
     <string name="free_pass_tooltip_message">무료 패스권은 교환소에서 확인할 수 있어요</string>
     <string name="not_show_today">오늘 그만보기</string>
     <string name="agree_and_receive">동의하고 받기</string>
+    <string name="home_search">탐색</string>
+    <string name="home_exchange">교환소</string>
     <string name="home_search_hint">어떤 지역의 인사이트를 찾으시나요?</string>
     <string name="home_banner_content">아파트임당은\n왜 1:1 교환시스템을 도입했을까요?</string>
     <string name="home_visit_complex_insight_subject">내가 다녀온 단지의 다른 인사이트</string>

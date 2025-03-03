@@ -43,7 +43,7 @@ enum class InsightItemType {
 @Composable
 fun InsightItem(
     itemType: InsightItemType,
-    coverImage: String,
+    coverImage: String?,
     region: String,
     recommendCount: Int,
     title: String,
@@ -72,7 +72,7 @@ fun InsightItem(
 
 @Composable
 private fun InsightHorizontalItem(
-    coverImage: String,
+    coverImage: String?,
     region: String,
     recommendCount: Int,
     title: String,
@@ -98,7 +98,7 @@ private fun InsightHorizontalItem(
 
 @Composable
 private fun InsightVerticalItem(
-    coverImage: String,
+    coverImage: String?,
     region: String,
     recommendCount: Int,
     title: String,
@@ -119,7 +119,7 @@ private fun InsightVerticalItem(
 }
 
 @Composable
-private fun InsightImageView(coverImage: String, width: Dp, height: Dp) {
+private fun InsightImageView(coverImage: String?, width: Dp, height: Dp) {
     Image(
         modifier = Modifier
             .width(width)

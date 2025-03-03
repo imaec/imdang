@@ -2,7 +2,7 @@ package info.imdang.remote.service
 
 import info.imdang.data.model.request.insight.RecommendInsightRequest
 import info.imdang.data.model.request.insight.ReportInsightRequest
-import info.imdang.data.model.response.insight.VisitAptComplexResponse
+import info.imdang.data.model.response.insight.VisitedComplexResponse
 import info.imdang.data.model.response.common.PagingResponse
 import info.imdang.data.model.response.insight.InsightDetailResponse
 import info.imdang.data.model.response.insight.InsightIdResponse
@@ -46,12 +46,12 @@ internal interface InsightService {
 
     /** 아파트 단지별 인사이트 목록 조회 */
     @GET("insights/by-apartment-complex")
-    suspend fun getInsightsByAptComplex(
+    suspend fun getInsightsByComplex(
         @Query("pageNumber") page: Int?,
         @Query("pageSize") size: Int?,
         @Query("direction") direction: String?,
         @Query("properties") properties: List<String>?,
-        @Query("apartmentComplexName") aptComplex: String
+        @Query("apartmentComplexName") complexName: String
     ): PagingResponse<InsightResponse, InsightDto>
 
     /** 지역별 인사이트 목록 조회 */
@@ -95,5 +95,5 @@ internal interface InsightService {
 
     /** 내가 다녀온 아파트 단지 이름 목록 조회 */
     @GET("insights/created-by-me/apartment-complexes")
-    suspend fun getVisitedAptComplexes(): List<VisitAptComplexResponse>
+    suspend fun getVisitedComplexes(): List<VisitedComplexResponse>
 }

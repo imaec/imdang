@@ -17,31 +17,30 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-open class GetInsightsByDateUseCase @Inject constructor(
+open class GetInsightsByComplexUseCase @Inject constructor(
     private val repository: InsightRepository,
     @IoDispatcher dispatcher: CoroutineDispatcher
-) : UseCase<GetInsightsByDateParams, PagingDto<InsightDto>>(
+) : UseCase<GetInsightsByComplexParams, PagingDto<InsightDto>>(
         coroutineDispatcher = dispatcher
     ) {
 
     override suspend fun execute(
-        parameters: GetInsightsByDateParams
-    ): PagingDto<InsightDto> = repository.getInsightsByDate(
-        date = parameters.date,
+        parameters: GetInsightsByComplexParams
+    ): PagingDto<InsightDto> = repository.getInsightsByComplex(
         page = parameters.pagingParams.page - 1,
         size = parameters.pagingParams.size,
         direction = parameters.pagingParams.direction,
         properties = parameters.pagingParams.properties,
-        totalCountListener = parameters.pagingParams.totalCountListener
+        complexName = parameters.complexName
     )
 }
 
-data class GetInsightsByDateParams(
-    val date: String? = null,
+data class GetInsightsByComplexParams(
+    val complexName: String,
     val pagingParams: PagingParams
 )
 
-class FakeGetInsightsByDateUseCase : GetInsightsByDateUseCase(
+class FakeGetInsightsByComplexUseCase : GetInsightsByComplexUseCase(
     repository = object : InsightRepository {
         override suspend fun writeInsight(
             writeInsightDto: WriteInsightDto,

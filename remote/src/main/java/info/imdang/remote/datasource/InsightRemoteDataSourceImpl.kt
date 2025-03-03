@@ -7,7 +7,7 @@ import info.imdang.data.model.response.common.PagingResponse
 import info.imdang.data.model.response.insight.InsightDetailResponse
 import info.imdang.data.model.response.insight.InsightIdResponse
 import info.imdang.data.model.response.insight.InsightResponse
-import info.imdang.data.model.response.insight.VisitAptComplexResponse
+import info.imdang.data.model.response.insight.VisitedComplexResponse
 import info.imdang.domain.model.insight.InsightDto
 import info.imdang.remote.service.InsightService
 import okhttp3.MultipartBody
@@ -46,18 +46,18 @@ internal class InsightRemoteDataSourceImpl @Inject constructor(
         properties = properties
     )
 
-    override suspend fun getInsightsByAptComplex(
+    override suspend fun getInsightsByComplex(
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?,
-        aptComplex: String
-    ): PagingResponse<InsightResponse, InsightDto> = insightService.getInsightsByAptComplex(
+        complexName: String
+    ): PagingResponse<InsightResponse, InsightDto> = insightService.getInsightsByComplex(
         page = page,
         size = size,
         direction = direction,
         properties = properties,
-        aptComplex = aptComplex
+        complexName = complexName
     )
 
     override suspend fun getInsightsByAddress(
@@ -101,6 +101,6 @@ internal class InsightRemoteDataSourceImpl @Inject constructor(
         reportInsightRequest: ReportInsightRequest
     ): InsightIdResponse = insightService.reportInsight(reportInsightRequest)
 
-    override suspend fun getVisitedAptComplexes(): List<VisitAptComplexResponse> =
-        insightService.getVisitedAptComplexes()
+    override suspend fun getVisitedComplexes(): List<VisitedComplexResponse> =
+        insightService.getVisitedComplexes()
 }

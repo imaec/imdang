@@ -9,21 +9,21 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetInsightsByAptComplexWithPagingUseCase @Inject constructor(
+class GetInsightsByComplexWithPagingUseCase @Inject constructor(
     private val insightRepository: InsightRepository,
     @IoDispatcher dispatcher: CoroutineDispatcher
-) : UseCase<GetInsightsByAptComplexParams, Flow<PagingData<InsightDto>>>(
+) : UseCase<GetInsightsByComplexParams, Flow<PagingData<InsightDto>>>(
         coroutineDispatcher = dispatcher
     ) {
 
     override suspend fun execute(
-        parameters: GetInsightsByAptComplexParams
-    ): Flow<PagingData<InsightDto>> = insightRepository.getInsightsByAptComplexWithPaging(
+        parameters: GetInsightsByComplexParams
+    ): Flow<PagingData<InsightDto>> = insightRepository.getInsightsByComplexWithPaging(
         page = parameters.pagingParams.page - 1,
         size = parameters.pagingParams.size,
         direction = parameters.pagingParams.direction,
         properties = parameters.pagingParams.properties,
-        aptComplex = parameters.aptComplex,
+        complexName = parameters.complexName,
         totalCountListener = parameters.pagingParams.totalCountListener
     )
 }

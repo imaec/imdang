@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -26,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.insight.InsightItem
@@ -104,10 +105,16 @@ fun HomeSearchPage(
                 )
             }
             item {
-                HomeSearchNewInsightsView(navController = navController)
+                HomeSearchNewInsightsView(
+                    navController = navController,
+                    viewModel = viewModel
+                )
             }
             item {
-                HomeSearchRecommendInsightsView(navController = navController)
+                HomeSearchRecommendInsightsView(
+                    navController = navController,
+                    viewModel = viewModel
+                )
             }
         }
     }
@@ -198,12 +205,8 @@ private fun HomeSearchVisitComplexView(
     navController: NavController,
     viewModel: HomeViewModel
 ) {
-    val complexes = listOf("신논현 더 센트럴 푸르지오", "신논현 더 센트럴 푸르지오", "신논현 더 센트럴 푸르지오")
-    val visitComplexInsights = listOf(
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기"
-    )
+    val complexes by viewModel.visitedComplexes.collectAsStateWithLifecycle()
+    val insightsByComplex by viewModel.insightsByComplex.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.padding(top = 32.dp)) {
         Row(
@@ -232,13 +235,13 @@ private fun HomeSearchVisitComplexView(
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                itemsIndexed(complexes) { index, complex ->
+                items(complexes) {
                     CommonChip(
-                        text = complex,
-                        isSelected = index == 0,
+                        text = it.complexName,
+                        isSelected = it.isSelected,
                         onClick = {
                             viewModel.hideTooltip()
-                            // todo : 칩 선택
+                            viewModel.onClickVisitedComplex(it)
                         }
                     )
                 }
@@ -249,14 +252,14 @@ private fun HomeSearchVisitComplexView(
                     .padding(top = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                visitComplexInsights.take(3).forEach {
+                insightsByComplex.take(3).forEach {
                     InsightItem(
                         itemType = InsightItemType.HORIZONTAL,
-                        coverImage = "",
-                        region = "강남구 신논현동",
-                        recommendCount = 24,
-                        title = it,
-                        nickname = "홍길동",
+                        coverImage = it.mainImage,
+                        region = it.address.toGuDong(),
+                        recommendCount = it.recommendedCount,
+                        title = it.title,
+                        nickname = it.nickname,
                         onClick = {
                             navController.navigate(INSIGHT_DETAIL_SCREEN)
                         }
@@ -307,14 +310,9 @@ private fun VisitComplexInsightEmptyView() {
 }
 
 @Composable
-fun HomeSearchNewInsightsView(navController: NavController) {
-    val newInsights = listOf(
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기"
-    )
+fun HomeSearchNewInsightsView(navController: NavController, viewModel: HomeViewModel) {
+    val newInsights by viewModel.newInsights.collectAsStateWithLifecycle()
+    if (newInsights.isEmpty()) return
 
     Column(modifier = Modifier.padding(top = 32.dp)) {
         Row(
@@ -342,14 +340,14 @@ fun HomeSearchNewInsightsView(navController: NavController) {
             contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(newInsights) { insight ->
+            items(newInsights) {
                 InsightItem(
                     itemType = InsightItemType.VERTICAL,
-                    coverImage = "",
-                    region = "강남구 신논현동",
-                    recommendCount = 24,
-                    title = insight,
-                    nickname = "홍길동",
+                    coverImage = it.mainImage,
+                    region = it.address.toGuDong(),
+                    recommendCount = it.recommendedCount,
+                    title = it.title,
+                    nickname = it.nickname,
                     onClick = {
                         navController.navigate(INSIGHT_DETAIL_SCREEN)
                     }
@@ -365,21 +363,14 @@ fun HomeSearchNewInsightsView(navController: NavController) {
 }
 
 @Composable
-private fun HomeSearchRecommendInsightsView(navController: NavController) {
-    val recommendInsights = listOf(
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기",
-        "초역세권 대단지 아파트 후기"
-    )
-    val page = ceil((recommendInsights.size / 3.0)).toInt()
-    val pagerState = rememberPagerState { page }
+private fun HomeSearchRecommendInsightsView(
+    navController: NavController,
+    viewModel: HomeViewModel
+) {
+    val recommendInsights by viewModel.recommendInsights.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState {
+        ceil((recommendInsights.size / 3.0)).toInt()
+    }
 
     Column(
         modifier = Modifier.padding(top = 32.dp),
@@ -399,7 +390,7 @@ private fun HomeSearchRecommendInsightsView(navController: NavController) {
                 color = Gray900
             )
             AnnotatedText(
-                text = "${pagerState.currentPage + 1} / 4",
+                text = "${pagerState.currentPage + 1} / ${pagerState.pageCount}",
                 pointText = "${pagerState.currentPage + 1}",
                 pointIndex = 0,
                 style = T400_14_19_6,
@@ -423,11 +414,11 @@ private fun HomeSearchRecommendInsightsView(navController: NavController) {
                 insights.forEach {
                     InsightItem(
                         itemType = InsightItemType.HORIZONTAL,
-                        coverImage = "",
-                        region = "강남구 신논현동",
-                        recommendCount = 24,
-                        title = it,
-                        nickname = "홍길동",
+                        coverImage = it.mainImage,
+                        region = it.address.toGuDong(),
+                        recommendCount = it.recommendedCount,
+                        title = it.title,
+                        nickname = it.nickname,
                         onClick = {
                             navController.navigate(INSIGHT_DETAIL_SCREEN)
                         }
@@ -439,7 +430,7 @@ private fun HomeSearchRecommendInsightsView(navController: NavController) {
             modifier = Modifier.padding(top = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            items(page) { index ->
+            items(pagerState.pageCount) { index ->
                 Box(
                     modifier = Modifier
                         .size(6.dp)

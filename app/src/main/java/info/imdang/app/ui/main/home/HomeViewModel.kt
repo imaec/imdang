@@ -5,13 +5,28 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import info.imdang.app.base.BaseViewModel
 import info.imdang.app.common.util.diffDays
 import info.imdang.app.common.util.isToday
+import info.imdang.app.common.util.snakeToCamelCase
 import info.imdang.app.common.util.toLocalDate
+import info.imdang.app.model.common.PagingDirection
+import info.imdang.app.model.common.PagingProperty
+import info.imdang.app.model.complex.VisitedComplexVo
+import info.imdang.app.model.complex.mapper
+import info.imdang.app.model.insight.InsightVo
+import info.imdang.app.model.insight.mapper
+import info.imdang.domain.model.common.PagingParams
+import info.imdang.domain.model.insight.InsightDto
+import info.imdang.domain.usecase.complex.GetVisitedComplexesUseCase
 import info.imdang.domain.usecase.coupon.GetCouponUseCase
 import info.imdang.domain.usecase.coupon.IssueCouponUseCase
 import info.imdang.domain.usecase.home.GetCloseTimeOfHomeFreePassUseCase
 import info.imdang.domain.usecase.home.GetFirstDateOfHomeFreePassUseCase
 import info.imdang.domain.usecase.home.SetCloseTimeOfHomeFreePassUseCase
 import info.imdang.domain.usecase.home.SetFirstDateOfHomeFreePassUseCase
+import info.imdang.domain.usecase.insight.GetInsightsByComplexParams
+import info.imdang.domain.usecase.insight.GetInsightsByComplexUseCase
+import info.imdang.domain.usecase.insight.GetInsightsByDateParams
+import info.imdang.domain.usecase.insight.GetInsightsByDateUseCase
+import info.imdang.domain.usecase.insight.GetInsightsUseCase
 import info.imdang.domain.usecase.mypage.GetMyPageInfoUseCase
 import info.imdang.domain.usecase.notification.HasNewNotificationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +45,11 @@ open class HomeViewModel @Inject constructor(
     private val setFirstDateOfHomeFreePassUseCase: SetFirstDateOfHomeFreePassUseCase,
     private val getCloseTimeOfHomeFreePassUseCase: GetCloseTimeOfHomeFreePassUseCase,
     private val setCloseTimeOfHomeFreePassUseCase: SetCloseTimeOfHomeFreePassUseCase,
-    private val issueCouponUseCase: IssueCouponUseCase
+    private val issueCouponUseCase: IssueCouponUseCase,
+    private val getVisitedComplexesUseCase: GetVisitedComplexesUseCase,
+    private val getInsightsByComplexUseCase: GetInsightsByComplexUseCase,
+    private val getInsightsByDateUseCase: GetInsightsByDateUseCase,
+    private val getInsightsUseCase: GetInsightsUseCase
 ) : BaseViewModel() {
 
     private val _event = MutableSharedFlow<HomeEvent>()
@@ -45,9 +64,24 @@ open class HomeViewModel @Inject constructor(
     private val _isShowTooltip = MutableStateFlow(false)
     val isShowTooltip = _isShowTooltip.asStateFlow()
 
+    protected val _visitedComplexes = MutableStateFlow<List<VisitedComplexVo>>(emptyList())
+    val visitedComplexes = _visitedComplexes.asStateFlow()
+
+    protected val _insightsByComplex = MutableStateFlow<List<InsightVo>>(emptyList())
+    val insightsByComplex = _insightsByComplex.asStateFlow()
+
+    protected val _newInsights = MutableStateFlow<List<InsightVo>>(emptyList())
+    val newInsights = _newInsights.asStateFlow()
+
+    protected val _recommendInsights = MutableStateFlow<List<InsightVo>>(emptyList())
+    val recommendInsights = _recommendInsights.asStateFlow()
+
     init {
         fetchHasNewNotification()
         fetchCoupon()
+        fetchVisitedAptComplexes()
+        fetchInsights()
+        fetchRecommendInsights()
     }
 
     private fun fetchHasNewNotification() {
@@ -79,6 +113,54 @@ open class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun fetchVisitedAptComplexes() {
+        viewModelScope.launch {
+            _visitedComplexes.value =
+                getVisitedComplexesUseCase(Unit)?.mapIndexed { index, visitedComplexDto ->
+                    visitedComplexDto.mapper(isSelected = index == 0)
+                } ?: emptyList()
+            fetchInsightsByAptComplex()
+        }
+    }
+
+    private fun fetchInsightsByAptComplex() {
+        viewModelScope.launch {
+            val selectedComplexName = visitedComplexes.value.firstOrNull {
+                it.isSelected
+            }?.complexName ?: return@launch
+            _insightsByComplex.value = getInsightsByComplexUseCase(
+                GetInsightsByComplexParams(
+                    complexName = selectedComplexName,
+                    pagingParams = PagingParams(
+                        page = 1,
+                        size = 3
+                    )
+                )
+            )?.content?.map(InsightDto::mapper)?.take(3) ?: emptyList()
+        }
+    }
+
+    private fun fetchInsights() {
+        viewModelScope.launch {
+            _newInsights.value = getInsightsByDateUseCase(
+                GetInsightsByDateParams(pagingParams = PagingParams(size = 5))
+            )?.content?.map(InsightDto::mapper)?.take(5) ?: emptyList()
+        }
+    }
+
+    private fun fetchRecommendInsights() {
+        viewModelScope.launch {
+            val recommendInsights = getInsightsUseCase(
+                PagingParams(
+                    size = 10,
+                    direction = PagingDirection.DESC.name,
+                    properties = listOf(PagingProperty.RECOMMENDED_COUNT.name.snakeToCamelCase())
+                )
+            )?.content?.map(InsightDto::mapper) ?: emptyList()
+            _recommendInsights.value = recommendInsights
+        }
+    }
+
     fun setCloseTimeOfHomeFreePass() {
         viewModelScope.launch {
             setCloseTimeOfHomeFreePassUseCase(System.currentTimeMillis())
@@ -96,4 +178,13 @@ open class HomeViewModel @Inject constructor(
     fun hideTooltip() {
         _isShowTooltip.value = false
     }
+
+    fun onClickVisitedComplex(complexVo: VisitedComplexVo) {
+        _visitedComplexes.value = visitedComplexes.value.map {
+            it.copy(isSelected = it.complexName == complexVo.complexName)
+        }
+        fetchInsightsByAptComplex()
+    }
+
+    fun getSelectedComplexIndex() = visitedComplexes.value.indexOfFirst { it.isSelected }
 }

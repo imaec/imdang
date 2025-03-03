@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -141,6 +142,7 @@ private fun HomeScreen(
             topBar = {
                 HomeTabBar(
                     navController = navController,
+                    viewModel = viewModel,
                     pagerState = pagerState
                 )
             },
@@ -169,9 +171,15 @@ private fun HomeScreen(
 @Composable
 private fun HomeTabBar(
     navController: NavController,
+    viewModel: HomeViewModel,
     pagerState: PagerState
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val hasNewNotification by viewModel.hasNewNotification.collectAsStateWithLifecycle()
+    val tabs = listOf(
+        stringResource(R.string.home_search),
+        stringResource(R.string.home_exchange)
+    )
 
     Row(
         modifier = Modifier
@@ -183,7 +191,7 @@ private fun HomeTabBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-            listOf("탐색", "교환소").forEachIndexed { index, title ->
+            tabs.forEachIndexed { index, title ->
                 val isSelected = pagerState.currentPage == index
                 Box(
                     modifier = Modifier
@@ -215,8 +223,12 @@ private fun HomeTabBar(
                     }
                     .padding(8.dp)
                     .size(24.dp),
-                iconResource = R.drawable.ic_alarm,
-                tint = Gray900
+                iconResource = if (hasNewNotification) {
+                    R.drawable.ic_alarm_new
+                } else {
+                    R.drawable.ic_alarm
+                },
+                tint = if (hasNewNotification) Color.Unspecified else Gray900
             )
             Icon(
                 modifier = Modifier

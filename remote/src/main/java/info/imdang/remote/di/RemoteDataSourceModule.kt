@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import info.imdang.data.datasource.remote.AptComplexRemoteDataSource
+import info.imdang.data.datasource.remote.ComplexRemoteDataSource
 import info.imdang.data.datasource.remote.AuthRemoteDataSource
 import info.imdang.data.datasource.remote.CouponRemoteDataSource
 import info.imdang.data.datasource.remote.DistrictRemoteDataSource
@@ -16,7 +16,7 @@ import info.imdang.data.datasource.remote.MyExchangeRemoteDataSource
 import info.imdang.data.datasource.remote.MyInsightRemoteDataSource
 import info.imdang.data.datasource.remote.MyPageRemoteDataSource
 import info.imdang.data.datasource.remote.NotificationRemoteDataSource
-import info.imdang.remote.datasource.AptComplexRemoteDataSourceImpl
+import info.imdang.remote.datasource.ComplexRemoteDataSourceImpl
 import info.imdang.remote.datasource.AuthRemoteDataSourceImpl
 import info.imdang.remote.datasource.CouponRemoteDataSourceImpl
 import info.imdang.remote.datasource.DistrictRemoteDataSourceImpl
@@ -54,9 +54,9 @@ internal abstract class RemoteDataSourceModule {
 
     @Binds
     @Singleton
-    abstract fun bindAptComplexRemoteDatasource(
-        aptComplexRemoteDataSourceImpl: AptComplexRemoteDataSourceImpl
-    ): AptComplexRemoteDataSource
+    abstract fun bindComplexRemoteDatasource(
+        complexRemoteDataSourceImpl: ComplexRemoteDataSourceImpl
+    ): ComplexRemoteDataSource
 
     @Binds
     @Singleton

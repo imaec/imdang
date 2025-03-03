@@ -25,7 +25,7 @@ data class InsightDetailVo(
     val mainImage: String?,
     val title: String,
     val address: AddressVo,
-    val aptComplex: String,
+    val complexName: String,
     val visitAt: String,
     val visitTimes: List<String>,
     val visitMethods: List<String>,
@@ -55,7 +55,7 @@ data class InsightDetailVo(
             " ${address.siGunGu}" +
             " ${address.eupMyeonDong}" +
             " ${address.buildingNumber}" +
-            "\n($aptComplex)",
+            "\n($complexName)",
         latitude = address.latitude ?: 0.0,
         longitude = address.longitude ?: 0.0,
         visitAt = visitAt,
@@ -74,7 +74,7 @@ data class InsightDetailVo(
             mainImage = "",
             title = "",
             address = AddressVo.init(),
-            aptComplex = "",
+            complexName = "",
             visitAt = "",
             visitTimes = emptyList(),
             visitMethods = emptyList(),
@@ -115,7 +115,7 @@ data class InsightDetailVo(
                 latitude = 37.5304831048862,
                 longitude = 126.902812773342
             ),
-            aptComplex = "당산아이파크1차",
+            complexName = "당산아이파크1차",
             visitAt = "2024.01.01",
             visitTimes = listOf("저녁"),
             visitMethods = listOf("자차, 도보"),
@@ -234,7 +234,7 @@ fun InsightDetailDto.mapper(memberId: String? = null): InsightDetailVo = Insight
     mainImage = mainImage,
     title = title,
     address = address.mapper(),
-    aptComplex = apartmentComplex.name,
+    complexName = apartmentComplex.name,
     visitAt = visitAt.formatDate(fromFormat = "yyyy-MM-dd", toFormat = "yyyy.MM.dd"),
     visitTimes = visitTimes.formatSelectedItems(),
     visitMethods = visitMethods.formatSelectedItems(),

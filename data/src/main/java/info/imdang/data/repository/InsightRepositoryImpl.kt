@@ -1,6 +1,5 @@
 package info.imdang.data.repository
 
-import android.util.Log
 import androidx.paging.PagingData
 import com.google.gson.Gson
 import info.imdang.data.datasource.remote.InsightRemoteDataSource
@@ -8,8 +7,8 @@ import info.imdang.data.mapper.mapper
 import info.imdang.data.model.request.insight.RecommendInsightRequest
 import info.imdang.data.model.request.insight.ReportInsightRequest
 import info.imdang.data.pagingsource.getPagingFlow
-import info.imdang.domain.model.aptcomplex.VisitAptComplexDto
 import info.imdang.domain.model.common.PagingDto
+import info.imdang.domain.model.complex.VisitedComplexDto
 import info.imdang.domain.model.insight.InsightDetailDto
 import info.imdang.domain.model.insight.InsightDto
 import info.imdang.domain.model.insight.InsightIdDto
@@ -91,37 +90,37 @@ internal class InsightRepositoryImpl @Inject constructor(
         totalCountListener = totalCountListener
     )
 
-    override suspend fun getInsightsByAptComplex(
+    override suspend fun getInsightsByComplex(
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?,
-        aptComplex: String
-    ): PagingDto<InsightDto> = insightRemoteDataSource.getInsightsByAptComplex(
+        complexName: String
+    ): PagingDto<InsightDto> = insightRemoteDataSource.getInsightsByComplex(
         page = page,
         size = size,
         direction = direction,
         properties = properties,
-        aptComplex = aptComplex
+        complexName = complexName
     ).mapper()
 
-    override suspend fun getInsightsByAptComplexWithPaging(
+    override suspend fun getInsightsByComplexWithPaging(
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?,
-        aptComplex: String,
+        complexName: String,
         totalCountListener: ((Int) -> Unit)?
     ): Flow<PagingData<InsightDto>> = getPagingFlow(
         initialPage = page ?: 0,
         pageSize = size ?: 20,
         loadData = { currentPage, pageSize ->
-            insightRemoteDataSource.getInsightsByAptComplex(
+            insightRemoteDataSource.getInsightsByComplex(
                 page = currentPage,
                 size = pageSize,
                 direction = direction,
                 properties = properties,
-                aptComplex = aptComplex
+                complexName = complexName
             ).mapper()
         },
         totalCountListener = totalCountListener
@@ -188,16 +187,8 @@ internal class InsightRepositoryImpl @Inject constructor(
         totalCountListener = totalCountListener
     )
 
-    override suspend fun getInsightDetail(insightId: String): InsightDetailDto {
-        val a = insightRemoteDataSource.getInsightDetail(insightId)
-        Log.d("##", a.toString())
-        try {
-            Log.d("##", a.mapper().toString())
-        } catch (e: Exception) {
-            Log.e("##", Log.getStackTraceString(e))
-        }
-        return a.mapper()
-    }
+    override suspend fun getInsightDetail(insightId: String): InsightDetailDto =
+        insightRemoteDataSource.getInsightDetail(insightId).mapper()
 
     override suspend fun recommendInsight(
         insightId: String,
@@ -219,6 +210,6 @@ internal class InsightRepositoryImpl @Inject constructor(
         )
     ).mapper()
 
-    override suspend fun getVisitedAptComplexes(): List<VisitAptComplexDto> =
-        insightRemoteDataSource.getVisitedAptComplexes().mapper()
+    override suspend fun getVisitedComplexes(): List<VisitedComplexDto> =
+        insightRemoteDataSource.getVisitedComplexes().mapper()
 }

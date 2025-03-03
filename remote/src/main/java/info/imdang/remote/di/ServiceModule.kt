@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import info.imdang.remote.service.AptComplexService
+import info.imdang.remote.service.ComplexService
 import info.imdang.remote.service.AuthService
 import info.imdang.remote.service.CouponService
 import info.imdang.remote.service.DistrictService
@@ -45,9 +45,9 @@ internal object ServiceModule {
 
     @Provides
     @Singleton
-    fun bindAptComplexService(
+    fun bindComplexService(
         @Named("imdang") retrofit: Retrofit
-    ): AptComplexService = retrofit.create()
+    ): ComplexService = retrofit.create()
 
     @Provides
     @Singleton

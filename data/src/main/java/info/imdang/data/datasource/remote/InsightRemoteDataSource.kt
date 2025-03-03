@@ -6,7 +6,7 @@ import info.imdang.data.model.response.common.PagingResponse
 import info.imdang.data.model.response.insight.InsightDetailResponse
 import info.imdang.data.model.response.insight.InsightIdResponse
 import info.imdang.data.model.response.insight.InsightResponse
-import info.imdang.data.model.response.insight.VisitAptComplexResponse
+import info.imdang.data.model.response.insight.VisitedComplexResponse
 import info.imdang.domain.model.insight.InsightDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -30,12 +30,12 @@ interface InsightRemoteDataSource {
         properties: List<String>?
     ): PagingResponse<InsightResponse, InsightDto>
 
-    suspend fun getInsightsByAptComplex(
+    suspend fun getInsightsByComplex(
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?,
-        aptComplex: String
+        complexName: String
     ): PagingResponse<InsightResponse, InsightDto>
 
     suspend fun getInsightsByAddress(
@@ -65,5 +65,5 @@ interface InsightRemoteDataSource {
         reportInsightRequest: ReportInsightRequest
     ): InsightIdResponse
 
-    suspend fun getVisitedAptComplexes(): List<VisitAptComplexResponse>
+    suspend fun getVisitedComplexes(): List<VisitedComplexResponse>
 }
