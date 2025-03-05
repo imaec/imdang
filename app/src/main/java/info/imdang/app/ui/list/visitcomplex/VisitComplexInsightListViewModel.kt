@@ -34,7 +34,9 @@ open class VisitComplexInsightListViewModel @Inject constructor(
     private val _event = MutableSharedFlow<VisitComplexInsightListEvent>()
     val event = _event.asSharedFlow()
 
-    private val _selectedIndex = MutableStateFlow(savedStateHandle["SELECTED_COMPLEX_INDEX"] ?: 0)
+    private val _selectedIndex = MutableStateFlow(
+        savedStateHandle.get<String>("selectedIndex")?.toInt() ?: 0
+    )
     val selectedIndex = _selectedIndex.asStateFlow()
 
     protected val _visitedComplexes = MutableStateFlow<List<VisitedComplexVo>>(emptyList())

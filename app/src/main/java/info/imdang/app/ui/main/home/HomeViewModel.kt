@@ -180,8 +180,12 @@ open class HomeViewModel @Inject constructor(
     }
 
     fun onClickVisitedComplex(complexVo: VisitedComplexVo) {
-        _visitedComplexes.value = visitedComplexes.value.map {
-            it.copy(isSelected = it.complexName == complexVo.complexName)
+        updateVisitedComplexes(visitedComplexes.value.indexOf(complexVo))
+    }
+
+    fun updateVisitedComplexes(selectedIndex: Int) {
+        _visitedComplexes.value = visitedComplexes.value.mapIndexed { index, visitedComplexVo ->
+            visitedComplexVo.copy(isSelected = index == selectedIndex)
         }
         fetchInsightsByAptComplex()
     }

@@ -1,5 +1,6 @@
 package info.imdang.app.ui.list.visitcomplex
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,7 +39,7 @@ import info.imdang.resource.R
 const val VISIT_COMPLEX_INSIGHT_LIST_SCREEN = "visitComplexInsight"
 
 fun NavGraphBuilder.visitComplexInsightScreen(navController: NavController) {
-    composable(route = VISIT_COMPLEX_INSIGHT_LIST_SCREEN) {
+    composable(route = "$VISIT_COMPLEX_INSIGHT_LIST_SCREEN?selectedIndex={selectedIndex}") {
         VisitComplexInsightScreen(
             navController = navController,
             viewModel = hiltViewModel()
@@ -51,13 +52,23 @@ private fun VisitComplexInsightScreen(
     navController: NavController,
     viewModel: VisitComplexInsightListViewModel
 ) {
+    BackHandler {
+        popBackStack(
+            navController = navController,
+            viewModel = viewModel
+        )
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopBar(
                 title = stringResource(R.string.home_visit_complex_insight_subject),
                 onClickBack = {
-                    navController.popBackStack()
+                    popBackStack(
+                        navController = navController,
+                        viewModel = viewModel
+                    )
                 }
             )
         },
@@ -69,6 +80,16 @@ private fun VisitComplexInsightScreen(
             )
         }
     )
+}
+
+private fun popBackStack(
+    navController: NavController,
+    viewModel: VisitComplexInsightListViewModel
+) {
+    navController.previousBackStackEntry
+        ?.savedStateHandle
+        ?.set("selectedIndex", viewModel.selectedIndex.value)
+    navController.popBackStack()
 }
 
 @Composable

@@ -207,6 +207,10 @@ private fun HomeSearchVisitComplexView(
 ) {
     val complexes by viewModel.visitedComplexes.collectAsStateWithLifecycle()
     val insightsByComplex by viewModel.insightsByComplex.collectAsStateWithLifecycle()
+    receiveSelectedIndex(
+        navController = navController,
+        viewModel = viewModel
+    )
 
     Column(modifier = Modifier.padding(top = 32.dp)) {
         Row(
@@ -222,7 +226,10 @@ private fun HomeSearchVisitComplexView(
             )
             Text(
                 modifier = Modifier.clickableWithoutRipple {
-                    navController.navigate(VISIT_COMPLEX_INSIGHT_LIST_SCREEN)
+                    navController.navigate(
+                        VISIT_COMPLEX_INSIGHT_LIST_SCREEN +
+                            "?selectedIndex=${viewModel.getSelectedComplexIndex()}"
+                    )
                 },
                 text = stringResource(R.string.see_all),
                 style = T400_14_19_6,
@@ -280,6 +287,21 @@ private fun HomeSearchVisitComplexView(
             thickness = 8.dp,
             color = Gray50
         )
+    }
+}
+
+private fun receiveSelectedIndex(
+    navController: NavController,
+    viewModel: HomeViewModel
+) {
+    val selectedIndex = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.get<Int>("selectedIndex")
+    if (selectedIndex != null) {
+        navController.currentBackStackEntry?.savedStateHandle?.remove<Int>("selectedIndex")
+        if (selectedIndex != viewModel.getSelectedComplexIndex()) {
+            viewModel.updateVisitedComplexes(selectedIndex)
+        }
     }
 }
 
