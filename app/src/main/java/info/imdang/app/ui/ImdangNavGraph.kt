@@ -10,7 +10,7 @@ import info.imdang.app.ui.insight.write.common.writeInsightOverallReviewScreen
 import info.imdang.app.ui.insight.write.writeInsightScreen
 import info.imdang.app.ui.join.complete.joinCompleteScreen
 import info.imdang.app.ui.join.joinScreen
-import info.imdang.app.ui.list.new.newInsightScreen
+import info.imdang.app.ui.list.newinsight.newInsightScreen
 import info.imdang.app.ui.list.region.searchByRegionInsightListScreen
 import info.imdang.app.ui.list.visitcomplex.visitComplexInsightScreen
 import info.imdang.app.ui.login.loginScreen

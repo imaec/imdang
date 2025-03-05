@@ -40,7 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
 import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
-import info.imdang.app.ui.list.new.NEW_INSIGHT_LIST_SCREEN
+import info.imdang.app.ui.list.newinsight.NEW_INSIGHT_LIST_SCREEN
 import info.imdang.app.ui.list.visitcomplex.VISIT_COMPLEX_INSIGHT_LIST_SCREEN
 import info.imdang.app.ui.main.home.HomeViewModel
 import info.imdang.app.ui.main.home.preview.FakeHomeViewModel
