@@ -154,6 +154,9 @@ dependencies {
     implementation(libs.accompanist.webview)
     implementation(libs.accompanist.systemuicontroller)
 
+    // paging
+    implementation(libs.androidx.paging.compose)
+
     // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

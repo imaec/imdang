@@ -8,20 +8,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
+import info.imdang.app.ui.list.visitcomplex.preview.FakeVisitComplexInsightListViewModel
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.system.chip.CommonChip
 import info.imdang.component.theme.Gray900
@@ -33,12 +39,18 @@ const val VISIT_COMPLEX_INSIGHT_LIST_SCREEN = "visitComplexInsight"
 
 fun NavGraphBuilder.visitComplexInsightScreen(navController: NavController) {
     composable(route = VISIT_COMPLEX_INSIGHT_LIST_SCREEN) {
-        VisitComplexInsightScreen(navController = navController)
+        VisitComplexInsightScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun VisitComplexInsightScreen(navController: NavController) {
+private fun VisitComplexInsightScreen(
+    navController: NavController,
+    viewModel: VisitComplexInsightListViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -50,19 +62,24 @@ private fun VisitComplexInsightScreen(navController: NavController) {
             )
         },
         content = { contentPadding ->
-            VisitComplexInsightContent(contentPadding)
+            VisitComplexInsightContent(
+                navController = navController,
+                viewModel = viewModel,
+                contentPadding = contentPadding
+            )
         }
     )
 }
 
 @Composable
-private fun VisitComplexInsightContent(contentPadding: PaddingValues) {
-    val complexes = listOf("신논현 더 센트럴 푸르지오", "신논현 더 센트럴 푸르지오", "신논현 더 센트럴 푸르지오")
-    val insights = mutableListOf<String>().apply {
-        repeat(33) {
-            add("초역세권 대단지 아파트 후기")
-        }
-    }
+private fun VisitComplexInsightContent(
+    navController: NavController,
+    viewModel: VisitComplexInsightListViewModel,
+    contentPadding: PaddingValues
+) {
+    val complexes by viewModel.visitedComplexes.collectAsStateWithLifecycle()
+    val insightCount by viewModel.insightCount.collectAsStateWithLifecycle()
+    val insights = viewModel.insightsByComplex.collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier
@@ -75,19 +92,19 @@ private fun VisitComplexInsightContent(contentPadding: PaddingValues) {
             contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            itemsIndexed(complexes) { index, chip ->
+            items(complexes) {
                 CommonChip(
-                    text = chip,
-                    isSelected = index == 0,
+                    text = it.complexName,
+                    isSelected = it.isSelected,
                     onClick = {
-                        // todo : 칩 선택
+                        viewModel.onClickVisitedComplex(it)
                     }
                 )
             }
         }
         Text(
             modifier = Modifier.padding(horizontal = 20.dp),
-            text = "${insights.size}개",
+            text = "${insightCount}개",
             style = T600_16_22_4,
             color = Gray900
         )
@@ -99,16 +116,20 @@ private fun VisitComplexInsightContent(contentPadding: PaddingValues) {
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(insights) {
+            items(
+                count = insights.itemCount,
+                key = insights.itemKey { it.insightId }
+            ) { index ->
+                val insightVo = insights[index] ?: return@items
                 InsightItem(
                     itemType = InsightItemType.HORIZONTAL,
-                    coverImage = "",
-                    region = "강남구 신논현동",
-                    recommendCount = 24,
-                    title = it,
-                    nickname = "홍길동",
+                    coverImage = insightVo.mainImage,
+                    region = insightVo.address.toGuDong(),
+                    recommendCount = insightVo.recommendedCount,
+                    title = insightVo.title,
+                    nickname = insightVo.nickname,
                     onClick = {
-                        // todo : 인사이트 상세로 이동
+                        navController.navigate(INSIGHT_DETAIL_SCREEN)
                     }
                 )
             }
@@ -120,6 +141,9 @@ private fun VisitComplexInsightContent(contentPadding: PaddingValues) {
 @Composable
 private fun VisitComplexInsightScreenPreview() {
     ImdangTheme {
-        VisitComplexInsightScreen(navController = rememberNavController())
+        VisitComplexInsightScreen(
+            navController = rememberNavController(),
+            viewModel = FakeVisitComplexInsightListViewModel()
+        )
     }
 }
