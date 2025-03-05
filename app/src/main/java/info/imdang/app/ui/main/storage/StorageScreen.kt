@@ -223,10 +223,22 @@ private fun StorageCollapsingContent(
     viewModel: StorageViewModel
 ) {
     val addresses by viewModel.addresses.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState { addresses.size }
+    val pagerState = rememberPagerState(initialPage = 0) { addresses.size }
+    val selectedPage = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.get<Int>("selectedPage")
+
+    LaunchedEffect(selectedPage) {
+        if (selectedPage != null) {
+            navController.currentBackStackEntry?.savedStateHandle?.remove<Int>("selectedPage")
+            pagerState.scrollToPage(selectedPage)
+        }
+    }
 
     LaunchedEffect(pagerState.currentPage) {
-        viewModel.selectInsightAddressPage(pagerState.currentPage)
+        if (pagerState.currentPage != viewModel.selectedInsightAddressPage.value) {
+            viewModel.selectInsightAddressPage(pagerState.currentPage)
+        }
     }
 
     Column {
@@ -256,7 +268,10 @@ private fun StorageCollapsingContent(
             }
             Text(
                 modifier = Modifier.clickableWithoutRipple {
-                    navController.navigate(STORAGE_ADDRESS_SCREEN)
+                    navController.navigate(
+                        STORAGE_ADDRESS_SCREEN +
+                            "?selectedPage=${viewModel.selectedInsightAddressPage.value}"
+                    )
                 },
                 text = stringResource(R.string.see_all),
                 style = T400_14_19_6,

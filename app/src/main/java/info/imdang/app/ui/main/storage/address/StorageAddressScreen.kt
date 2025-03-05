@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.main.storage.address.preview.FakeStorageAddressViewModel
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.system.button.CommonButton
 import info.imdang.component.system.button.RadioButton
@@ -46,13 +47,19 @@ import info.imdang.resource.R
 const val STORAGE_ADDRESS_SCREEN = "storageAddress"
 
 fun NavGraphBuilder.storageAddressScreen(navController: NavController) {
-    composable(route = STORAGE_ADDRESS_SCREEN) {
-        StorageAddressScreen(navController = navController)
+    composable(route = "$STORAGE_ADDRESS_SCREEN?selectedPage={selectedPage}") {
+        StorageAddressScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun StorageAddressScreen(navController: NavController) {
+private fun StorageAddressScreen(
+    navController: NavController,
+    viewModel: StorageAddressViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -64,19 +71,30 @@ private fun StorageAddressScreen(navController: NavController) {
             )
         },
         content = { contentPadding ->
-            StorageAddressContent(contentPadding)
+            StorageAddressContent(
+                viewModel = viewModel,
+                contentPadding = contentPadding
+            )
         },
         bottomBar = {
             CommonButton(
-                buttonText = stringResource(R.string.select_complete)
+                buttonText = stringResource(R.string.select_complete),
+                onClick = {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("selectedPage", viewModel.selectedPage.value)
+                    navController.popBackStack()
+                }
             )
         }
     )
 }
 
 @Composable
-private fun StorageAddressContent(contentPadding: PaddingValues) {
-    val viewModel = hiltViewModel<StorageAddressViewModel>()
+private fun StorageAddressContent(
+    viewModel: StorageAddressViewModel,
+    contentPadding: PaddingValues
+) {
     val addresses by viewModel.addresses.collectAsStateWithLifecycle()
 
     Box(
@@ -85,17 +103,14 @@ private fun StorageAddressContent(contentPadding: PaddingValues) {
             .fillMaxSize()
     ) {
         LazyColumn {
-            itemsIndexed(addresses) { index, address ->
+            items(addresses) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    if (index > 0) {
-                        HorizontalDivider(color = Gray100)
-                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(86.dp)
                             .clickable {
-                                viewModel.onClickAddress(selectedIndex = index)
+                                viewModel.onClickAddress(it)
                             }
                             .padding(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -103,7 +118,7 @@ private fun StorageAddressContent(contentPadding: PaddingValues) {
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = address.name,
+                                text = it.toSiGuDong(),
                                 style = T500_14_19_6,
                                 color = Gray900
                             )
@@ -115,7 +130,7 @@ private fun StorageAddressContent(contentPadding: PaddingValues) {
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "3개",
+                                    text = "${it.aptComplexCount}개",
                                     style = T500_14_19_6,
                                     color = Orange500
                                 )
@@ -133,17 +148,18 @@ private fun StorageAddressContent(contentPadding: PaddingValues) {
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "3개",
+                                    text = "${it.insightCount}개",
                                     style = T500_14_19_6,
                                     color = Orange500
                                 )
                             }
                         }
                         RadioButton(
-                            isSelected = address.isSelected,
+                            isSelected = it.isSelected,
                             isEnabled = false
                         )
                     }
+                    HorizontalDivider(color = Gray100)
                 }
             }
         }
@@ -155,6 +171,9 @@ private fun StorageAddressContent(contentPadding: PaddingValues) {
 @Composable
 private fun StorageAddressScreenPreview() {
     ImdangTheme {
-        StorageAddressScreen(navController = rememberNavController())
+        StorageAddressScreen(
+            navController = rememberNavController(),
+            viewModel = FakeStorageAddressViewModel()
+        )
     }
 }
