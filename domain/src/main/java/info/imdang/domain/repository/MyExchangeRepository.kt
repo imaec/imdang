@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface MyExchangeRepository {
 
-    suspend fun getRequestedMyExchanges(
-        requestMemberId: String,
+    suspend fun getRequestExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,
@@ -16,8 +16,8 @@ interface MyExchangeRepository {
         totalCountListener: ((Int) -> Unit)?
     ): Flow<PagingData<InsightDto>>
 
-    suspend fun getRequestedOthersExchanges(
-        requestedMemberId: String,
+    suspend fun getRequestedExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,

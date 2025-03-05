@@ -12,8 +12,8 @@ internal class MyExchangeRepositoryImpl @Inject constructor(
     private val myExchangeRemoteDataSource: MyExchangeRemoteDataSource
 ) : MyExchangeRepository {
 
-    override suspend fun getRequestedMyExchanges(
-        requestMemberId: String,
+    override suspend fun getRequestExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,
@@ -24,8 +24,8 @@ internal class MyExchangeRepositoryImpl @Inject constructor(
         initialPage = page ?: 0,
         pageSize = size ?: 20,
         loadData = { currentPage, pageSize ->
-            myExchangeRemoteDataSource.getRequestedMyExchanges(
-                requestMemberId = requestMemberId,
+            myExchangeRemoteDataSource.getRequestExchanges(
+                memberId = memberId,
                 exchangeRequestStatus = exchangeRequestStatus,
                 page = currentPage,
                 size = pageSize,
@@ -36,8 +36,8 @@ internal class MyExchangeRepositoryImpl @Inject constructor(
         totalCountListener = totalCountListener
     )
 
-    override suspend fun getRequestedOthersExchanges(
-        requestedMemberId: String,
+    override suspend fun getRequestedExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,
@@ -48,8 +48,8 @@ internal class MyExchangeRepositoryImpl @Inject constructor(
         initialPage = page ?: 0,
         pageSize = size ?: 2,
         loadData = { currentPage, pageSize ->
-            myExchangeRemoteDataSource.getRequestedOthersExchanges(
-                requestedMemberId = requestedMemberId,
+            myExchangeRemoteDataSource.getRequestedExchanges(
+                memberId = memberId,
                 exchangeRequestStatus = exchangeRequestStatus,
                 page = currentPage,
                 size = pageSize,

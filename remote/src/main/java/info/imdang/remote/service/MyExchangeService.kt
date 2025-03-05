@@ -10,8 +10,8 @@ internal interface MyExchangeService {
 
     /** 내가 요청한 교환 목록 조회 */
     @GET("my-exchanges/requested-by-me")
-    suspend fun getRequestedMyExchanges(
-        @Query("requestMemberId") requestMemberId: String,
+    suspend fun getRequestExchanges(
+        @Query("requestMemberId") memberId: String,
         @Query("exchangeRequestStatus") exchangeRequestStatus: String?,
         @Query("pageNumber") page: Int?,
         @Query("pageSize") size: Int?,
@@ -21,8 +21,8 @@ internal interface MyExchangeService {
 
     /** 다른 사람이 요청한 인사이트 교환 목록 API */
     @GET("my-exchanges/requested-by-others")
-    suspend fun getRequestedOthersExchanges(
-        @Query("requestedMemberId") requestedMemberId: String,
+    suspend fun getRequestedExchanges(
+        @Query("requestedMemberId") memberId: String,
         @Query("exchangeRequestStatus") exchangeRequestStatus: String?,
         @Query("pageNumber") page: Int?,
         @Query("pageSize") size: Int?,

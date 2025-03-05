@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -22,14 +21,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
+import info.imdang.app.model.insight.ExchangeRequestStatus
+import info.imdang.app.model.insight.ExchangeType
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
+import info.imdang.app.ui.main.home.HomeViewModel
+import info.imdang.app.ui.main.home.preview.FakeHomeViewModel
 import info.imdang.component.common.image.Icon
 import info.imdang.component.system.chip.CommonChip
 import info.imdang.component.system.tab.Tabs
@@ -47,7 +57,10 @@ import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeExchangePage() {
+fun HomeExchangePage(
+    navController: NavController,
+    viewModel: HomeViewModel
+) {
     val pagerState = rememberPagerState { 2 }
 
     Column(
@@ -57,21 +70,24 @@ fun HomeExchangePage() {
     ) {
         HorizontalDivider(color = Gray100)
         Spacer(modifier = Modifier.height(24.dp))
-        OwnedPassView()
+        OwnedPassView(viewModel = viewModel)
         Spacer(modifier = Modifier.height(12.dp))
-        ExchangeTabRow(pagerState = pagerState)
-        HorizontalPager(state = pagerState) { page ->
-            when (page) {
-                0 -> ExchangeInsightListPage()
-                1 -> ExchangeInsightListPage()
-            }
+        ExchangeTabRow(
+            viewModel = viewModel,
+            pagerState = pagerState
+        )
+        HorizontalPager(state = pagerState) {
+            ExchangeInsightListPage(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     }
 }
 
 @Composable
-private fun OwnedPassView() {
-    val passCount = 2
+private fun OwnedPassView(viewModel: HomeViewModel) {
+    val couponCount = viewModel.coupon.collectAsStateWithLifecycle().value?.couponCount ?: 0
 
     Row(
         modifier = Modifier
@@ -102,7 +118,7 @@ private fun OwnedPassView() {
             )
         }
         Text(
-            text = "${passCount}개",
+            text = "${couponCount}개",
             style = T600_16_22_4,
             color = Orange500
         )
@@ -110,12 +126,19 @@ private fun OwnedPassView() {
 }
 
 @Composable
-private fun ExchangeTabRow(pagerState: PagerState) {
+private fun ExchangeTabRow(
+    viewModel: HomeViewModel,
+    pagerState: PagerState
+) {
     val coroutineScope = rememberCoroutineScope()
     val tabs = listOf(
         stringResource(R.string.request_exchange_history),
         stringResource(R.string.requested_exchange_history)
     )
+
+    LaunchedEffect(pagerState.currentPage) {
+        viewModel.updateExchangeType(ExchangeType.fromId(pagerState.currentPage))
+    }
 
     Tabs(
         selectedTabIndex = pagerState.currentPage,
@@ -130,17 +153,23 @@ private fun ExchangeTabRow(pagerState: PagerState) {
 }
 
 @Composable
-private fun ExchangeInsightListPage() {
+private fun ExchangeInsightListPage(
+    navController: NavController,
+    viewModel: HomeViewModel
+) {
+    val currentExchangeType by viewModel.currentExchangeType.collectAsStateWithLifecycle()
+    val selectedExchangeStatus by viewModel.selectedExchangeStatus.collectAsStateWithLifecycle()
     val exchangeStatus = listOf(
-        stringResource(R.string.waiting),
-        stringResource(R.string.reject),
-        stringResource(R.string.exchange_complete)
+        ExchangeRequestStatus.PENDING to stringResource(R.string.waiting),
+        ExchangeRequestStatus.REJECTED to stringResource(R.string.reject),
+        ExchangeRequestStatus.ACCEPTED to stringResource(R.string.exchange_complete)
     )
-    val insights = mutableListOf<String>().apply {
-        repeat(33) {
-            add("초역세권 대단지 아파트 후기")
-        }
+    val insights = if (currentExchangeType == ExchangeType.REQUEST) {
+        viewModel.requestExchangeInsights.collectAsLazyPagingItems()
+    } else {
+        viewModel.requestedExchangeInsights.collectAsLazyPagingItems()
     }
+    val exchangeInsightCount by viewModel.exchangeInsightCount.collectAsStateWithLifecycle()
 
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         LazyRow(
@@ -149,12 +178,18 @@ private fun ExchangeInsightListPage() {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Top
         ) {
-            itemsIndexed(exchangeStatus) { index, status ->
+            items(exchangeStatus) {
+                val isSelected = it.first == selectedExchangeStatus
+                val title = if (isSelected) {
+                    "${it.second} ($exchangeInsightCount)"
+                } else {
+                    it.second
+                }
                 CommonChip(
-                    text = status,
-                    isSelected = index == 0,
+                    text = title,
+                    isSelected = isSelected,
                     onClick = {
-                        // todo : 교환 상태 선택
+                        viewModel.onClickExchangeStatus(it.first)
                     }
                 )
             }
@@ -191,16 +226,17 @@ private fun ExchangeInsightListPage() {
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(insights) {
+            items(insights.itemCount) { index ->
+                val insightVo = insights[index] ?: return@items
                 InsightItem(
                     itemType = InsightItemType.HORIZONTAL,
-                    coverImage = "",
-                    region = "강남구 신논현동",
-                    recommendCount = 24,
-                    title = it,
-                    nickname = "홍길동",
+                    coverImage = insightVo.mainImage,
+                    region = insightVo.address.toGuDong(),
+                    recommendCount = insightVo.recommendedCount,
+                    title = insightVo.title,
+                    nickname = insightVo.nickname,
                     onClick = {
-                        // todo : 인사이트 상세로 이동
+                        navController.navigate(INSIGHT_DETAIL_SCREEN)
                     }
                 )
             }
@@ -212,6 +248,9 @@ private fun ExchangeInsightListPage() {
 @Composable
 private fun HomeExchangePagePreview() {
     ImdangTheme {
-        HomeExchangePage()
+        HomeExchangePage(
+            navController = rememberNavController(),
+            viewModel = FakeHomeViewModel()
+        )
     }
 }

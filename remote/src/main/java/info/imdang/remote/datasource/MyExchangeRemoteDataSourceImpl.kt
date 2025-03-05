@@ -11,15 +11,15 @@ internal class MyExchangeRemoteDataSourceImpl @Inject constructor(
     private val myExchangeService: MyExchangeService
 ) : MyExchangeRemoteDataSource {
 
-    override suspend fun getRequestedMyExchanges(
-        requestMemberId: String,
+    override suspend fun getRequestExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?
-    ): PagingResponse<InsightResponse, InsightDto> = myExchangeService.getRequestedMyExchanges(
-        requestMemberId = requestMemberId,
+    ): PagingResponse<InsightResponse, InsightDto> = myExchangeService.getRequestExchanges(
+        memberId = memberId,
         exchangeRequestStatus = exchangeRequestStatus,
         page = page,
         size = size,
@@ -27,15 +27,15 @@ internal class MyExchangeRemoteDataSourceImpl @Inject constructor(
         properties = properties
     )
 
-    override suspend fun getRequestedOthersExchanges(
-        requestedMemberId: String,
+    override suspend fun getRequestedExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,
         direction: String?,
         properties: List<String>?
-    ): PagingResponse<InsightResponse, InsightDto> = myExchangeService.getRequestedOthersExchanges(
-        requestedMemberId = requestedMemberId,
+    ): PagingResponse<InsightResponse, InsightDto> = myExchangeService.getRequestedExchanges(
+        memberId = memberId,
         exchangeRequestStatus = exchangeRequestStatus,
         page = page,
         size = size,

@@ -261,7 +261,10 @@ private fun HomeContent(
                 navController = navController,
                 viewModel = viewModel
             )
-            1 -> HomeExchangePage()
+            1 -> HomeExchangePage(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     }
 }

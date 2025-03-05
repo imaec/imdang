@@ -6,8 +6,8 @@ import info.imdang.domain.model.insight.InsightDto
 
 interface MyExchangeRemoteDataSource {
 
-    suspend fun getRequestedMyExchanges(
-        requestMemberId: String,
+    suspend fun getRequestExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,
@@ -15,8 +15,8 @@ interface MyExchangeRemoteDataSource {
         properties: List<String>?
     ): PagingResponse<InsightResponse, InsightDto>
 
-    suspend fun getRequestedOthersExchanges(
-        requestedMemberId: String,
+    suspend fun getRequestedExchanges(
+        memberId: String,
         exchangeRequestStatus: String?,
         page: Int?,
         size: Int?,

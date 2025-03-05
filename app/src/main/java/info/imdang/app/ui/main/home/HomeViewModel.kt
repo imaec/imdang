@@ -1,6 +1,9 @@
 package info.imdang.app.ui.main.home
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import info.imdang.app.base.BaseViewModel
 import info.imdang.app.common.util.diffDays
@@ -11,9 +14,14 @@ import info.imdang.app.model.common.PagingDirection
 import info.imdang.app.model.common.PagingProperty
 import info.imdang.app.model.complex.VisitedComplexVo
 import info.imdang.app.model.complex.mapper
+import info.imdang.app.model.coupon.CouponVo
+import info.imdang.app.model.coupon.mapper
+import info.imdang.app.model.insight.ExchangeRequestStatus
+import info.imdang.app.model.insight.ExchangeType
 import info.imdang.app.model.insight.InsightVo
 import info.imdang.app.model.insight.mapper
 import info.imdang.domain.model.common.PagingParams
+import info.imdang.domain.model.coupon.CouponDto
 import info.imdang.domain.model.insight.InsightDto
 import info.imdang.domain.usecase.complex.GetVisitedComplexesUseCase
 import info.imdang.domain.usecase.coupon.GetCouponUseCase
@@ -27,6 +35,9 @@ import info.imdang.domain.usecase.insight.GetInsightsByComplexUseCase
 import info.imdang.domain.usecase.insight.GetInsightsByDateParams
 import info.imdang.domain.usecase.insight.GetInsightsByDateUseCase
 import info.imdang.domain.usecase.insight.GetInsightsUseCase
+import info.imdang.domain.usecase.myexchange.GetExchangesParams
+import info.imdang.domain.usecase.myexchange.GetRequestExchangesUseCase
+import info.imdang.domain.usecase.myexchange.GetRequestedExchangesUseCase
 import info.imdang.domain.usecase.mypage.GetMyPageInfoUseCase
 import info.imdang.domain.usecase.notification.HasNewNotificationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,7 +60,9 @@ open class HomeViewModel @Inject constructor(
     private val getVisitedComplexesUseCase: GetVisitedComplexesUseCase,
     private val getInsightsByComplexUseCase: GetInsightsByComplexUseCase,
     private val getInsightsByDateUseCase: GetInsightsByDateUseCase,
-    private val getInsightsUseCase: GetInsightsUseCase
+    private val getInsightsUseCase: GetInsightsUseCase,
+    private val getRequestExchangesUseCase: GetRequestExchangesUseCase,
+    private val getRequestedExchangesUseCase: GetRequestedExchangesUseCase
 ) : BaseViewModel() {
 
     private val _event = MutableSharedFlow<HomeEvent>()
@@ -64,6 +77,7 @@ open class HomeViewModel @Inject constructor(
     private val _isShowTooltip = MutableStateFlow(false)
     val isShowTooltip = _isShowTooltip.asStateFlow()
 
+    /** 탐색 */
     protected val _visitedComplexes = MutableStateFlow<List<VisitedComplexVo>>(emptyList())
     val visitedComplexes = _visitedComplexes.asStateFlow()
 
@@ -76,9 +90,34 @@ open class HomeViewModel @Inject constructor(
     protected val _recommendInsights = MutableStateFlow<List<InsightVo>>(emptyList())
     val recommendInsights = _recommendInsights.asStateFlow()
 
+    /** 교환소 */
+    private val _currentExchangeType = MutableStateFlow(ExchangeType.REQUEST)
+    val currentExchangeType = _currentExchangeType.asStateFlow()
+
+    protected val _coupon = MutableStateFlow<CouponVo?>(null)
+    val coupon = _coupon.asStateFlow()
+
+    private val _selectedExchangeStatus = MutableStateFlow(ExchangeRequestStatus.PENDING)
+    val selectedExchangeStatus = _selectedExchangeStatus.asStateFlow()
+
+    protected val _requestExchangeInsights = MutableStateFlow<PagingData<InsightVo>>(
+        PagingData.empty()
+    )
+    val requestExchangeInsights = _requestExchangeInsights.asStateFlow()
+
+    protected val _requestedExchangeInsights = MutableStateFlow<PagingData<InsightVo>>(
+        PagingData.empty()
+    )
+    val requestedExchangeInsights = _requestedExchangeInsights.asStateFlow()
+
+    protected val _exchangeInsightCount = MutableStateFlow(0)
+    val exchangeInsightCount = _exchangeInsightCount.asStateFlow()
+
     init {
         fetchHasNewNotification()
         fetchCoupon()
+
+        // 탐색
         fetchVisitedAptComplexes()
         fetchInsights()
         fetchRecommendInsights()
@@ -92,8 +131,9 @@ open class HomeViewModel @Inject constructor(
 
     private fun fetchCoupon() {
         viewModelScope.launch {
-            val couponCount = getCouponUseCase(Unit)?.couponCount ?: 0
             _nickname.value = getMyPageInfoUseCase(Unit)?.nickname ?: ""
+            _coupon.value = getCouponUseCase(Unit)?.let(CouponDto::mapper)
+            val couponCount = coupon.value ?: 0
             if (couponCount == 0 && nickname.value.isNotBlank()) showFreePassPopup()
         }
     }
@@ -171,6 +211,7 @@ open class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             issueCouponUseCase(Unit)?.let {
                 _isShowTooltip.value = true
+                fetchCoupon()
             }
         }
     }
@@ -191,4 +232,60 @@ open class HomeViewModel @Inject constructor(
     }
 
     fun getSelectedComplexIndex() = visitedComplexes.value.indexOfFirst { it.isSelected }
+
+    private fun fetchRequestExchange() {
+        viewModelScope.launch {
+            getRequestExchangesUseCase(
+                GetExchangesParams(
+                    exchangeRequestStatus = selectedExchangeStatus.value.name,
+                    pagingParams = PagingParams(
+                        totalCountListener = {
+                            _exchangeInsightCount.value = it
+                        }
+                    )
+                )
+            )
+                ?.cachedIn(this)
+                ?.collect {
+                    _requestExchangeInsights.value = it.map(InsightDto::mapper)
+                }
+        }
+    }
+
+    private fun fetchRequestedExchange() {
+        viewModelScope.launch {
+            getRequestedExchangesUseCase(
+                GetExchangesParams(
+                    exchangeRequestStatus = selectedExchangeStatus.value.name,
+                    pagingParams = PagingParams(
+                        totalCountListener = {
+                            _exchangeInsightCount.value = it
+                        }
+                    )
+                )
+            )
+                ?.cachedIn(this)
+                ?.collect {
+                    _requestedExchangeInsights.value = it.map(InsightDto::mapper)
+                }
+        }
+    }
+
+    fun updateExchangeType(exchangeType: ExchangeType) {
+        _currentExchangeType.value = exchangeType
+
+        when (exchangeType) {
+            ExchangeType.REQUEST -> fetchRequestExchange()
+            ExchangeType.REQUESTED -> fetchRequestedExchange()
+        }
+    }
+
+    fun onClickExchangeStatus(exchangeStatus: ExchangeRequestStatus) {
+        _selectedExchangeStatus.value = exchangeStatus
+
+        when (currentExchangeType.value) {
+            ExchangeType.REQUEST -> fetchRequestExchange()
+            ExchangeType.REQUESTED -> fetchRequestedExchange()
+        }
+    }
 }
