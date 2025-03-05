@@ -32,6 +32,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +52,13 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
 import info.imdang.app.ui.main.storage.address.STORAGE_ADDRESS_SCREEN
 import info.imdang.app.ui.main.storage.map.STORAGE_BY_MAP_SCREEN
+import info.imdang.app.ui.main.storage.preview.FakeStorageViewModel
 import info.imdang.component.common.bottomsheet.BottomSheetHandle
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
@@ -92,7 +96,8 @@ fun NavGraphBuilder.storageScreen(
     composable(route = STORAGE_SCREEN) {
         StorageScreen(
             navController = navController,
-            mainNavController = mainNavController
+            mainNavController = mainNavController,
+            viewModel = hiltViewModel()
         )
     }
 }
@@ -101,7 +106,8 @@ fun NavGraphBuilder.storageScreen(
 @Composable
 private fun StorageScreen(
     navController: NavController,
-    mainNavController: NavController
+    mainNavController: NavController,
+    viewModel: StorageViewModel
 ) {
     val scrollBehavior = exitUntilCollapsedScrollBehavior()
     var isCollapsed by remember { mutableStateOf(false) }
@@ -117,14 +123,21 @@ private fun StorageScreen(
         topBar = {
             StorageTopBar(
                 navController = navController,
+                viewModel = viewModel,
                 isCollapsed = isCollapsed
             )
         },
         collapsingContent = {
-            StorageCollapsingContent(navController = navController)
+            StorageCollapsingContent(
+                navController = navController,
+                viewModel = viewModel
+            )
         },
         content = {
-            StorageContent()
+            StorageContent(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     )
 }
@@ -132,6 +145,7 @@ private fun StorageScreen(
 @Composable
 private fun StorageTopBar(
     navController: NavController,
+    viewModel: StorageViewModel,
     isCollapsed: Boolean
 ) {
     Column {
@@ -152,7 +166,11 @@ private fun StorageTopBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (isCollapsed) "신논현동" else stringResource(R.string.storage),
+                    text = if (isCollapsed) {
+                        viewModel.getSelectedDong()
+                    } else {
+                        stringResource(R.string.storage)
+                    },
                     style = T700_24_33_6,
                     color = Gray900
                 )
@@ -200,8 +218,16 @@ private fun StorageTopBar(
 }
 
 @Composable
-private fun StorageCollapsingContent(navController: NavController) {
-    val pagerState = rememberPagerState { 4 }
+private fun StorageCollapsingContent(
+    navController: NavController,
+    viewModel: StorageViewModel
+) {
+    val addresses by viewModel.addresses.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState { addresses.size }
+
+    LaunchedEffect(pagerState.currentPage) {
+        viewModel.selectInsightAddressPage(pagerState.currentPage)
+    }
 
     Column {
         Spacer(modifier = Modifier.height(24.dp))
@@ -238,39 +264,46 @@ private fun StorageCollapsingContent(navController: NavController) {
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
-        StorageAddressView(pagerState = pagerState)
+        StorageAddressView(
+            pagerState = pagerState,
+            addresses = addresses
+        )
         Spacer(modifier = Modifier.height(24.dp))
         HorizontalDivider(thickness = 8.dp, color = Gray50)
     }
 }
 
 @Composable
-private fun StorageContent() {
+private fun StorageContent(
+    navController: NavController,
+    viewModel: StorageViewModel
+) {
     val listState = rememberLazyListState()
-    val insights = mutableListOf<String>().apply {
-        repeat(33) {
-            add("초역세권 대단지 아파트 후기")
-        }
-    }
+    val insights = viewModel.insights.collectAsLazyPagingItems()
+    val insightCount by viewModel.insightCount.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        StorageInsightFilterView(insightCount = insights.size)
+        StorageInsightFilterView(
+            viewModel = viewModel,
+            insightCount = insightCount
+        )
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(insights) {
+            items(insights.itemCount) { index ->
+                val insightVo = insights[index] ?: return@items
                 InsightItem(
                     itemType = InsightItemType.HORIZONTAL,
-                    coverImage = "",
-                    region = "강남구 신논현동",
-                    recommendCount = 24,
-                    title = it,
-                    nickname = "홍길동",
+                    coverImage = insightVo.mainImage,
+                    region = insightVo.address.toGuDong(),
+                    recommendCount = insightVo.recommendedCount,
+                    title = insightVo.title,
+                    nickname = insightVo.nickname,
                     onClick = {
-                        // todo : 인사이트 상세로 이동
+                        navController.navigate(INSIGHT_DETAIL_SCREEN)
                     }
                 )
             }
@@ -280,9 +313,11 @@ private fun StorageContent() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun StorageInsightFilterView(insightCount: Int) {
+private fun StorageInsightFilterView(
+    viewModel: StorageViewModel,
+    insightCount: Int
+) {
     val sheetState = rememberModalBottomSheetState()
-    val viewModel = hiltViewModel<StorageViewModel>()
     var showBottomSheet by remember { mutableStateOf(false) }
     val selectedComplex by viewModel.selectedComplex.collectAsStateWithLifecycle()
 
@@ -295,6 +330,7 @@ private fun StorageInsightFilterView(insightCount: Int) {
             onDismissRequest = { showBottomSheet = false }
         ) {
             StorageComplexBottomSheet(
+                viewModel = viewModel,
                 sheetState = sheetState,
                 onCloseBottomSheet = {
                     showBottomSheet = false
@@ -357,7 +393,8 @@ private fun StorageInsightFilterView(insightCount: Int) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = selectedComplex ?: stringResource(R.string.see_by_complex),
+                        text = selectedComplex?.aptComplexName
+                            ?: stringResource(R.string.see_by_complex),
                         style = T600_14_19_6,
                         color = if (selectedComplex != null) White else Gray500
                     )
@@ -382,6 +419,7 @@ private fun StorageInsightFilterView(insightCount: Int) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val isSeeOnlyMyInsight by viewModel.isSeeOnlyMyInsight.collectAsStateWithLifecycle()
                 Text(
                     text = stringResource(R.string.see_just_my_insight),
                     style = T500_14_19_6,
@@ -393,9 +431,13 @@ private fun StorageInsightFilterView(insightCount: Int) {
                         .height(18.dp)
                         .clip(CircleShape)
                         .clickable {
-                            // todo : 내 인사이트만 보기 on/off
+                            viewModel.toggleMyInsightOnly()
                         },
-                    iconResource = R.drawable.ic_switch_off
+                    iconResource = if (isSeeOnlyMyInsight) {
+                        R.drawable.ic_switch_on
+                    } else {
+                        R.drawable.ic_switch_off
+                    }
                 )
             }
             Text(
@@ -411,10 +453,10 @@ private fun StorageInsightFilterView(insightCount: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StorageComplexBottomSheet(
+    viewModel: StorageViewModel,
     sheetState: SheetState,
     onCloseBottomSheet: () -> Unit
 ) {
-    val viewModel = hiltViewModel<StorageViewModel>()
     val config = LocalConfiguration.current
     val systemBarPadding = WindowInsets.systemBars.asPaddingValues()
     val coroutineScope = rememberCoroutineScope()
@@ -460,7 +502,7 @@ private fun StorageComplexBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = it,
+                    text = it.aptComplexName,
                     style = T500_16_22_4,
                     color = Gray900
                 )
@@ -480,7 +522,8 @@ private fun StorageScreenPreview() {
     ImdangTheme {
         StorageScreen(
             navController = rememberNavController(),
-            mainNavController = rememberNavController()
+            mainNavController = rememberNavController(),
+            viewModel = FakeStorageViewModel()
         )
     }
 }
@@ -492,6 +535,7 @@ private fun StorageComplexBottomSheetPreview() {
     ImdangTheme {
         Box(modifier = Modifier.background(White)) {
             StorageComplexBottomSheet(
+                viewModel = FakeStorageViewModel(),
                 sheetState = rememberModalBottomSheetState(),
                 onCloseBottomSheet = {}
             )

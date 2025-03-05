@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import info.imdang.app.model.myinsight.MyInsightAddressVo
 import info.imdang.component.common.image.Icon
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.ImdangTheme
@@ -32,29 +33,26 @@ import info.imdang.component.theme.White
 import info.imdang.resource.R
 
 @Composable
-fun StorageAddressView(pagerState: PagerState) {
+fun StorageAddressView(
+    pagerState: PagerState,
+    addresses: List<MyInsightAddressVo>
+) {
     HorizontalPager(
         state = pagerState,
         contentPadding = PaddingValues(horizontal = 20.dp),
         pageSpacing = 12.dp
     ) { page ->
-        StorageAddressPage(
-            addressCount = pagerState.pageCount,
-            isSelected = pagerState.currentPage == page
-        )
+        StorageAddressPage(addressVo = addresses[page])
     }
 }
 
 @Composable
-private fun StorageAddressPage(
-    isSelected: Boolean,
-    addressCount: Int
-) {
+private fun StorageAddressPage(addressVo: MyInsightAddressVo) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = if (isSelected) Orange500 else Gray100,
+                color = if (addressVo.isSelected) Orange500 else Gray100,
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(all = 20.dp),
@@ -70,7 +68,7 @@ private fun StorageAddressPage(
                 tint = White
             )
             Text(
-                text = "서울시 강남구 신논현동",
+                text = addressVo.toSiGuDong(),
                 style = T600_18_25_2,
                 color = White
             )
@@ -97,7 +95,7 @@ private fun StorageAddressPage(
                     color = White
                 )
                 Text(
-                    text = "${addressCount}개",
+                    text = "${addressVo.aptComplexCount}개",
                     style = T600_16_22_4,
                     color = White
                 )
@@ -120,7 +118,7 @@ private fun StorageAddressPage(
                     color = White
                 )
                 Text(
-                    text = "3개",
+                    text = "${addressVo.insightCount}개",
                     style = T600_16_22_4,
                     color = White
                 )
@@ -134,7 +132,10 @@ private fun StorageAddressPage(
 private fun StorageAddressViewPreview() {
     ImdangTheme {
         Box(modifier = Modifier.padding(vertical = 20.dp)) {
-            StorageAddressView(pagerState = rememberPagerState { 4 })
+            StorageAddressView(
+                pagerState = rememberPagerState { 4 },
+                addresses = MyInsightAddressVo.getSamples(4)
+            )
         }
     }
 }

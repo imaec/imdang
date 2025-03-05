@@ -23,6 +23,25 @@ data class MyInsightAddressVo(
         latitude = null,
         longitude = null
     )
+
+    companion object {
+        fun getSamples(size: Int): List<MyInsightAddressVo> {
+            val addresses = mutableListOf<MyInsightAddressVo>()
+            repeat(size) {
+                addresses.add(
+                    MyInsightAddressVo(
+                        siDo = "서울특별시",
+                        siGunGu = "강남구",
+                        eupMyeonDong = "역삼동",
+                        aptComplexCount = 4,
+                        insightCount = 3,
+                        isSelected = it == 0
+                    )
+                )
+            }
+            return addresses
+        }
+    }
 }
 
 fun MyInsightAddressDto.mapper(
