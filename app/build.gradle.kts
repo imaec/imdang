@@ -92,6 +92,7 @@ android {
         create("dev") {
             dimension = "server"
             addManifestPlaceholders(mapOf("KAKAO_NATIVE_KEY" to DevConfig.KAKAO_NATIVE_KEY))
+            addManifestPlaceholders(mapOf("NAVER_CLIENT_ID" to DevConfig.NAVER_CLIENT_ID))
             buildConfigField(
                 "String",
                 "KAKAO_NATIVE_KEY",
@@ -102,10 +103,16 @@ android {
                 "GOOGLE_WEB_CLIENT_ID",
                 "\"${DevConfig.GOOGLE_WEB_CLIENT_ID}\""
             )
+            buildConfigField(
+                "String",
+                "NAVER_CLIENT_ID",
+                "\"${DevConfig.NAVER_CLIENT_ID}\""
+            )
         }
         create("product") {
             dimension = "server"
             addManifestPlaceholders(mapOf("KAKAO_NATIVE_KEY" to ProductConfig.KAKAO_NATIVE_KEY))
+            addManifestPlaceholders(mapOf("NAVER_CLIENT_ID" to ProductConfig.NAVER_CLIENT_ID))
             buildConfigField(
                 "String",
                 "KAKAO_NATIVE_KEY",
@@ -115,6 +122,11 @@ android {
                 "String",
                 "GOOGLE_WEB_CLIENT_ID",
                 "\"${ProductConfig.GOOGLE_WEB_CLIENT_ID}\""
+            )
+            buildConfigField(
+                "String",
+                "NAVER_CLIENT_ID",
+                "\"${ProductConfig.NAVER_CLIENT_ID}\""
             )
         }
     }
@@ -169,6 +181,9 @@ dependencies {
     // kakao
     implementation(libs.kakao.login)
     implementation(libs.kakao.share)
+
+    // naver map
+    implementation(libs.naver.map.compose)
 
     // gson
     implementation(libs.gson)

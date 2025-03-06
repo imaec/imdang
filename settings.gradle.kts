@@ -1,3 +1,5 @@
+import java.net.URI
+
 pluginManagement {
     repositories {
         google {
@@ -16,7 +18,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = java.net.URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
+        maven { url = URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
+        maven { url = URI("https://repository.map.naver.com/archive/maven") }
     }
 }
 

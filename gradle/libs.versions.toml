@@ -27,6 +27,7 @@ okhttp3 = "4.12.0"
 paging = "3.3.6"
 coroutines = "1.7.3"
 security-crypto = "1.0.0"
+naver-map-compose = "1.7.3"
 
 [libraries]
 kotlin-stblib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -72,6 +73,7 @@ androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtim
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging"}
 coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "security-crypto" }
+naver-map-compose = { group = "io.github.fornewid", name = "naver-map-compose", version.ref = "naver-map-compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

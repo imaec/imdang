@@ -78,6 +78,7 @@ private fun InsightDetailScreen(
     viewModel: InsightDetailViewModel
 ) {
     val scrollBehavior = exitUntilCollapsedScrollBehavior()
+    var isVisibleMap by remember { mutableStateOf(true) }
 
     CollapsingScaffold(
         modifier = Modifier
@@ -85,15 +86,26 @@ private fun InsightDetailScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         scrollBehavior = scrollBehavior,
         topBar = {
-            InsightDetailTopBar(navController = navController)
+            InsightDetailTopBar(
+                onClickBack = {
+                    isVisibleMap = false
+                    navController.popBackStack()
+                }
+            )
         },
         collapsingContent = {
             InsightDetailCollapsingContent(viewModel = viewModel)
         },
         content = {
             InsightDetailContent(
+                navController = navController,
                 viewModel = viewModel,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                isVisibleMap = isVisibleMap,
+                onClickBack = {
+                    isVisibleMap = false
+                    navController.popBackStack()
+                }
             )
         },
         bottomBar = {
@@ -103,7 +115,7 @@ private fun InsightDetailScreen(
 }
 
 @Composable
-private fun InsightDetailTopBar(navController: NavController) {
+private fun InsightDetailTopBar(onClickBack: () -> Unit) {
     TopBar(
         hasStatusBarsPadding = false,
         rightWidget = {
@@ -132,16 +144,17 @@ private fun InsightDetailTopBar(navController: NavController) {
                 )
             }
         },
-        onClickBack = {
-            navController.popBackStack()
-        }
+        onClickBack = onClickBack
     )
 }
 
 @Composable
 private fun InsightDetailContent(
+    navController: NavController,
     viewModel: InsightDetailViewModel,
-    scrollBehavior: ExitUntilCollapsedScrollBehavior
+    scrollBehavior: ExitUntilCollapsedScrollBehavior,
+    isVisibleMap: Boolean,
+    onClickBack: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -201,7 +214,11 @@ private fun InsightDetailContent(
                 items(insightDetails) {
                     when (it) {
                         is InsightDetailItem.BasicInfo -> {
-                            InsightDetailBasicInfoItems(basicInfo = it)
+                            InsightDetailBasicInfoItems(
+                                basicInfo = it,
+                                isVisibleMap = isVisibleMap,
+                                onClickBack = onClickBack
+                            )
                         }
                         is InsightDetailItem.Infra -> InsightDetailInfraItems(infra = it.infra)
                         is InsightDetailItem.ComplexEnvironment -> {
