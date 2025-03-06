@@ -62,6 +62,7 @@
     <string name="reject">거절</string>
     <string name="accept">수락</string>
     <string name="exchange_complete">교환 완료</string>
+    <string name="edit">수정하기</string>
     <string name="waiting_message">대기 중 내역은 최근 7일간의 기록만 표시돼요.</string>
     <string name="reject_message">거절 내역은 최근 7일간의 기록만 표시돼요.</string>
     <string name="exchange_complete_message">교환한 인사이트는 보관함에 저장되며, 완료 내역은 최근 7일간의 기록만 표시돼요.</string>

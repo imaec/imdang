@@ -26,7 +26,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
+import info.imdang.app.ui.insight.detail.preview.FakeInsightDetailViewModel
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.theme.Gray100
@@ -40,8 +42,9 @@ import info.imdang.component.theme.White
 import info.imdang.resource.R
 
 @Composable
-fun InsightDetailCollapsingContent() {
+fun InsightDetailCollapsingContent(viewModel: InsightDetailViewModel) {
     var isShowRecommendInfoDialog by remember { mutableStateOf(false) }
+    val insight by viewModel.insight.collectAsStateWithLifecycle()
 
     if (isShowRecommendInfoDialog) {
         CommonDialog(
@@ -62,7 +65,7 @@ fun InsightDetailCollapsingContent() {
                 .fillMaxWidth()
                 .height(300.dp),
             painter = rememberAsyncImagePainter(
-                model = "https://placehold.co/375x300.png",
+                model = insight.mainImage,
                 contentScale = ContentScale.Crop
             ),
             contentScale = ContentScale.Crop,
@@ -86,7 +89,7 @@ fun InsightDetailCollapsingContent() {
                         iconResource = R.drawable.ic_profile
                     )
                     Text(
-                        text = "홍길동",
+                        text = insight.nickname,
                         style = T500_16_22_4,
                         color = Gray700
                     )
@@ -111,14 +114,14 @@ fun InsightDetailCollapsingContent() {
                         tint = Gray700
                     )
                     Text(
-                        text = "추천 24",
+                        text = "추천 ${insight.recommendedCount}",
                         style = T500_14_19_6,
                         color = Gray700
                     )
                 }
             }
             Text(
-                text = "초역세권 대단지 아파트 후기",
+                text = insight.title,
                 style = T700_22_30_8,
                 color = Gray900
             )
@@ -131,7 +134,7 @@ fun InsightDetailCollapsingContent() {
 @Composable
 private fun InsightDetailCollapsingContentPreview() {
     ImdangTheme {
-        InsightDetailCollapsingContent()
+        InsightDetailCollapsingContent(viewModel = FakeInsightDetailViewModel())
     }
 }
 

@@ -268,7 +268,9 @@ private fun HomeSearchVisitComplexView(
                         title = it.title,
                         nickname = it.nickname,
                         onClick = {
-                            navController.navigate(INSIGHT_DETAIL_SCREEN)
+                            navController.navigate(
+                                "$INSIGHT_DETAIL_SCREEN?insightId=${it.insightId}"
+                            )
                         }
                     )
                 }
@@ -371,7 +373,9 @@ fun HomeSearchNewInsightsView(navController: NavController, viewModel: HomeViewM
                     title = it.title,
                     nickname = it.nickname,
                     onClick = {
-                        navController.navigate(INSIGHT_DETAIL_SCREEN)
+                        navController.navigate(
+                            "$INSIGHT_DETAIL_SCREEN?insightId=${it.insightId}"
+                        )
                     }
                 )
             }
@@ -442,7 +446,9 @@ private fun HomeSearchRecommendInsightsView(
                         title = it.title,
                         nickname = it.nickname,
                         onClick = {
-                            navController.navigate(INSIGHT_DETAIL_SCREEN)
+                            navController.navigate(
+                                "$INSIGHT_DETAIL_SCREEN?insightId=${it.insightId}"
+                            )
                         }
                     )
                 }

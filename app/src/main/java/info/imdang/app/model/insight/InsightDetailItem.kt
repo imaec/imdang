@@ -17,9 +17,11 @@ sealed class InsightDetailItem {
 
     data class Infra(val infra: InfraVo) : InsightDetailItem()
 
-    data class AptEnvironment(val complexEnvironment: ComplexEnvironmentVo) : InsightDetailItem()
+    data class ComplexEnvironment(
+        val complexEnvironment: ComplexEnvironmentVo
+    ) : InsightDetailItem()
 
-    data class AptFacility(val complexFacility: ComplexFacilityVo) : InsightDetailItem()
+    data class ComplexFacility(val complexFacility: ComplexFacilityVo) : InsightDetailItem()
 
     data class GoodNews(
         val goodNews: GoodNewsVo,

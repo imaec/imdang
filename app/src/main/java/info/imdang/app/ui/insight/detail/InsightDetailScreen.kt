@@ -1,6 +1,7 @@
 package info.imdang.app.ui.insight.detail
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,15 +33,16 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.model.insight.InsightDetailItem
+import info.imdang.app.model.insight.InsightDetailStatus
 import info.imdang.app.ui.insight.detail.bottomsheet.ExchangeBottomSheet
-import info.imdang.app.ui.insight.write.ComplexEnvironmentItems
-import info.imdang.app.ui.insight.write.ComplexFacilityItems
-import info.imdang.app.ui.insight.write.GoodNewsItems
-import info.imdang.app.ui.insight.write.InfraItems
+import info.imdang.app.ui.insight.detail.preview.FakeInsightDetailViewModel
 import info.imdang.component.common.bottomsheet.BottomSheetHandle
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
@@ -48,6 +51,7 @@ import info.imdang.component.common.topbar.ExitUntilCollapsedScrollBehavior
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.common.topbar.exitUntilCollapsedScrollBehavior
 import info.imdang.component.system.button.CommonButton
+import info.imdang.component.system.button.CommonButtonType
 import info.imdang.component.system.gradient.ButtonGradient
 import info.imdang.component.system.tab.ScrollableTabs
 import info.imdang.component.theme.Gray900
@@ -59,14 +63,20 @@ import kotlinx.coroutines.launch
 const val INSIGHT_DETAIL_SCREEN = "insightDetail"
 
 fun NavGraphBuilder.insightDetailScreen(navController: NavController) {
-    composable(route = INSIGHT_DETAIL_SCREEN) {
-        InsightDetailScreen(navController = navController)
+    composable(route = "$INSIGHT_DETAIL_SCREEN?insightId={insightId}") {
+        InsightDetailScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun InsightDetailScreen(navController: NavController) {
+private fun InsightDetailScreen(
+    navController: NavController,
+    viewModel: InsightDetailViewModel
+) {
     val scrollBehavior = exitUntilCollapsedScrollBehavior()
 
     CollapsingScaffold(
@@ -78,13 +88,16 @@ private fun InsightDetailScreen(navController: NavController) {
             InsightDetailTopBar(navController = navController)
         },
         collapsingContent = {
-            InsightDetailCollapsingContent()
+            InsightDetailCollapsingContent(viewModel = viewModel)
         },
         content = {
-            InsightDetailContent(scrollBehavior = scrollBehavior)
+            InsightDetailContent(
+                viewModel = viewModel,
+                scrollBehavior = scrollBehavior
+            )
         },
         bottomBar = {
-            InsightDetailBottomBar()
+            InsightDetailBottomBar(viewModel = viewModel)
         }
     )
 }
@@ -126,7 +139,10 @@ private fun InsightDetailTopBar(navController: NavController) {
 }
 
 @Composable
-private fun InsightDetailContent(scrollBehavior: ExitUntilCollapsedScrollBehavior) {
+private fun InsightDetailContent(
+    viewModel: InsightDetailViewModel,
+    scrollBehavior: ExitUntilCollapsedScrollBehavior
+) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -138,6 +154,7 @@ private fun InsightDetailContent(scrollBehavior: ExitUntilCollapsedScrollBehavio
         stringResource(R.string.complex_facility),
         stringResource(R.string.good)
     )
+    val insightDetails by viewModel.insightDetails.collectAsStateWithLifecycle()
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
@@ -181,87 +198,29 @@ private fun InsightDetailContent(scrollBehavior: ExitUntilCollapsedScrollBehavio
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 40.dp)
             ) {
-                item {
-                    InsightDetailBasicInfoItems(
-                        address = "서울특별시 영등포구 당산 2동 123-467",
-                        complexName = "당산아이파크1차",
-                        visitDate = "2024.01.01",
-                        visitTimes = listOf("아침", "저녁"),
-                        trafficMethods = listOf("자차", "도보"),
-                        accessLimit = "자유로움",
-                        summary = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
-                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
-                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
-                    )
-                }
-                item {
-                    InsightDetailInfraItems(
-                        traffics = InfraItems.traffics().map { it.name },
-                        schools = InfraItems.schools().map { it.name },
-                        livingFacilities = InfraItems.livingFacilities().map { it.name },
-                        cultureFacilities = InfraItems.cultureFacilities().map { it.name },
-                        surroundingEnvironments = InfraItems.surroundingEnvironments()
-                            .map { it.name },
-                        landmarks = InfraItems.landmarks().map { it.name },
-                        avoidFacilities = InfraItems.avoidFacilities().map { it.name },
-                        infraReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
-                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
-                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
-                    )
-                }
-                item {
-                    InsightDetailComplexEnvironmentItems(
-                        building = ComplexEnvironmentItems.buildings().first().name,
-                        safety = ComplexEnvironmentItems.safeties().first().name,
-                        childrenFacility = ComplexEnvironmentItems.childrenFacilities()
-                            .first().name,
-                        silverFacility = ComplexEnvironmentItems.silverFacilities().first().name,
-                        complexEnvironmentReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
-                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
-                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
-                    )
-                }
-                item {
-                    InsightDetailComplexFacilityItems(
-                        familyFacilities = ComplexFacilityItems.familyFacilities().map { it.name },
-                        multipurposeFacilities = ComplexFacilityItems.multipurposeFacilities()
-                            .map { it.name },
-                        leisureFacilities = ComplexFacilityItems.leisureFacilities()
-                            .map { it.name },
-                        environments = ComplexFacilityItems.environments().map { it.name },
-                        complexFacilityReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
-                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
-                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
-                    )
-                }
-                item {
-                    InsightDetailGoodNewsItems(
-                        traffics = GoodNewsItems.traffics().map { it.name },
-                        developments = GoodNewsItems.developments().map { it.name },
-                        educations = GoodNewsItems.educations().map { it.name },
-                        naturalEnvironments = GoodNewsItems.naturalEnvironments().map { it.name },
-                        cultures = GoodNewsItems.cultures().map { it.name },
-                        industries = GoodNewsItems.industries().map { it.name },
-                        policies = GoodNewsItems.policies().map { it.name },
-                        goodNewsReview = "단지는 전반적으로 관리 상태가 양호했으며, 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며," +
-                            " 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. 단지는 전반적으로 관리 상태가 양호했으며, " +
-                            "주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다. 다만 주차 공간이 협소하고, " +
-                            "단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
-                    )
+                items(insightDetails) {
+                    when (it) {
+                        is InsightDetailItem.BasicInfo -> {
+                            InsightDetailBasicInfoItems(basicInfo = it)
+                        }
+                        is InsightDetailItem.Infra -> InsightDetailInfraItems(infra = it.infra)
+                        is InsightDetailItem.ComplexEnvironment -> {
+                            InsightDetailComplexEnvironmentItems(
+                                complexEnvironmentVo = it.complexEnvironment
+                            )
+                        }
+                        is InsightDetailItem.ComplexFacility -> {
+                            InsightDetailComplexFacilityItems(
+                                complexFacilityVo = it.complexFacility
+                            )
+                        }
+                        is InsightDetailItem.GoodNews -> {
+                            InsightDetailGoodNewsItems(goodNewsVo = it.goodNews)
+                        }
+                        is InsightDetailItem.Invisible -> {
+                            InsightDetailInvisibleItem(viewModel = viewModel)
+                        }
+                    }
                 }
             }
         }
@@ -271,10 +230,12 @@ private fun InsightDetailContent(scrollBehavior: ExitUntilCollapsedScrollBehavio
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun InsightDetailBottomBar() {
+private fun InsightDetailBottomBar(viewModel: InsightDetailViewModel) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isShowExchangeInfoDialog by remember { mutableStateOf(false) }
     var isShowExchangeBottomSheet by remember { mutableStateOf(false) }
+    val insightDetailStatus =
+        viewModel.insight.collectAsStateWithLifecycle().value.insightDetailStatus
 
     if (isShowExchangeInfoDialog) {
         CommonDialog(
@@ -303,20 +264,77 @@ private fun InsightDetailBottomBar() {
         }
     }
 
-    CommonButton(
-        buttonText = stringResource(R.string.request_exchange),
-        onClick = {
-            // todo : 교환 요청
-            isShowExchangeBottomSheet = true
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 40.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        if (insightDetailStatus == InsightDetailStatus.EXCHANGE_REQUESTED) {
+            CommonButton(
+                modifier = Modifier.weight(1f),
+                horizontalPadding = 0.dp,
+                bottomPadding = 0.dp,
+                buttonType = CommonButtonType.SUB,
+                buttonText = stringResource(R.string.reject),
+                onClick = {
+                    // todo : 교환 거절
+                }
+            )
         }
-    )
+        CommonButton(
+            modifier = Modifier.weight(1f),
+            horizontalPadding = 0.dp,
+            bottomPadding = 0.dp,
+            buttonType = when (insightDetailStatus) {
+                InsightDetailStatus.EXCHANGE_REQUEST -> CommonButtonType.MAIN
+                InsightDetailStatus.EXCHANGE_REQUESTED -> CommonButtonType.MAIN
+                InsightDetailStatus.EXCHANGE_WAITING -> CommonButtonType.MAIN
+                InsightDetailStatus.EXCHANGE_COMPLETE -> CommonButtonType.MAIN
+                InsightDetailStatus.MY_INSIGHT -> CommonButtonType.SUB
+            },
+            buttonText = when (insightDetailStatus) {
+                InsightDetailStatus.EXCHANGE_REQUEST -> stringResource(R.string.request_exchange)
+                InsightDetailStatus.EXCHANGE_REQUESTED -> stringResource(R.string.accept)
+                InsightDetailStatus.EXCHANGE_WAITING -> stringResource(R.string.waiting)
+                InsightDetailStatus.EXCHANGE_COMPLETE -> stringResource(R.string.exchange_complete)
+                InsightDetailStatus.MY_INSIGHT -> stringResource(R.string.edit)
+            },
+            isEnabled = when (insightDetailStatus) {
+                InsightDetailStatus.EXCHANGE_REQUEST -> true
+                InsightDetailStatus.EXCHANGE_REQUESTED -> true
+                InsightDetailStatus.EXCHANGE_WAITING -> false
+                InsightDetailStatus.EXCHANGE_COMPLETE -> false
+                InsightDetailStatus.MY_INSIGHT -> true
+            },
+            onClick = {
+                when (insightDetailStatus) {
+                    InsightDetailStatus.EXCHANGE_REQUEST -> {
+                        // todo : 교환 요청
+                        isShowExchangeBottomSheet = true
+                    }
+                    InsightDetailStatus.EXCHANGE_REQUESTED -> {
+                        // todo : 교환 수락
+                    }
+                    InsightDetailStatus.EXCHANGE_WAITING -> {}
+                    InsightDetailStatus.EXCHANGE_COMPLETE -> {}
+                    InsightDetailStatus.MY_INSIGHT -> {
+                        // todo : 인사이트 수정
+                    }
+                }
+            }
+        )
+    }
 }
 
 @Preview
 @Composable
 private fun InsightDetailScreenPreview() {
     ImdangTheme {
-        InsightDetailScreen(navController = rememberNavController())
+        InsightDetailScreen(
+            navController = rememberNavController(),
+            viewModel = FakeInsightDetailViewModel()
+        )
     }
 }
 

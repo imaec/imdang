@@ -150,7 +150,9 @@ private fun VisitComplexInsightContent(
                     title = insightVo.title,
                     nickname = insightVo.nickname,
                     onClick = {
-                        navController.navigate(INSIGHT_DETAIL_SCREEN)
+                        navController.navigate(
+                            "$INSIGHT_DETAIL_SCREEN?insightId=${insightVo.insightId}"
+                        )
                     }
                 )
             }

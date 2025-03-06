@@ -59,9 +59,7 @@ class FakeGetMemberIdUseCase : GetMemberIdUseCase(
             TODO("Not yet implemented")
         }
 
-        override fun getMemberId(): String {
-            TODO("Not yet implemented")
-        }
+        override fun getMemberId(): String = ""
 
         override fun saveLoginType(loginType: String) {
             TODO("Not yet implemented")

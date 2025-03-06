@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import info.imdang.app.model.insight.ComplexFacilityVo
 import info.imdang.app.ui.insight.detail.common.InsightDetailItem
 import info.imdang.app.ui.insight.detail.common.InsightDetailSelectionItem
 import info.imdang.app.ui.insight.write.ComplexFacilityItems
@@ -17,13 +18,7 @@ import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 
 @Composable
-fun InsightDetailComplexFacilityItems(
-    familyFacilities: List<String>,
-    multipurposeFacilities: List<String>,
-    leisureFacilities: List<String>,
-    environments: List<String>,
-    complexFacilityReview: String
-) {
+fun InsightDetailComplexFacilityItems(complexFacilityVo: ComplexFacilityVo) {
     Column {
         Column(
             modifier = Modifier
@@ -32,24 +27,26 @@ fun InsightDetailComplexFacilityItems(
         ) {
             InsightDetailSelectionItem(
                 title = stringResource(R.string.family),
-                items = familyFacilities
+                items = complexFacilityVo.familyFacilities
             )
             InsightDetailSelectionItem(
                 title = stringResource(R.string.multipurpose),
-                items = multipurposeFacilities
+                items = complexFacilityVo.multipurposeFacilities
             )
             InsightDetailSelectionItem(
                 title = stringResource(R.string.leisure),
-                items = leisureFacilities
+                items = complexFacilityVo.leisureFacilities
             )
             InsightDetailSelectionItem(
                 title = stringResource(R.string.environment),
-                items = environments
+                items = complexFacilityVo.environments
             )
-            InsightDetailItem(
-                title = stringResource(R.string.complex_facility_overall_review),
-                content = complexFacilityReview
-            )
+            if (complexFacilityVo.complexFacilityReview.isNotBlank()) {
+                InsightDetailItem(
+                    title = stringResource(R.string.complex_facility_overall_review),
+                    content = complexFacilityVo.complexFacilityReview
+                )
+            }
         }
         HorizontalDivider(thickness = 8.dp, color = Gray50)
     }
@@ -60,16 +57,19 @@ fun InsightDetailComplexFacilityItems(
 private fun InsightDetailComplexFacilityItemsPreview() {
     ImdangTheme {
         InsightDetailComplexFacilityItems(
-            familyFacilities = ComplexFacilityItems.familyFacilities().map { it.name },
-            multipurposeFacilities = ComplexFacilityItems.multipurposeFacilities().map { it.name },
-            leisureFacilities = ComplexFacilityItems.leisureFacilities().map { it.name },
-            environments = ComplexFacilityItems.environments().map { it.name },
-            complexFacilityReview = "단지는 전반적으로 관리 상태가 양호했으며," +
-                " 다만 주차 공간이 협소하고, 단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. " +
-                "단지는 전반적으로 관리 상태가 양호했으며, 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다." +
-                " 다만 주차 공간이 협소하고, 단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. " +
-                "단지는 전반적으로 관리 상태가 양호했으며, 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다." +
-                " 다만 주차 공간이 협소하고, 단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
+            ComplexFacilityVo(
+                familyFacilities = ComplexFacilityItems.familyFacilities().map { it.name },
+                multipurposeFacilities = ComplexFacilityItems.multipurposeFacilities()
+                    .map { it.name },
+                leisureFacilities = ComplexFacilityItems.leisureFacilities().map { it.name },
+                environments = ComplexFacilityItems.environments().map { it.name },
+                complexFacilityReview = "단지는 전반적으로 관리 상태가 양호했으며," +
+                    " 다만 주차 공간이 협소하고, 단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. " +
+                    "단지는 전반적으로 관리 상태가 양호했으며, 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다." +
+                    " 다만 주차 공간이 협소하고, 단지 내 보안 카메라 설치가 부족한 점이 아쉬워요. " +
+                    "단지는 전반적으로 관리 상태가 양호했으며, 주변에 대형 마트와 초등학교가 가까워 생활 편의성이 뛰어납니다." +
+                    " 다만 주차 공간이 협소하고, 단지 내 보안 카메라 설치가 부족한 점이 아쉬워요."
+            )
         )
     }
 }
