@@ -1,4 +1,4 @@
-package info.imdang.app.ui.my.fake
+package info.imdang.app.ui.my.preview
 
 import info.imdang.app.ui.my.MyViewModel
 import info.imdang.domain.usecase.auth.FakeRemoveTokenUseCase

@@ -39,7 +39,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.common.util.logout
 import info.imdang.app.ui.login.LOGIN_SCREEN
-import info.imdang.app.ui.my.fake.FakeMyVieModel
+import info.imdang.app.ui.my.preview.FakeMyVieModel
 import info.imdang.app.ui.my.term.SERVICE_TERM_SCREEN
 import info.imdang.app.ui.my.withdraw.WITHDRAW_SCREEN
 import info.imdang.app.ui.serviceintroduction.SERVICE_INTRODUCTION_SCREEN

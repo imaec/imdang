@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,11 +26,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.login.LOGIN_SCREEN
+import info.imdang.app.ui.my.withdraw.preview.FakeWithdrawViewModel
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
 import info.imdang.component.common.topbar.TopBar
@@ -48,12 +51,18 @@ const val WITHDRAW_SCREEN = "withdraw"
 
 fun NavGraphBuilder.withdrawScreen(navController: NavController) {
     composable(route = WITHDRAW_SCREEN) {
-        WithdrawScreen(navController = navController)
+        WithdrawScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun WithdrawScreen(navController: NavController) {
+private fun WithdrawScreen(
+    navController: NavController,
+    viewModel: WithdrawViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -65,6 +74,7 @@ private fun WithdrawScreen(navController: NavController) {
         content = { contentPadding ->
             WithdrawContent(
                 navController = navController,
+                viewModel = viewModel,
                 contentPadding = contentPadding
             )
         }
@@ -74,9 +84,22 @@ private fun WithdrawScreen(navController: NavController) {
 @Composable
 private fun WithdrawContent(
     navController: NavController,
+    viewModel: WithdrawViewModel,
     contentPadding: PaddingValues
 ) {
     var isAgreeWithdraw by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is WithdrawEvent.MoveLoginScreen -> {
+                    navController.navigate("$LOGIN_SCREEN?isWithdraw=true") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -149,9 +172,7 @@ private fun WithdrawContent(
             horizontalPadding = 0.dp,
             isEnabled = isAgreeWithdraw,
             onClick = {
-                navController.navigate("$LOGIN_SCREEN?isWithdraw=true") {
-                    popUpTo(0) { inclusive = true }
-                }
+                if (isAgreeWithdraw) viewModel.withdraw()
             }
         )
     }
@@ -161,6 +182,9 @@ private fun WithdrawContent(
 @Composable
 private fun WithdrawScreenPreview() {
     ImdangTheme {
-        WithdrawScreen(navController = rememberNavController())
+        WithdrawScreen(
+            navController = rememberNavController(),
+            viewModel = FakeWithdrawViewModel()
+        )
     }
 }

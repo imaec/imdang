@@ -5,14 +5,14 @@ import info.imdang.domain.model.auth.TokenDto
 import info.imdang.domain.repository.AuthRepository
 import javax.inject.Inject
 
-open class GetLoginTypeUseCase @Inject constructor(
+open class GetSocialAccessTokenUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
 
-    operator fun invoke(): String = repository.getLoginType()
+    operator fun invoke(): String = repository.getSocialAccessToken()
 }
 
-class FakeGetLoginTypeUseCase : GetLoginTypeUseCase(
+class FakeGetSocialAccessTokenUseCase : GetSocialAccessTokenUseCase(
     repository = object : AuthRepository {
         override suspend fun kakaoLogin(authorizationCode: String): LoginDto {
             TODO("Not yet implemented")
@@ -67,7 +67,9 @@ class FakeGetLoginTypeUseCase : GetLoginTypeUseCase(
             TODO("Not yet implemented")
         }
 
-        override fun getLoginType(): String = ""
+        override fun getLoginType(): String {
+            TODO("Not yet implemented")
+        }
 
         override fun saveSocialAccessToken(accessToken: String) {
             TODO("Not yet implemented")
