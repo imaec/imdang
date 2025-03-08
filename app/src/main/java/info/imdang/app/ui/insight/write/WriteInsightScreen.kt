@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.common.ext.sharedViewModel
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
 import info.imdang.app.ui.insight.write.basic.WriteInsightBasicInfoPage
 import info.imdang.app.ui.insight.write.environment.WriteInsightComplexEnvironmentPage
 import info.imdang.app.ui.insight.write.facility.WriteInsightComplexFacilityPage
@@ -217,28 +218,32 @@ private fun WriteInsightBottomBar(
     )
     val isButtonEnabled by viewModel.isButtonEnabled.collectAsStateWithLifecycle()
     val isValidButtonEnabled by viewModel.isValidButtonEnabled.collectAsStateWithLifecycle()
-    var isShowWriteCompleteDialog by remember { mutableStateOf(false) }
+    var isShowWriteCompleteDialog by remember { mutableStateOf(false to "") }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest {
             when (it) {
-                is WriteInsightEvent.WriteInsightComplete -> isShowWriteCompleteDialog = true
+                is WriteInsightEvent.WriteInsightComplete -> {
+                    isShowWriteCompleteDialog = true to it.insightId
+                }
             }
         }
     }
 
-    if (isShowWriteCompleteDialog) {
+    if (isShowWriteCompleteDialog.first) {
         CommonDialog(
             message = stringResource(R.string.write_insight_complete_message),
             subButtonText = stringResource(R.string.check_storage),
             onClickPositiveButton = {
-                // todo : 인사이트 상세로 이동
-                isShowWriteCompleteDialog = false
                 navController.popBackStack()
+                navController.navigate(
+                    "$INSIGHT_DETAIL_SCREEN?insightId=${isShowWriteCompleteDialog.second}"
+                )
+                isShowWriteCompleteDialog = false to ""
             },
             onClickSubButton = {
                 // todo : 보관함 화면으로 이동
-                isShowWriteCompleteDialog = false
+                isShowWriteCompleteDialog = false to ""
                 navController.popBackStack()
             },
             onDismiss = {}

@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -104,6 +105,7 @@ private fun MyContent(
 ) {
     val context = LocalContext.current
     var isShowLogoutDialog by remember { mutableStateOf(false) }
+    val myPage by viewModel.myPage.collectAsStateWithLifecycle()
 
     if (isShowLogoutDialog) {
         CommonDialog(
@@ -152,7 +154,7 @@ private fun MyContent(
                     iconResource = R.drawable.ic_profile
                 )
                 Text(
-                    text = "홍길동",
+                    text = myPage?.nickname ?: "",
                     style = T600_18_25_2,
                     color = Gray900
                 )
@@ -196,7 +198,7 @@ private fun MyContent(
                 color = Gray900
             )
             Text(
-                text = "16개",
+                text = "${myPage?.insightCount ?: 0}개",
                 style = T600_16_22_4,
                 color = Orange500
             )
@@ -218,7 +220,7 @@ private fun MyContent(
                 color = Gray900
             )
             Text(
-                text = "8건",
+                text = "${myPage?.exchangeCount ?: 0}건",
                 style = T600_16_22_4,
                 color = Orange500
             )
