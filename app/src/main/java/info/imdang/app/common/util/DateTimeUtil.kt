@@ -9,8 +9,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 
-private const val SERVER_DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX"
-
 fun reformatDate(date: String): String {
     var newDate = date.replace(".", "")
     if (newDate.length > 4) {
@@ -38,7 +36,7 @@ fun Long.diffDays(): Int {
 fun LocalDate.isToday() = isEqual(LocalDate.now())
 
 fun String.isToday() =
-    LocalDate.parse(this, DateTimeFormatter.ofPattern(SERVER_DEFAULT_DATE_FORMAT)).isToday()
+    LocalDate.parse(this, DateTimeFormatter.ofPattern(getServerDefaultDateFormat())).isToday()
 
 fun String.formatDate(fromFormat: String, toFormat: String): String {
     val dateTime = LocalDate.parse(this, DateTimeFormatter.ofPattern(fromFormat))
@@ -48,7 +46,7 @@ fun String.formatDate(fromFormat: String, toFormat: String): String {
 fun String.formatBeforeText(): String {
     val dateTime = LocalDateTime.parse(
         this,
-        DateTimeFormatter.ofPattern(SERVER_DEFAULT_DATE_FORMAT)
+        DateTimeFormatter.ofPattern(getServerDefaultDateFormat())
     )
     val currentDateTime = LocalDateTime.now()
     val duration = Duration.between(currentDateTime, dateTime)
@@ -71,3 +69,8 @@ fun String.formatBeforeText(): String {
         else -> return "방금 전"
     }
 }
+
+private fun String.getServerDefaultDateFormat() =
+    "yyyy-MM-dd'T'HH:mm:ss." + slice(20..lastIndex)
+        .replace(Regex("\\d"), "S")
+        .replace("Z", "X")

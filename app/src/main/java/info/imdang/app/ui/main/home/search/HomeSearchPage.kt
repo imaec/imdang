@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,8 +48,8 @@ import info.imdang.app.ui.main.home.search.region.SEARCH_BY_REGION_SCREEN
 import info.imdang.app.ui.serviceintroduction.SERVICE_INTRODUCTION_SCREEN
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.clickableWithoutRipple
-import info.imdang.component.common.modifier.dashedBorder
 import info.imdang.component.common.text.AnnotatedText
+import info.imdang.component.common.text.EmptyView
 import info.imdang.component.system.chip.CommonChip
 import info.imdang.component.theme.Gray100
 import info.imdang.component.theme.Gray25
@@ -281,7 +280,7 @@ private fun HomeSearchVisitComplexView(
                     .padding(horizontal = 20.dp)
                     .padding(top = 24.dp)
             ) {
-                VisitComplexInsightEmptyView()
+                EmptyView(emptyMessage = stringResource(R.string.empty_home_insight_message))
             }
         }
         HorizontalDivider(
@@ -304,32 +303,6 @@ private fun receiveSelectedIndex(
         if (selectedIndex != viewModel.getSelectedComplexIndex()) {
             viewModel.updateVisitedComplexes(selectedIndex)
         }
-    }
-}
-
-@Composable
-private fun VisitComplexInsightEmptyView() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(72.dp)
-            .background(
-                color = Gray50,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .dashedBorder(
-                width = 1.dp,
-                radius = 8.dp,
-                color = Gray100
-            )
-    ) {
-        Text(
-            modifier = Modifier.align(Alignment.Center),
-            text = stringResource(R.string.empty_home_insight_message),
-            style = T500_14_19_6,
-            color = Gray500,
-            textAlign = TextAlign.Center
-        )
     }
 }
 
@@ -488,7 +461,7 @@ private fun HomeSearchPagePreview() {
 private fun VisitComplexInsightEmptyViewPreview() {
     ImdangTheme {
         Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp)) {
-            VisitComplexInsightEmptyView()
+            EmptyView(emptyMessage = stringResource(R.string.empty_home_insight_message))
         }
     }
 }

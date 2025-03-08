@@ -1,4 +1,4 @@
-package info.imdang.imdang.model.notification
+package info.imdang.app.model.notification
 
 enum class NotificationListType {
     ALL,

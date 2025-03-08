@@ -15,26 +15,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.model.notification.NotificationCategory
+import info.imdang.app.model.notification.NotificationItem
+import info.imdang.app.model.notification.NotificationListType
+import info.imdang.app.model.notification.NotificationVo
+import info.imdang.app.ui.notification.preview.FakeNotificationVIewModel
+import info.imdang.component.common.text.EmptyView
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.system.chip.CommonChip
 import info.imdang.component.theme.Blue11388B
@@ -58,12 +63,18 @@ const val NOTIFICATION_SCREEN = "notification"
 
 fun NavGraphBuilder.notificationScreen(navController: NavController) {
     composable(route = NOTIFICATION_SCREEN) {
-        NotificationScreen(navController = navController)
+        NotificationScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun NotificationScreen(navController: NavController) {
+private fun NotificationScreen(
+    navController: NavController,
+    viewModel: NotificationViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -73,41 +84,25 @@ private fun NotificationScreen(navController: NavController) {
             )
         },
         content = { contentPadding ->
-            NotificationContent(contentPadding)
+            NotificationContent(
+                navController = navController,
+                viewModel = viewModel,
+                contentPadding = contentPadding
+            )
         }
     )
 }
 
 @Composable
-private fun NotificationContent(contentPadding: PaddingValues) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    val notificationStatus = listOf(
-        stringResource(R.string.all),
-        stringResource(R.string.request_exchange_history),
-        stringResource(R.string.requested_exchange_history)
-    )
-    val newNotifications = listOf(
-        NotificationCategory.REQUESTED,
-        NotificationCategory.ACCEPTED,
-        NotificationCategory.REJECTED
-    ).filter {
-        when (selectedIndex) {
-            1 -> it != NotificationCategory.REQUESTED
-            2 -> it == NotificationCategory.REQUESTED
-            else -> true
-        }
-    }
-    val lastNotifications = listOf(
-        NotificationCategory.REQUESTED,
-        NotificationCategory.ACCEPTED,
-        NotificationCategory.REJECTED
-    ).filter {
-        when (selectedIndex) {
-            1 -> it != NotificationCategory.REQUESTED
-            2 -> it == NotificationCategory.REQUESTED
-            else -> true
-        }
-    }
+private fun NotificationContent(
+    navController: NavController,
+    viewModel: NotificationViewModel,
+    contentPadding: PaddingValues
+) {
+    val selectedNotificationType by viewModel.selectedNotificationListType
+        .collectAsStateWithLifecycle()
+    val notifications by viewModel.notificationItems.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .padding(contentPadding)
@@ -116,12 +111,20 @@ private fun NotificationContent(contentPadding: PaddingValues) {
             .padding(top = 24.dp)
     ) {
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            itemsIndexed(notificationStatus) { index, status ->
+            items(NotificationListType.entries) {
                 CommonChip(
-                    text = status,
-                    isSelected = index == selectedIndex,
+                    text = when (it) {
+                        NotificationListType.ALL -> stringResource(R.string.all)
+                        NotificationListType.REQUEST_HISTORY -> {
+                            stringResource(R.string.request_exchange_history)
+                        }
+                        NotificationListType.REQUESTED_HISTORY -> {
+                            stringResource(R.string.requested_exchange_history)
+                        }
+                    },
+                    isSelected = it == selectedNotificationType,
                     onClick = {
-                        selectedIndex = index
+                        viewModel.selectNotificationType(it)
                     }
                 )
             }
@@ -131,33 +134,32 @@ private fun NotificationContent(contentPadding: PaddingValues) {
             contentPadding = PaddingValues(top = 12.dp, bottom = 40.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            item {
-                Text(
-                    text = stringResource(R.string.new_notification),
-                    style = T700_22_30_8
-                )
-            }
-            itemsIndexed(newNotifications) { index, notification ->
-                if (index == 0) Spacer(Modifier.height(4.dp))
-                NotificationItem(notification)
-            }
-            item {
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = stringResource(R.string.last_notification),
-                    style = T700_22_30_8
-                )
-            }
-            itemsIndexed(lastNotifications) { index, notification ->
-                if (index == 0) Spacer(Modifier.height(4.dp))
-                NotificationItem(notification)
+            itemsIndexed(notifications) { index, notificationItem ->
+                when (notificationItem) {
+                    is NotificationItem.Title -> {
+                        if (index != 0) Spacer(Modifier.height(12.dp))
+                        Text(text = notificationItem.title, style = T700_22_30_8)
+                    }
+                    is NotificationItem.Notification -> {
+                        if (index > 0) {
+                            if (notifications[index - 1] is NotificationItem.Title) {
+                                Spacer(Modifier.height(4.dp))
+                            }
+                        }
+                        NotificationItem(notificationItem.notification)
+                    }
+                    is NotificationItem.Empty -> {
+                        if (index != 0) Spacer(Modifier.height(4.dp))
+                        EmptyView(emptyMessage = notificationItem.text)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun NotificationItem(notificationCategory: NotificationCategory) {
+private fun NotificationItem(notificationVo: NotificationVo) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -175,7 +177,7 @@ private fun NotificationItem(notificationCategory: NotificationCategory) {
                 modifier = Modifier
                     .height(25.dp)
                     .background(
-                        color = if (notificationCategory == NotificationCategory.REQUESTED) {
+                        color = if (notificationVo.category == NotificationCategory.REQUESTED) {
                             Orange50
                         } else {
                             BlueEDF3FF
@@ -186,13 +188,13 @@ private fun NotificationItem(notificationCategory: NotificationCategory) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (notificationCategory == NotificationCategory.REQUESTED) {
+                    text = if (notificationVo.category == NotificationCategory.REQUESTED) {
                         stringResource(R.string.requested_exchange_history)
                     } else {
                         stringResource(R.string.request_exchange_history)
                     },
                     style = T600_12_16_8,
-                    color = if (notificationCategory == NotificationCategory.REQUESTED) {
+                    color = if (notificationVo.category == NotificationCategory.REQUESTED) {
                         Orange500
                     } else {
                         Blue11388B
@@ -200,13 +202,13 @@ private fun NotificationItem(notificationCategory: NotificationCategory) {
                 )
             }
             Text(
-                text = "방금 전",
+                text = notificationVo.createdAt,
                 style = T500_12_16_8,
                 color = Gray500
             )
         }
         Text(
-            text = "길동님이 인사이트 교환을 수락했어요.\n교환한 인사이트를 보관함에서 확인해보세요.",
+            text = notificationVo.message,
             style = T500_16_22_4,
             color = Gray900
         )
@@ -217,14 +219,24 @@ private fun NotificationItem(notificationCategory: NotificationCategory) {
                 .border(width = 1.dp, color = Gray100, shape = RoundedCornerShape(8.dp))
                 .clip(RoundedCornerShape(8.dp))
                 .clickable {
-                    // todo : 알림 클릭 동작
+                    when (notificationVo.category) {
+                        NotificationCategory.REQUESTED -> {
+                            // todo : 인사이트 상세 이동
+                        }
+                        NotificationCategory.ACCEPTED -> {
+                            // todo : 보관함 이동
+                        }
+                        NotificationCategory.REJECTED -> {
+                            // todo : 인사이트 상세 이동
+                        }
+                    }
                 }
                 .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = stringResource(
-                    when (notificationCategory) {
+                    when (notificationVo.category) {
                         NotificationCategory.REQUESTED -> R.string.check_insight
                         NotificationCategory.ACCEPTED -> R.string.check_storage
                         NotificationCategory.REJECTED -> R.string.retry_request
@@ -241,6 +253,9 @@ private fun NotificationItem(notificationCategory: NotificationCategory) {
 @Composable
 private fun NotificationScreenPreview() {
     ImdangTheme {
-        NotificationScreen(navController = rememberNavController())
+        NotificationScreen(
+            navController = rememberNavController(),
+            viewModel = FakeNotificationVIewModel()
+        )
     }
 }
