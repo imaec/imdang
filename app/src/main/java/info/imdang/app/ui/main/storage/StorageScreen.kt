@@ -524,7 +524,7 @@ private fun StorageComplexBottomSheet(
                     color = Gray900
                 )
                 Text(
-                    text = "${complexes.size}개",
+                    text = "${it.insightCount}개",
                     style = T500_14_19_6,
                     color = Orange500
                 )
