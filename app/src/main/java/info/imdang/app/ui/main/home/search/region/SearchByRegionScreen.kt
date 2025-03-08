@@ -35,8 +35,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import info.imdang.app.ui.list.region.SEARCH_BY_REGION_INSIGHT_LIST_SCREEN
 import info.imdang.app.ui.main.home.search.map.SEARCH_BY_MAP_SCREEN
+import info.imdang.app.ui.main.home.search.region.preview.FakeSearchByRegionViewModel
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.theme.Gray100
@@ -55,12 +57,18 @@ const val SEARCH_BY_REGION_SCREEN = "searchByRegion"
 
 fun NavGraphBuilder.searchByRegionScreen(navController: NavController) {
     composable(route = SEARCH_BY_REGION_SCREEN) {
-        SearchByRegionScreen(navController = navController)
+        SearchByRegionScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun SearchByRegionScreen(navController: NavController) {
+private fun SearchByRegionScreen(
+    navController: NavController,
+    viewModel: SearchByRegionViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -102,6 +110,7 @@ private fun SearchByRegionScreen(navController: NavController) {
         content = { contentPadding ->
             SearchByRegionContent(
                 navController = navController,
+                viewModel = viewModel,
                 contentPadding = contentPadding
             )
         }
@@ -111,11 +120,11 @@ private fun SearchByRegionScreen(navController: NavController) {
 @Composable
 private fun SearchByRegionContent(
     navController: NavController,
+    viewModel: SearchByRegionViewModel,
     contentPadding: PaddingValues
 ) {
-    val viewModel = hiltViewModel<SearchByRegionViewModel>()
     val guList by viewModel.guList.collectAsStateWithLifecycle()
-    val dongList by viewModel.dongList.collectAsStateWithLifecycle()
+    val dongList = viewModel.dongList.collectAsLazyPagingItems()
 
     Row(
         modifier = Modifier
@@ -135,7 +144,7 @@ private fun SearchByRegionContent(
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
-                        text = gu.name,
+                        text = gu.siGunGu,
                         style = T600_16_22_4,
                         color = if (gu.isSelected) White else Gray500
                     )
@@ -149,7 +158,8 @@ private fun SearchByRegionContent(
                 .background(Gray100)
         )
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(dongList) {
+            items(dongList.itemCount) { index ->
+                val dong = dongList[index] ?: return@items
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -159,13 +169,13 @@ private fun SearchByRegionContent(
                             navController.navigate(
                                 route = SEARCH_BY_REGION_INSIGHT_LIST_SCREEN +
                                     "?siGunGu=${viewModel.getSelectedGu()}" +
-                                    "&eupMyeonDong=$it"
+                                    "&eupMyeonDong=$dong"
                             )
                         }
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
-                        text = it,
+                        text = dong,
                         style = T600_16_22_4,
                         color = Color(0xFF333333)
                     )
@@ -179,6 +189,9 @@ private fun SearchByRegionContent(
 @Composable
 private fun SearchByRegionScreenPreview() {
     ImdangTheme {
-        SearchByRegionScreen(navController = rememberNavController())
+        SearchByRegionScreen(
+            navController = rememberNavController(),
+            viewModel = FakeSearchByRegionViewModel()
+        )
     }
 }

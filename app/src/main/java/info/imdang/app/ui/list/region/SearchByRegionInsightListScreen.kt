@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +19,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import info.imdang.app.ui.insight.InsightItem
 import info.imdang.app.ui.insight.InsightItemType
+import info.imdang.app.ui.insight.detail.INSIGHT_DETAIL_SCREEN
+import info.imdang.app.ui.list.region.preview.FakeSearchByRegionInsightListViewModel
 import info.imdang.component.common.topbar.TopBar
 import info.imdang.component.theme.Gray900
 import info.imdang.component.theme.ImdangTheme
@@ -35,14 +37,18 @@ fun NavGraphBuilder.searchByRegionInsightListScreen(navController: NavController
             "?siGunGu={siGunGu}" +
             "&eupMyeonDong={eupMyeonDong}"
     ) {
-        SearchByRegionInsightListScreen(navController = navController)
+        SearchByRegionInsightListScreen(
+            navController = navController,
+            viewModel = hiltViewModel()
+        )
     }
 }
 
 @Composable
-private fun SearchByRegionInsightListScreen(navController: NavController) {
-    val viewModel = hiltViewModel<SearchByRegionInsightListViewModel>()
-
+private fun SearchByRegionInsightListScreen(
+    navController: NavController,
+    viewModel: SearchByRegionInsightListViewModel
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -54,15 +60,23 @@ private fun SearchByRegionInsightListScreen(navController: NavController) {
             )
         },
         content = { contentPadding ->
-            SearchByRegionInsightListContent(contentPadding)
+            SearchByRegionInsightListContent(
+                navController = navController,
+                viewModel = viewModel,
+                contentPadding = contentPadding
+            )
         }
     )
 }
 
 @Composable
-private fun SearchByRegionInsightListContent(contentPadding: PaddingValues) {
-    val viewModel = hiltViewModel<SearchByRegionInsightListViewModel>()
-    val insights by viewModel.insights.collectAsStateWithLifecycle()
+private fun SearchByRegionInsightListContent(
+    navController: NavController,
+    viewModel: SearchByRegionInsightListViewModel,
+    contentPadding: PaddingValues
+) {
+    val insights = viewModel.insights.collectAsLazyPagingItems()
+    val insightCount by viewModel.insightCount.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -74,7 +88,7 @@ private fun SearchByRegionInsightListContent(contentPadding: PaddingValues) {
             modifier = Modifier
                 .padding(top = 24.dp)
                 .padding(horizontal = 20.dp),
-            text = "${insights.size}개",
+            text = "${insightCount}개",
             style = T600_16_22_4,
             color = Gray900
         )
@@ -86,16 +100,19 @@ private fun SearchByRegionInsightListContent(contentPadding: PaddingValues) {
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(insights) {
+            items(insights.itemCount) { index ->
+                val insightVo = insights[index] ?: return@items
                 InsightItem(
                     itemType = InsightItemType.HORIZONTAL,
-                    coverImage = "",
-                    region = "강남구 신논현동",
-                    recommendCount = 24,
-                    title = it,
-                    nickname = "홍길동",
+                    coverImage = insightVo.mainImage,
+                    region = insightVo.address.toGuDong(),
+                    recommendCount = insightVo.recommendedCount,
+                    title = insightVo.title,
+                    nickname = insightVo.nickname,
                     onClick = {
-                        // todo : 인사이트 상세로 이동
+                        navController.navigate(
+                            "$INSIGHT_DETAIL_SCREEN?insightId=${insightVo.insightId}"
+                        )
                     }
                 )
             }
@@ -107,6 +124,9 @@ private fun SearchByRegionInsightListContent(contentPadding: PaddingValues) {
 @Composable
 private fun SearchByRegionInsightListScreenPreview() {
     ImdangTheme {
-        SearchByRegionInsightListScreen(navController = rememberNavController())
+        SearchByRegionInsightListScreen(
+            navController = rememberNavController(),
+            viewModel = FakeSearchByRegionInsightListViewModel()
+        )
     }
 }
