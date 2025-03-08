@@ -49,20 +49,20 @@ open class VisitComplexInsightListViewModel @Inject constructor(
     val insightCount = _insightCount.asStateFlow()
 
     init {
-        fetchVisitedAptComplexes()
+        fetchVisitedComplexes()
     }
 
-    private fun fetchVisitedAptComplexes() {
+    private fun fetchVisitedComplexes() {
         viewModelScope.launch {
             _visitedComplexes.value =
-                getVisitedComplexesUseCase(Unit)?.mapIndexed { index, visitedAptComplexDto ->
-                    visitedAptComplexDto.mapper(isSelected = index == selectedIndex.value)
+                getVisitedComplexesUseCase(Unit)?.mapIndexed { index, visitedComplexDto ->
+                    visitedComplexDto.mapper(isSelected = index == selectedIndex.value)
                 } ?: emptyList()
-            fetchInsightsByAptComplex()
+            fetchInsightsByComplex()
         }
     }
 
-    private fun fetchInsightsByAptComplex() {
+    private fun fetchInsightsByComplex() {
         viewModelScope.launch {
             val complexName = visitedComplexes.value.firstOrNull {
                 it.isSelected
@@ -93,6 +93,6 @@ open class VisitComplexInsightListViewModel @Inject constructor(
             it.copy(isSelected = it.complexName == complexVo.complexName)
         }
         _selectedIndex.value = visitedComplexes.value.indexOfFirst { it.isSelected }
-        fetchInsightsByAptComplex()
+        fetchInsightsByComplex()
     }
 }

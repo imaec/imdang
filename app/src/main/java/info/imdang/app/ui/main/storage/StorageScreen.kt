@@ -410,7 +410,7 @@ private fun StorageInsightFilterView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = selectedComplex?.aptComplexName
+                        text = selectedComplex?.complexName
                             ?: stringResource(R.string.see_by_complex),
                         style = T600_14_19_6,
                         color = if (selectedComplex != null) White else Gray500
@@ -519,7 +519,7 @@ private fun StorageComplexBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = it.aptComplexName,
+                    text = it.complexName,
                     style = T500_16_22_4,
                     color = Gray900
                 )

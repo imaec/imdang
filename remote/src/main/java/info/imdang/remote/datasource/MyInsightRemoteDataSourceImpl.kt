@@ -1,7 +1,7 @@
 package info.imdang.remote.datasource
 
 import info.imdang.data.datasource.remote.MyInsightRemoteDataSource
-import info.imdang.data.model.response.myinsight.AptComplexResponse
+import info.imdang.data.model.response.myinsight.ComplexResponse
 import info.imdang.data.model.response.common.PagingResponse
 import info.imdang.data.model.response.insight.InsightResponse
 import info.imdang.data.model.response.myinsight.MyInsightAddressResponse
@@ -18,11 +18,11 @@ internal class MyInsightRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getComplexesByAddress(
         queries: Map<String, String>
-    ): List<AptComplexResponse> = myInsightService.getComplexesByAddress(queries)
+    ): List<ComplexResponse> = myInsightService.getComplexesByAddress(queries)
 
     override suspend fun getMyInsightsByAddress(
         addressQueries: Map<String, String>,
-        aptComplexName: String?,
+        complexName: String?,
         onlyMine: Boolean?,
         page: Int?,
         size: Int?,
@@ -30,7 +30,7 @@ internal class MyInsightRemoteDataSourceImpl @Inject constructor(
         properties: List<String>?
     ): PagingResponse<InsightResponse, InsightDto> = myInsightService.getMyInsightsByAddress(
         addressQueries = addressQueries,
-        aptComplexName = aptComplexName,
+        complexName = complexName,
         onlyMine = onlyMine,
         page = page,
         size = size,

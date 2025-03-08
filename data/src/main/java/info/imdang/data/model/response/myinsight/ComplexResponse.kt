@@ -1,13 +1,13 @@
 package info.imdang.data.model.response.myinsight
 
 import info.imdang.data.mapper.DataToDomainMapper
-import info.imdang.domain.model.myinsight.AptComplexDto
+import info.imdang.domain.model.myinsight.ComplexDto
 
-data class AptComplexResponse(
+data class ComplexResponse(
     val apartmentComplexName: String,
     val insightCount: Int?
-) : DataToDomainMapper<AptComplexDto> {
-    override fun mapper(): AptComplexDto = AptComplexDto(
+) : DataToDomainMapper<ComplexDto> {
+    override fun mapper(): ComplexDto = ComplexDto(
         apartmentComplexName = apartmentComplexName,
         insightCount = insightCount
     )

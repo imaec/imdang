@@ -1,6 +1,6 @@
 package info.imdang.data.datasource.remote
 
-import info.imdang.data.model.response.myinsight.AptComplexResponse
+import info.imdang.data.model.response.myinsight.ComplexResponse
 import info.imdang.data.model.response.common.PagingResponse
 import info.imdang.data.model.response.insight.InsightResponse
 import info.imdang.data.model.response.myinsight.MyInsightAddressResponse
@@ -10,11 +10,11 @@ interface MyInsightRemoteDataSource {
 
     suspend fun getAddresses(): List<MyInsightAddressResponse>
 
-    suspend fun getComplexesByAddress(queries: Map<String, String>): List<AptComplexResponse>
+    suspend fun getComplexesByAddress(queries: Map<String, String>): List<ComplexResponse>
 
     suspend fun getMyInsightsByAddress(
         addressQueries: Map<String, String>,
-        aptComplexName: String?,
+        complexName: String?,
         onlyMine: Boolean?,
         page: Int?,
         size: Int?,

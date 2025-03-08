@@ -2,7 +2,7 @@ package info.imdang.app.ui.main.storage.preview
 
 import androidx.paging.PagingData
 import info.imdang.app.model.insight.InsightVo
-import info.imdang.app.model.myinsight.AptComplexVo
+import info.imdang.app.model.myinsight.ComplexVo
 import info.imdang.app.model.myinsight.MyInsightAddressVo
 import info.imdang.app.ui.main.storage.StorageViewModel
 import info.imdang.domain.usecase.myinsight.FakeGetAddressesUseCase
@@ -18,6 +18,6 @@ class FakeStorageViewModel : StorageViewModel(
         _insights.value = PagingData.from(InsightVo.getSamples(size = 33))
         _insightCount.value = 33
         _addresses.value = MyInsightAddressVo.getSamples(size = 4)
-        _complexes.value = AptComplexVo.getSamples(size = 15)
+        _complexes.value = ComplexVo.getSamples(size = 15)
     }
 }

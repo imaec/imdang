@@ -118,7 +118,7 @@ open class HomeViewModel @Inject constructor(
         fetchCoupon()
 
         // 탐색
-        fetchVisitedAptComplexes()
+        fetchVisitedComplexes()
         fetchInsights()
         fetchRecommendInsights()
     }
@@ -153,17 +153,17 @@ open class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun fetchVisitedAptComplexes() {
+    private fun fetchVisitedComplexes() {
         viewModelScope.launch {
             _visitedComplexes.value =
                 getVisitedComplexesUseCase(Unit)?.mapIndexed { index, visitedComplexDto ->
                     visitedComplexDto.mapper(isSelected = index == 0)
                 } ?: emptyList()
-            fetchInsightsByAptComplex()
+            fetchInsightsByComplex()
         }
     }
 
-    private fun fetchInsightsByAptComplex() {
+    private fun fetchInsightsByComplex() {
         viewModelScope.launch {
             val selectedComplexName = visitedComplexes.value.firstOrNull {
                 it.isSelected
@@ -228,7 +228,7 @@ open class HomeViewModel @Inject constructor(
         _visitedComplexes.value = visitedComplexes.value.mapIndexed { index, visitedComplexVo ->
             visitedComplexVo.copy(isSelected = index == selectedIndex)
         }
-        fetchInsightsByAptComplex()
+        fetchInsightsByComplex()
     }
 
     fun getSelectedComplexIndex() = visitedComplexes.value.indexOfFirst { it.isSelected }

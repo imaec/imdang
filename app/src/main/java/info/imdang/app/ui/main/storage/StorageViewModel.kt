@@ -8,12 +8,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import info.imdang.app.base.BaseViewModel
 import info.imdang.app.model.insight.InsightVo
 import info.imdang.app.model.insight.mapper
-import info.imdang.app.model.myinsight.AptComplexVo
+import info.imdang.app.model.myinsight.ComplexVo
 import info.imdang.app.model.myinsight.MyInsightAddressVo
 import info.imdang.app.model.myinsight.mapper
 import info.imdang.domain.model.common.PagingParams
 import info.imdang.domain.model.insight.InsightDto
-import info.imdang.domain.model.myinsight.AptComplexDto
+import info.imdang.domain.model.myinsight.ComplexDto
 import info.imdang.domain.usecase.myinsight.GetAddressesUseCase
 import info.imdang.domain.usecase.myinsight.GetComplexesByAddressUseCase
 import info.imdang.domain.usecase.myinsight.GetMyInsightsByAddressParams
@@ -50,10 +50,10 @@ open class StorageViewModel @Inject constructor(
     private val _isSeeOnlyMyInsight = MutableStateFlow(false)
     val isSeeOnlyMyInsight = _isSeeOnlyMyInsight.asStateFlow()
 
-    protected val _complexes = MutableStateFlow<List<AptComplexVo>>(emptyList())
+    protected val _complexes = MutableStateFlow<List<ComplexVo>>(emptyList())
     val complexes = _complexes.asStateFlow()
 
-    private val _selectedComplex = MutableStateFlow<AptComplexVo?>(null)
+    private val _selectedComplex = MutableStateFlow<ComplexVo?>(null)
     val selectedComplex = _selectedComplex.asStateFlow()
 
     init {
@@ -74,7 +74,7 @@ open class StorageViewModel @Inject constructor(
         viewModelScope.launch {
             _complexes.value = getComplexesByAddressUseCase(
                 selectedAddress.value?.toAddressDto() ?: return@launch
-            )?.map(AptComplexDto::mapper) ?: emptyList()
+            )?.map(ComplexDto::mapper) ?: emptyList()
         }
     }
 
@@ -83,7 +83,7 @@ open class StorageViewModel @Inject constructor(
             getMyInsightsByAddressUseCase(
                 GetMyInsightsByAddressParams(
                     address = selectedAddress.value?.toAddressDto() ?: return@launch,
-                    aptComplexName = selectedComplex.value?.aptComplexName,
+                    complexName = selectedComplex.value?.complexName,
                     onlyMine = isSeeOnlyMyInsight.value,
                     pagingParams = PagingParams(
                         totalCountListener = {
@@ -116,7 +116,7 @@ open class StorageViewModel @Inject constructor(
         fetchInsightsByAddress()
     }
 
-    fun updateSelectedComplex(item: AptComplexVo?) {
+    fun updateSelectedComplex(item: ComplexVo?) {
         _selectedComplex.value = item
         fetchInsightsByAddress()
     }

@@ -7,7 +7,7 @@ data class MyInsightAddressVo(
     val siDo: String,
     val siGunGu: String,
     val eupMyeonDong: String,
-    val aptComplexCount: Int,
+    val complexCount: Int,
     val insightCount: Int,
     val isSelected: Boolean
 ) {
@@ -33,7 +33,7 @@ data class MyInsightAddressVo(
                         siDo = "서울특별시",
                         siGunGu = "강남구",
                         eupMyeonDong = "역삼동",
-                        aptComplexCount = 4,
+                        complexCount = 4,
                         insightCount = 3,
                         isSelected = it == 0
                     )
@@ -50,7 +50,7 @@ fun MyInsightAddressDto.mapper(
     siDo = siDo,
     siGunGu = siGunGu,
     eupMyeonDong = eupMyeonDong,
-    aptComplexCount = apartmentComplexCount,
+    complexCount = apartmentComplexCount,
     insightCount = insightCount,
     isSelected = isSelected
 )

@@ -130,7 +130,7 @@ private fun StorageAddressContent(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "${it.aptComplexCount}개",
+                                    text = "${it.complexCount}개",
                                     style = T500_14_19_6,
                                     color = Orange500
                                 )

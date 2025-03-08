@@ -8,7 +8,7 @@ import info.imdang.data.pagingsource.getPagingFlow
 import info.imdang.domain.model.common.AddressDto
 import info.imdang.domain.model.common.PagingDto
 import info.imdang.domain.model.insight.InsightDto
-import info.imdang.domain.model.myinsight.AptComplexDto
+import info.imdang.domain.model.myinsight.ComplexDto
 import info.imdang.domain.model.myinsight.MyInsightAddressDto
 import info.imdang.domain.repository.MyInsightRepository
 import kotlinx.coroutines.flow.Flow
@@ -23,13 +23,13 @@ internal class MyInsightRepositoryImpl @Inject constructor(
 
     override suspend fun getComplexesByAddress(
         address: AddressDto
-    ): List<AptComplexDto> = myInsightRemoteDataSource.getComplexesByAddress(
+    ): List<ComplexDto> = myInsightRemoteDataSource.getComplexesByAddress(
         queries = Gson().fromJson<Map<String, String>>(Gson().toJson(address), Map::class.java)
     ).mapper()
 
     override suspend fun getMyInsightsByAddress(
         address: AddressDto,
-        aptComplexName: String?,
+        complexName: String?,
         onlyMine: Boolean?,
         page: Int?,
         size: Int?,
@@ -43,7 +43,7 @@ internal class MyInsightRepositoryImpl @Inject constructor(
             myInsightRemoteDataSource.getMyInsightsByAddress(
                 addressQueries = Gson()
                     .fromJson<Map<String, String>>(Gson().toJson(address), Map::class.java),
-                aptComplexName = aptComplexName,
+                complexName = complexName,
                 onlyMine = onlyMine,
                 page = currentPage,
                 size = pageSize,

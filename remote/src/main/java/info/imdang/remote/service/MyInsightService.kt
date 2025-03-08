@@ -1,6 +1,6 @@
 package info.imdang.remote.service
 
-import info.imdang.data.model.response.myinsight.AptComplexResponse
+import info.imdang.data.model.response.myinsight.ComplexResponse
 import info.imdang.data.model.response.common.PagingResponse
 import info.imdang.data.model.response.insight.InsightResponse
 import info.imdang.data.model.response.myinsight.MyInsightAddressResponse
@@ -19,13 +19,13 @@ internal interface MyInsightService {
     @GET("my-insights/by-district/apartment-complexes")
     suspend fun getComplexesByAddress(
         @QueryMap queries: Map<String, String>
-    ): List<AptComplexResponse>
+    ): List<ComplexResponse>
 
     /** 보관함 인사이트 목록 조회 */
     @GET("my-insights")
     suspend fun getMyInsightsByAddress(
         @QueryMap addressQueries: Map<String, String>,
-        @Query("apartmentComplexName") aptComplexName: String?,
+        @Query("apartmentComplexName") complexName: String?,
         @Query("onlyMine") onlyMine: Boolean?,
         @Query("pageNumber") page: Int?,
         @Query("pageSize") size: Int?,

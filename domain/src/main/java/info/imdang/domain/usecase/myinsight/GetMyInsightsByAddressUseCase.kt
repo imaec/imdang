@@ -6,7 +6,7 @@ import info.imdang.domain.model.common.AddressDto
 import info.imdang.domain.model.common.PagingDto
 import info.imdang.domain.model.common.PagingParams
 import info.imdang.domain.model.insight.InsightDto
-import info.imdang.domain.model.myinsight.AptComplexDto
+import info.imdang.domain.model.myinsight.ComplexDto
 import info.imdang.domain.model.myinsight.MyInsightAddressDto
 import info.imdang.domain.repository.MyInsightRepository
 import info.imdang.domain.usecase.UseCase
@@ -26,7 +26,7 @@ open class GetMyInsightsByAddressUseCase @Inject constructor(
         parameters: GetMyInsightsByAddressParams
     ): Flow<PagingData<InsightDto>> = repository.getMyInsightsByAddress(
         address = parameters.address,
-        aptComplexName = parameters.aptComplexName,
+        complexName = parameters.complexName,
         onlyMine = parameters.onlyMine,
         page = parameters.pagingParams.page - 1,
         size = parameters.pagingParams.size,
@@ -38,7 +38,7 @@ open class GetMyInsightsByAddressUseCase @Inject constructor(
 
 data class GetMyInsightsByAddressParams(
     val address: AddressDto,
-    val aptComplexName: String?,
+    val complexName: String?,
     val onlyMine: Boolean?,
     val pagingParams: PagingParams
 )
@@ -49,13 +49,13 @@ class FakeGetMyInsightsByAddressUseCase : GetMyInsightsByAddressUseCase(
             TODO("Not yet implemented")
         }
 
-        override suspend fun getComplexesByAddress(address: AddressDto): List<AptComplexDto> {
+        override suspend fun getComplexesByAddress(address: AddressDto): List<ComplexDto> {
             TODO("Not yet implemented")
         }
 
         override suspend fun getMyInsightsByAddress(
             address: AddressDto,
-            aptComplexName: String?,
+            complexName: String?,
             onlyMine: Boolean?,
             page: Int?,
             size: Int?,

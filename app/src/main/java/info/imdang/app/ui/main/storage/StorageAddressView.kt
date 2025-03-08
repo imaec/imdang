@@ -95,7 +95,7 @@ private fun StorageAddressPage(addressVo: MyInsightAddressVo) {
                     color = White
                 )
                 Text(
-                    text = "${addressVo.aptComplexCount}개",
+                    text = "${addressVo.complexCount}개",
                     style = T600_16_22_4,
                     color = White
                 )

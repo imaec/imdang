@@ -2,7 +2,7 @@ package info.imdang.domain.usecase.myinsight
 
 import androidx.paging.PagingData
 import info.imdang.domain.IoDispatcher
-import info.imdang.domain.model.myinsight.AptComplexDto
+import info.imdang.domain.model.myinsight.ComplexDto
 import info.imdang.domain.model.common.AddressDto
 import info.imdang.domain.model.common.PagingDto
 import info.imdang.domain.model.insight.InsightDto
@@ -17,9 +17,9 @@ import javax.inject.Inject
 open class GetComplexesByAddressUseCase @Inject constructor(
     private val repository: MyInsightRepository,
     @IoDispatcher dispatcher: CoroutineDispatcher
-) : UseCase<AddressDto, List<AptComplexDto>>(coroutineDispatcher = dispatcher) {
+) : UseCase<AddressDto, List<ComplexDto>>(coroutineDispatcher = dispatcher) {
 
-    override suspend fun execute(parameters: AddressDto): List<AptComplexDto> =
+    override suspend fun execute(parameters: AddressDto): List<ComplexDto> =
         repository.getComplexesByAddress(parameters)
 }
 
@@ -29,13 +29,13 @@ class FakeGetComplexesByAddressUseCase : GetComplexesByAddressUseCase(
             TODO("Not yet implemented")
         }
 
-        override suspend fun getComplexesByAddress(address: AddressDto): List<AptComplexDto> {
+        override suspend fun getComplexesByAddress(address: AddressDto): List<ComplexDto> {
             TODO("Not yet implemented")
         }
 
         override suspend fun getMyInsightsByAddress(
             address: AddressDto,
-            aptComplexName: String?,
+            complexName: String?,
             onlyMine: Boolean?,
             page: Int?,
             size: Int?,

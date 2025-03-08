@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import info.imdang.domain.model.common.AddressDto
 import info.imdang.domain.model.common.PagingDto
 import info.imdang.domain.model.insight.InsightDto
-import info.imdang.domain.model.myinsight.AptComplexDto
+import info.imdang.domain.model.myinsight.ComplexDto
 import info.imdang.domain.model.myinsight.MyInsightAddressDto
 import kotlinx.coroutines.flow.Flow
 
@@ -12,11 +12,11 @@ interface MyInsightRepository {
 
     suspend fun getAddresses(): List<MyInsightAddressDto>
 
-    suspend fun getComplexesByAddress(address: AddressDto): List<AptComplexDto>
+    suspend fun getComplexesByAddress(address: AddressDto): List<ComplexDto>
 
     suspend fun getMyInsightsByAddress(
         address: AddressDto,
-        aptComplexName: String?,
+        complexName: String?,
         onlyMine: Boolean?,
         page: Int?,
         size: Int?,
