@@ -11,24 +11,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import info.imdang.app.ui.insight.write.WriteInsightViewModel
-import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
-import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
 import info.imdang.app.ui.insight.write.WriteInsightInit
+import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_OVERALL_REVIEW_SCREEN
 import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_REVIEW_TYPE
+import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightReviewType
+import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
+import info.imdang.app.ui.insight.write.preview.FakeWriteInsightViewModel
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteInsightComplexFacilityPage(navController: NavController = rememberNavController()) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
+fun WriteInsightComplexFacilityPage(
+    navController: NavController,
+    viewModel: WriteInsightViewModel
+) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
@@ -106,8 +108,12 @@ fun WriteInsightComplexFacilityPage(navController: NavController = rememberNavCo
 @Preview(showBackground = true, heightDp = 1415)
 @Composable
 private fun WriteInsightComplexFacilityPreview() {
-    WriteInsightInit()
+    val viewModel = FakeWriteInsightViewModel()
+    WriteInsightInit(viewModel = viewModel)
     ImdangTheme {
-        WriteInsightComplexFacilityPage()
+        WriteInsightComplexFacilityPage(
+            navController = rememberNavController(),
+            viewModel = viewModel
+        )
     }
 }

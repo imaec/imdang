@@ -29,7 +29,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -42,6 +41,7 @@ import info.imdang.app.ui.insight.write.environment.WriteInsightComplexEnvironme
 import info.imdang.app.ui.insight.write.facility.WriteInsightComplexFacilityPage
 import info.imdang.app.ui.insight.write.goodnews.WriteInsightGoodNewsPage
 import info.imdang.app.ui.insight.write.infra.WriteInsightInfraPage
+import info.imdang.app.ui.insight.write.preview.FakeWriteInsightViewModel
 import info.imdang.app.util.KeyboardCallback
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.modifier.visible
@@ -54,12 +54,13 @@ import info.imdang.component.system.gradient.ButtonGradient
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val WRITE_INSIGHT_SCREEN = "writeInsight"
 
 fun NavGraphBuilder.writeInsightScreen(navController: NavHostController) {
-    composable(route = WRITE_INSIGHT_SCREEN) {
+    composable(route = "$WRITE_INSIGHT_SCREEN?insightId={insightId}") {
         WriteInsightScreen(
             navController = navController,
             viewModel = it.sharedViewModel(navController, WRITE_INSIGHT_SCREEN)
@@ -71,7 +72,7 @@ fun NavGraphBuilder.writeInsightScreen(navController: NavHostController) {
 @Composable
 private fun WriteInsightScreen(
     navController: NavHostController,
-    viewModel: WriteInsightViewModel = hiltViewModel()
+    viewModel: WriteInsightViewModel
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { 5 }
     var isInit by rememberSaveable { mutableStateOf(false) }
@@ -109,7 +110,10 @@ private fun WriteInsightScreen(
                 .fillMaxSize()
                 .imePadding(),
             topBar = {
-                WriteInsightTopBar(navController = navController)
+                WriteInsightTopBar(
+                    navController = navController,
+                    viewModel = viewModel
+                )
             },
             content = { contentPadding ->
                 WriteInsightContent(
@@ -170,11 +174,21 @@ private fun WriteInsightContent(
                     navController = navController,
                     viewModel = viewModel
                 )
-                1 -> WriteInsightInfraPage(navController = navController)
-                2 -> WriteInsightComplexEnvironmentPage(navController = navController)
-                3 -> WriteInsightComplexFacilityPage(navController = navController)
+                1 -> WriteInsightInfraPage(
+                    navController = navController,
+                    viewModel = viewModel
+                )
+                2 -> WriteInsightComplexEnvironmentPage(
+                    navController = navController,
+                    viewModel = viewModel
+                )
+                3 -> WriteInsightComplexFacilityPage(
+                    navController = navController,
+                    viewModel = viewModel
+                )
                 4 -> WriteInsightGoodNewsPage(
                     navController = navController,
+                    viewModel = viewModel,
                     onHideTooltip = onHideTooltip
                 )
             }
@@ -204,6 +218,14 @@ private fun WriteInsightBottomBar(
     val isButtonEnabled by viewModel.isButtonEnabled.collectAsStateWithLifecycle()
     val isValidButtonEnabled by viewModel.isValidButtonEnabled.collectAsStateWithLifecycle()
     var isShowWriteCompleteDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest {
+            when (it) {
+                is WriteInsightEvent.WriteInsightComplete -> isShowWriteCompleteDialog = true
+            }
+        }
+    }
 
     if (isShowWriteCompleteDialog) {
         CommonDialog(
@@ -277,8 +299,7 @@ private fun WriteInsightBottomBar(
                                 viewModel.updateProgress()
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             } else {
-                                // todo : 인사이트 작성
-                                isShowWriteCompleteDialog = true
+                                viewModel.writeInsight()
                             }
                         }
                     } else {
@@ -293,7 +314,7 @@ private fun WriteInsightBottomBar(
 }
 
 @Composable
-fun WriteInsightInit(viewModel: WriteInsightViewModel = hiltViewModel()) {
+fun WriteInsightInit(viewModel: WriteInsightViewModel) {
     viewModel.initSelectionItems(
         visitTimes = BasicInfoItems.visitTimes(),
         trafficsMethods = BasicInfoItems.traffics(),
@@ -327,7 +348,10 @@ fun WriteInsightInit(viewModel: WriteInsightViewModel = hiltViewModel()) {
 @Composable
 private fun WriteInsightScreenPreview() {
     ImdangTheme {
-        WriteInsightScreen(navController = rememberNavController())
+        WriteInsightScreen(
+            navController = rememberNavController(),
+            viewModel = FakeWriteInsightViewModel()
+        )
     }
 }
 

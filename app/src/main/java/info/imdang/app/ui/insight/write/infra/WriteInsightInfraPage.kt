@@ -13,26 +13,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import info.imdang.app.ui.insight.write.InfraItems
+import info.imdang.app.ui.insight.write.WriteInsightInit
 import info.imdang.app.ui.insight.write.WriteInsightSelectionItems
 import info.imdang.app.ui.insight.write.WriteInsightViewModel
-import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
-import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
-import info.imdang.app.ui.insight.write.WriteInsightInit
 import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_OVERALL_REVIEW_SCREEN
 import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_REVIEW_TYPE
+import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightReviewType
+import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
+import info.imdang.app.ui.insight.write.preview.FakeWriteInsightViewModel
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteInsightInfraPage(navController: NavController = rememberNavController()) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
+fun WriteInsightInfraPage(
+    navController: NavController,
+    viewModel: WriteInsightViewModel
+) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
@@ -142,16 +144,20 @@ fun WriteInsightInfraPage(navController: NavController = rememberNavController()
 @Preview(showBackground = true, heightDp = 1950)
 @Composable
 private fun WriteInsightInfraPagePreview1() {
-    WriteInsightInit()
+    val viewModel = FakeWriteInsightViewModel()
+    WriteInsightInit(viewModel = viewModel)
     ImdangTheme {
-        WriteInsightInfraPage()
+        WriteInsightInfraPage(
+            navController = rememberNavController(),
+            viewModel = viewModel
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun WriteInsightInfraPagePreview2() {
-    WriteInsightInit()
+    WriteInsightInit(viewModel = FakeWriteInsightViewModel())
     ImdangTheme {
         Column(
             modifier = Modifier

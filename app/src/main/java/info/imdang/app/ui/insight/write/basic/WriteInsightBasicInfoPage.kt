@@ -47,7 +47,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -63,6 +62,7 @@ import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
 import info.imdang.app.ui.insight.write.common.WriteInsightTitle
+import info.imdang.app.ui.insight.write.preview.FakeWriteInsightViewModel
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.modifier.visible
 import info.imdang.component.system.textfield.CommonTextField
@@ -85,8 +85,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun WriteInsightBasicInfoPage(
-    navController: NavController = rememberNavController(),
-    viewModel: WriteInsightViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: WriteInsightViewModel
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
@@ -263,7 +263,8 @@ private fun CoverImageView(viewModel: WriteInsightViewModel) {
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val coverImage by viewModel.coverImageFile.collectAsStateWithLifecycle()
+            val coverImage = viewModel.coverImageFile.collectAsStateWithLifecycle().value
+                ?: viewModel.coverImageUrl.collectAsStateWithLifecycle().value
             Box {
                 Box(
                     modifier = Modifier
@@ -428,22 +429,42 @@ private fun TitleView(
     viewModel: WriteInsightViewModel,
     onFocusChanged: (isFocused: Boolean) -> Unit
 ) {
-    CommonTextField(
-        modifier = Modifier
-            .focusRequester(FocusRequester())
-            .onFocusChanged {
-                onFocusChanged(it.isFocused)
-            },
-        text = viewModel.title.collectAsStateWithLifecycle().value,
-        imeAction = ImeAction.Next,
-        title = stringResource(R.string.title),
-        isRequired = true,
-        minLength = 1,
-        maxLength = 10,
-        onTextChanged = {
-            viewModel.updateTitle(title = it)
-        }
-    )
+    val title by viewModel.title.collectAsStateWithLifecycle()
+    if (viewModel.insightId != null && title.isNotBlank()) {
+        CommonTextField(
+            modifier = Modifier
+                .focusRequester(FocusRequester())
+                .onFocusChanged {
+                    onFocusChanged(it.isFocused)
+                },
+            text = title,
+            imeAction = ImeAction.Next,
+            title = stringResource(R.string.title),
+            isRequired = true,
+            minLength = 1,
+            maxLength = 10,
+            onTextChanged = {
+                viewModel.updateTitle(title = it)
+            }
+        )
+    } else {
+        CommonTextField(
+            modifier = Modifier
+                .focusRequester(FocusRequester())
+                .onFocusChanged {
+                    onFocusChanged(it.isFocused)
+                },
+            text = title,
+            imeAction = ImeAction.Next,
+            title = stringResource(R.string.title),
+            isRequired = true,
+            minLength = 1,
+            maxLength = 10,
+            onTextChanged = {
+                viewModel.updateTitle(title = it)
+            }
+        )
+    }
 }
 
 @Composable
@@ -529,9 +550,13 @@ private fun VisitDateView(
 @Preview(showBackground = true, heightDp = 1410)
 @Composable
 private fun WriteInsightBasicInfoPreview() {
-    WriteInsightInit()
+    val viewModel = FakeWriteInsightViewModel()
+    WriteInsightInit(viewModel = viewModel)
     ImdangTheme {
-        WriteInsightBasicInfoPage()
+        WriteInsightBasicInfoPage(
+            navController = rememberNavController(),
+            viewModel = viewModel
+        )
     }
 }
 

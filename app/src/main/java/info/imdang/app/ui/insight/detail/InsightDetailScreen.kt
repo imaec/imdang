@@ -43,6 +43,7 @@ import info.imdang.app.model.insight.InsightDetailItem
 import info.imdang.app.model.insight.InsightDetailStatus
 import info.imdang.app.ui.insight.detail.bottomsheet.ExchangeBottomSheet
 import info.imdang.app.ui.insight.detail.preview.FakeInsightDetailViewModel
+import info.imdang.app.ui.insight.write.WRITE_INSIGHT_SCREEN
 import info.imdang.component.common.bottomsheet.BottomSheetHandle
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
@@ -109,7 +110,10 @@ private fun InsightDetailScreen(
             )
         },
         bottomBar = {
-            InsightDetailBottomBar(viewModel = viewModel)
+            InsightDetailBottomBar(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     )
 }
@@ -247,7 +251,10 @@ private fun InsightDetailContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun InsightDetailBottomBar(viewModel: InsightDetailViewModel) {
+private fun InsightDetailBottomBar(
+    navController: NavController,
+    viewModel: InsightDetailViewModel
+) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isShowExchangeInfoDialog by remember { mutableStateOf(false) }
     var isShowExchangeBottomSheet by remember { mutableStateOf(false) }
@@ -336,7 +343,9 @@ private fun InsightDetailBottomBar(viewModel: InsightDetailViewModel) {
                     InsightDetailStatus.EXCHANGE_WAITING -> {}
                     InsightDetailStatus.EXCHANGE_COMPLETE -> {}
                     InsightDetailStatus.MY_INSIGHT -> {
-                        // todo : 인사이트 수정
+                        navController.navigate(
+                            "$WRITE_INSIGHT_SCREEN?insightId=${viewModel.insightId}"
+                        )
                     }
                 }
             }

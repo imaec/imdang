@@ -27,10 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import info.imdang.app.ui.insight.write.preview.FakeWriteInsightViewModel
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.common.image.Icon
 import info.imdang.component.common.topbar.TopBar
@@ -45,8 +45,10 @@ import info.imdang.component.theme.T600_14_19_6
 import info.imdang.resource.R
 
 @Composable
-fun WriteInsightTopBar(navController: NavController) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
+fun WriteInsightTopBar(
+    navController: NavController,
+    viewModel: WriteInsightViewModel
+) {
     val selectedPage by viewModel.selectedPage.collectAsStateWithLifecycle()
     val pages = listOf(
         stringResource(R.string.basic_info),
@@ -194,6 +196,9 @@ private fun WriteInsightPageItem(
 @Composable
 private fun WriteInsightTopBarPreview() {
     ImdangTheme {
-        WriteInsightTopBar(navController = rememberNavController())
+        WriteInsightTopBar(
+            navController = rememberNavController(),
+            viewModel = FakeWriteInsightViewModel()
+        )
     }
 }

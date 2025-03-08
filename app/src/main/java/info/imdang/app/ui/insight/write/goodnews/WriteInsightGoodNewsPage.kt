@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -22,16 +21,17 @@ import info.imdang.app.ui.insight.write.common.WRITE_INSIGHT_REVIEW_TYPE
 import info.imdang.app.ui.insight.write.common.WriteInsightDetailContentView
 import info.imdang.app.ui.insight.write.common.WriteInsightReviewType
 import info.imdang.app.ui.insight.write.common.WriteInsightSelectionButtons
+import info.imdang.app.ui.insight.write.preview.FakeWriteInsightViewModel
 import info.imdang.component.theme.ImdangTheme
 import info.imdang.resource.R
 import kotlinx.coroutines.launch
 
 @Composable
 fun WriteInsightGoodNewsPage(
-    navController: NavController = rememberNavController(),
+    navController: NavController,
+    viewModel: WriteInsightViewModel,
     onHideTooltip: () -> Unit
 ) {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
@@ -149,9 +149,12 @@ fun WriteInsightGoodNewsPage(
 @Preview(showBackground = true, heightDp = 2000)
 @Composable
 private fun WriteInsightGoodNewsPagePreview() {
-    WriteInsightInit()
+    val viewModel = FakeWriteInsightViewModel()
+    WriteInsightInit(viewModel = viewModel)
     ImdangTheme {
         WriteInsightGoodNewsPage(
+            navController = rememberNavController(),
+            viewModel = viewModel,
             onHideTooltip = {}
         )
     }

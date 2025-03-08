@@ -21,11 +21,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import info.imdang.app.ui.insight.write.WriteInsightInit
 import info.imdang.app.ui.insight.write.WriteInsightSelectionItems
-import info.imdang.app.ui.insight.write.WriteInsightViewModel
+import info.imdang.app.ui.insight.write.preview.FakeWriteInsightViewModel
 import info.imdang.component.common.dialog.CommonDialog
 import info.imdang.component.system.button.SelectionButtons
 import info.imdang.component.theme.Gray50
@@ -118,8 +117,8 @@ fun WriteInsightSelectionButtons(
 @Preview(showBackground = true)
 @Composable
 private fun WriteInsightSelectionButtonsPreview() {
-    val viewModel = hiltViewModel<WriteInsightViewModel>()
-    WriteInsightInit()
+    val viewModel = FakeWriteInsightViewModel()
+    WriteInsightInit(viewModel = viewModel)
     ImdangTheme {
         Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
             WriteInsightSelectionButtons(

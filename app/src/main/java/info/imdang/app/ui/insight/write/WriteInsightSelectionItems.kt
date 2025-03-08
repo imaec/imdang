@@ -28,7 +28,7 @@ class WriteInsightSelectionItems(val isSingleSelection: Boolean = false) {
         _items.value = items
     }
 
-    fun selectItem(item: SelectionVo, onShowResetDialog: (resetItem: String) -> Unit) {
+    fun selectItem(item: SelectionVo, onShowResetDialog: (resetItem: String) -> Unit = {}) {
         if (item.isReset()) {
             onShowResetDialog(item.name)
             return
@@ -45,6 +45,12 @@ class WriteInsightSelectionItems(val isSingleSelection: Boolean = false) {
                     it.copy(isSelected = it.isSelected && !resetItems.contains(it.name))
                 }
             }
+        }
+    }
+
+    fun selectItems(selectedItems: List<String>) {
+        _items.value = items.value.map { item ->
+            item.copy(isSelected = selectedItems.any { item.name == it })
         }
     }
 

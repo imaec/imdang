@@ -1,20 +1,50 @@
 package info.imdang.app.ui.insight.write
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import info.imdang.app.base.BaseViewModel
+import info.imdang.app.common.util.formatDate
 import info.imdang.app.common.util.reformatDate
+import info.imdang.app.model.insight.mapper
 import info.imdang.app.util.validateVisitDate
+import info.imdang.component.common.snackbar.showSnackbar
 import info.imdang.component.model.SelectionVo
+import info.imdang.domain.model.common.AddressDto
+import info.imdang.domain.model.insight.ApartmentComplexDto
+import info.imdang.domain.model.insight.ComplexEnvironmentDto
+import info.imdang.domain.model.insight.ComplexFacilityDto
+import info.imdang.domain.model.insight.FavorableNewsDto
+import info.imdang.domain.model.insight.InfraDto
+import info.imdang.domain.model.insight.request.WriteInsightDto
+import info.imdang.domain.usecase.insight.GetInsightDetailUseCase
+import info.imdang.domain.usecase.insight.UpdateInsightParams
+import info.imdang.domain.usecase.insight.UpdateInsightUseCase
+import info.imdang.domain.usecase.insight.WriteInsightParams
+import info.imdang.domain.usecase.insight.WriteInsightUseCase
 import java.io.File
 import java.util.Locale
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
+open class WriteInsightViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val getInsightDetailUseCase: GetInsightDetailUseCase,
+    private val writeInsightUseCase: WriteInsightUseCase,
+    private val updateInsightUseCase: UpdateInsightUseCase
+) : BaseViewModel() {
+
+    val insightId: String? = savedStateHandle["insightId"]
+
+    private val _event = MutableSharedFlow<WriteInsightEvent>()
+    val event = _event.asSharedFlow()
 
     private val _selectedPage = MutableStateFlow(0)
     val selectedPage = _selectedPage.asStateFlow()
@@ -131,7 +161,7 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
     /** 페이지별 작성 완료 여부 **/
     private val basicInfoValid = combine(
         coverImageFile.isValid(),
-//        coverImageUrl.isValid(),
+        coverImageUrl.isValid(),
         titleValid,
         address.isValid(),
         complexName.isValid(),
@@ -141,10 +171,7 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
         accessLimits.selectedItems.isValid(),
         summary.map { it.length in 30..200 }.toStateFlow(false)
     ) { valid ->
-        valid[0] && valid.takeLast(valid.size - 2).all { it }
-        // todo : coverImage 수정 구현 후 사용
-        // (valid[0] || valid[1]) && valid.takeLast(valid.size - 2).all { it }
-        valid.all { it }
+        (valid[0] || valid[1]) && valid.takeLast(valid.size - 2).all { it }
     }.toStateFlow(false)
 
     private val infraValid = combine(
@@ -206,6 +233,70 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
             else -> false
         }
     }.toStateFlow(false)
+
+    init {
+        fetchInsightDetail()
+    }
+
+    private fun fetchInsightDetail() {
+        insightId ?: return
+        viewModelScope.launch {
+            val insight = getInsightDetailUseCase(insightId)?.mapper() ?: return@launch
+
+            // 기본 정보
+            _coverImageUrl.value = insight.mainImage
+            _title.value = insight.title
+            _address.value = insight.address.toJibunAddress()
+            _complexName.value = insight.complexName
+            _latitude.value = insight.address.latitude ?: 0.0
+            _longitude.value = insight.address.longitude ?: 0.0
+            _visitDate.value = insight.visitAt
+            visitTimes.selectItems(insight.visitTimes)
+            trafficsMethods.selectItems(insight.visitMethods)
+            accessLimits.selectItems(listOf(insight.access))
+            _summary.value = insight.summary
+            // 인프라
+            insight.infra?.let {
+                infraTraffics.selectItems(it.traffics)
+                schools.selectItems(it.schools)
+                livingFacilities.selectItems(it.lifeFacilities)
+                cultureFacilities.selectItems(it.cultureFacilities)
+                surroundingEnvironments.selectItems(it.surroundingEnvironments)
+                landmarks.selectItems(it.landmarks)
+                avoidFacilities.selectItems(it.avoidFacilities)
+                _infraReview.value = it.infraReview
+            }
+            // 단지 환경
+            insight.complexEnvironment?.let {
+                buildings.selectItems(listOf(it.building))
+                safeties.selectItems(listOf(it.safety))
+                childrenFacilities.selectItems(listOf(it.childrenFacility))
+                silverFacilities.selectItems(listOf(it.silverFacility))
+                _complexFacilityReview.value = it.complexEnvironmentReview
+            }
+            // 단지 시설
+            insight.complexFacility?.let {
+                familyFacilities.selectItems(it.familyFacilities)
+                multipurposeFacilities.selectItems(it.multipurposeFacilities)
+                leisureFacilities.selectItems(it.leisureFacilities)
+                environments.selectItems(it.environments)
+                _complexFacilityReview.value = it.complexFacilityReview
+            }
+            // 호재
+            insight.goodNews?.let {
+                goodNewsTraffics.selectItems(it.traffics)
+                developments.selectItems(it.developments)
+                educations.selectItems(it.educations)
+                naturalEnvironments.selectItems(it.naturalEnvironments)
+                cultures.selectItems(it.cultures)
+                industries.selectItems(it.industries)
+                policies.selectItems(it.policies)
+                _goodNewsReview.value = it.goodNewsReview
+            }
+
+            updateProgress()
+        }
+    }
 
     fun initSelectionItems(
         visitTimes: List<SelectionVo>,
@@ -335,4 +426,115 @@ class WriteInsightViewModel @Inject constructor() : BaseViewModel() {
     fun updateGoodNewsReview(review: String) {
         _goodNewsReview.value = review
     }
+
+    fun writeInsight() {
+        val writeInsightDto = WriteInsightDto(
+            insightId = insightId,
+            score = progress.value.replace("%", "").toInt(),
+            title = title.value,
+            address = AddressDto(
+                siDo = address.value.split(" ")[0],
+                siGunGu = address.value.split(" ")[1],
+                eupMyeonDong = address.value.split(" ")[2],
+                roadName = "",
+                buildingNumber = address.value.split(" ")[3],
+                detail = "",
+                latitude = latitude.value,
+                longitude = longitude.value
+            ),
+            apartmentComplex = ApartmentComplexDto(
+                name = complexName.value
+            ),
+            visitAt = visitDate.value.formatDate(
+                fromFormat = "yyyy.MM.dd",
+                toFormat = "yyyy-MM-dd"
+            ),
+            visitTimes = visitTimes.formattedSelectedItems(),
+            visitMethods = trafficsMethods.formattedSelectedItems(),
+            access = accessLimits.selectedSingleItem(),
+            summary = summary.value,
+            infra = InfraDto(
+                transportations = infraTraffics.formattedSelectedItems(),
+                schoolDistricts = schools.formattedSelectedItems(),
+                amenities = livingFacilities.formattedSelectedItems(),
+                facilities = cultureFacilities.formattedSelectedItems(),
+                surroundings = surroundingEnvironments.formattedSelectedItems(),
+                landmarks = landmarks.formattedSelectedItems(),
+                unpleasantFacilities = avoidFacilities.formattedSelectedItems(),
+                text = infraReview.value
+            ),
+            complexEnvironment = ComplexEnvironmentDto(
+                buildingCondition = buildings.selectedSingleItem(),
+                security = safeties.selectedSingleItem(),
+                childrenFacility = childrenFacilities.selectedSingleItem(),
+                seniorFacility = silverFacilities.selectedSingleItem(),
+                text = complexEnvironmentReview.value
+            ),
+            complexFacility = ComplexFacilityDto(
+                familyFacilities = familyFacilities.formattedSelectedItems(),
+                multipurposeFacilities = multipurposeFacilities
+                    .formattedSelectedItems(),
+                leisureFacilities = leisureFacilities.formattedSelectedItems(),
+                surroundings = environments.formattedSelectedItems(),
+                text = complexFacilityReview.value
+            ),
+            favorableNews = FavorableNewsDto(
+                transportations = goodNewsTraffics.formattedSelectedItems(),
+                developments = developments.formattedSelectedItems(),
+                educations = educations.formattedSelectedItems(),
+                environments = naturalEnvironments.formattedSelectedItems(),
+                cultures = cultures.formattedSelectedItems(),
+                industries = industries.formattedSelectedItems(),
+                policies = policies.formattedSelectedItems(),
+                text = goodNewsReview.value
+            )
+        )
+
+        viewModelScope.launch {
+            if (insightId == null) {
+                // 인사이트 작성
+                writeInsightUseCase(
+                    WriteInsightParams(
+                        writeInsightDto = writeInsightDto,
+                        mainImage = coverImageFile.value ?: return@launch
+                    ),
+                    onError = {
+                        it.message?.let {
+                            launch {
+                                showSnackbar(it)
+                            }
+                        }
+                    }
+                )?.let {
+                    _event.emit(WriteInsightEvent.WriteInsightComplete(it.insightId))
+                }
+            } else {
+                // 인사이트 수정
+                updateInsightUseCase(
+                    UpdateInsightParams(
+                        writeInsightDto = writeInsightDto,
+                        mainImage = coverImageFile.value
+                    ),
+                    onError = {
+                        it.message?.let {
+                            launch {
+                                showSnackbar(it)
+                            }
+                        }
+                    }
+                )?.let {
+                    _event.emit(WriteInsightEvent.WriteInsightComplete(it.insightId))
+                }
+            }
+        }
+    }
+
+    private fun WriteInsightSelectionItems.formattedSelectedItems() = selectedItems
+        .toStateFlow(emptyList()).value
+        .map {
+            it.name.replace(" ", "_")
+        }
+
+    private fun WriteInsightSelectionItems.selectedSingleItem() =
+        formattedSelectedItems().firstOrNull() ?: ""
 }
