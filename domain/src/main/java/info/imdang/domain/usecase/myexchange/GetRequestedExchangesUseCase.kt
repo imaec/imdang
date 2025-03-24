@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import info.imdang.domain.IoDispatcher
 import info.imdang.domain.model.insight.InsightDto
 import info.imdang.domain.repository.MyExchangeRepository
+import info.imdang.domain.repository.fake.FakeMyExchangeRepositoryImpl
 import info.imdang.domain.usecase.UseCase
 import info.imdang.domain.usecase.auth.FakeGetMemberIdUseCase
 import info.imdang.domain.usecase.auth.GetMemberIdUseCase
@@ -34,31 +35,7 @@ open class GetRequestedExchangesUseCase @Inject constructor(
 }
 
 class FakeGetRequestedExchangesUseCase : GetRequestedExchangesUseCase(
-    repository = object : MyExchangeRepository {
-        override suspend fun getRequestExchanges(
-            memberId: String,
-            exchangeRequestStatus: String?,
-            page: Int?,
-            size: Int?,
-            direction: String?,
-            properties: List<String>?,
-            totalCountListener: ((Int) -> Unit)?
-        ): Flow<PagingData<InsightDto>> {
-            TODO("Not yet implemented")
-        }
-
-        override suspend fun getRequestedExchanges(
-            memberId: String,
-            exchangeRequestStatus: String?,
-            page: Int?,
-            size: Int?,
-            direction: String?,
-            properties: List<String>?,
-            totalCountListener: ((Int) -> Unit)?
-        ): Flow<PagingData<InsightDto>> {
-            TODO("Not yet implemented")
-        }
-    },
+    repository = FakeMyExchangeRepositoryImpl(),
     getMemberIdUseCase = FakeGetMemberIdUseCase(),
     dispatcher = Dispatchers.IO
 )

@@ -3,6 +3,7 @@ package info.imdang.domain.usecase.mypage
 import info.imdang.domain.IoDispatcher
 import info.imdang.domain.model.mypage.MyPageDto
 import info.imdang.domain.repository.MyPageRepository
+import info.imdang.domain.repository.fake.FakeMyPageRepositoryImpl
 import info.imdang.domain.usecase.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,18 +20,6 @@ open class GetMyPageInfoUseCase @Inject constructor(
 }
 
 class FakeGetMyPageInfoUseCase : GetMyPageInfoUseCase(
-    repository = object : MyPageRepository {
-        override suspend fun getMyPageInfo(): MyPageDto {
-            TODO("Not yet implemented")
-        }
-
-        override suspend fun withdrawalKakao(accessToken: String) {
-            TODO("Not yet implemented")
-        }
-
-        override suspend fun withdrawalGoogle(accessToken: String) {
-            TODO("Not yet implemented")
-        }
-    },
+    repository = FakeMyPageRepositoryImpl(),
     dispatcher = Dispatchers.IO
 )

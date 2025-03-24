@@ -2,6 +2,7 @@ package info.imdang.domain.usecase.coupon
 
 import info.imdang.domain.IoDispatcher
 import info.imdang.domain.repository.CouponRepository
+import info.imdang.domain.repository.fake.FakeCouponRepositoryImpl
 import info.imdang.domain.usecase.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -16,10 +17,6 @@ open class IssueCouponUseCase @Inject constructor(
 }
 
 class FakeIssueCouponUseCase : IssueCouponUseCase(
-    repository = object : CouponRepository {
-        override suspend fun issueCoupon() {
-            TODO("Not yet implemented")
-        }
-    },
+    repository = FakeCouponRepositoryImpl(),
     dispatcher = Dispatchers.IO
 )

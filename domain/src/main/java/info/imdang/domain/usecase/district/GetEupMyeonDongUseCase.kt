@@ -2,10 +2,10 @@ package info.imdang.domain.usecase.district
 
 import androidx.paging.PagingData
 import info.imdang.domain.IoDispatcher
-import info.imdang.domain.model.common.PagingDto
 import info.imdang.domain.model.common.PagingParams
 import info.imdang.domain.model.district.DistrictDto
 import info.imdang.domain.repository.DistrictRepository
+import info.imdang.domain.repository.fake.FakeDistrictRepositoryImpl
 import info.imdang.domain.usecase.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -35,19 +35,6 @@ data class GetEupMyeonDongParams(
 )
 
 class FakeGetEupMyeonDongUseCase : GetEupMyeonDongUseCase(
-    repository = object : DistrictRepository {
-        override suspend fun getSiGunGu(page: Int?, size: Int?): PagingDto<DistrictDto> {
-            TODO("Not yet implemented")
-        }
-
-        override suspend fun getEupMyeonDong(
-            siGunGu: String,
-            page: Int?,
-            size: Int?,
-            totalCountListener: ((Int) -> Unit)?
-        ): Flow<PagingData<DistrictDto>> {
-            TODO("Not yet implemented")
-        }
-    },
+    repository = FakeDistrictRepositoryImpl(),
     dispatcher = Dispatchers.IO
 )

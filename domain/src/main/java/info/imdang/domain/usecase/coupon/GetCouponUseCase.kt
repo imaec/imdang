@@ -3,6 +3,7 @@ package info.imdang.domain.usecase.coupon
 import info.imdang.domain.IoDispatcher
 import info.imdang.domain.model.coupon.CouponDto
 import info.imdang.domain.repository.MyCouponRepository
+import info.imdang.domain.repository.fake.FakeMyCouponRepositoryImpl
 import info.imdang.domain.usecase.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -17,10 +18,6 @@ open class GetCouponUseCase @Inject constructor(
 }
 
 class FakeGetCouponUseCase : GetCouponUseCase(
-    repository = object : MyCouponRepository {
-        override suspend fun getCoupon(): CouponDto {
-            TODO("Not yet implemented")
-        }
-    },
+    repository = FakeMyCouponRepositoryImpl(),
     dispatcher = Dispatchers.IO
 )

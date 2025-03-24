@@ -3,6 +3,7 @@ package info.imdang.domain.usecase.google
 import info.imdang.domain.IoDispatcher
 import info.imdang.domain.model.google.GoogleAccessTokenDto
 import info.imdang.domain.repository.GoogleRepository
+import info.imdang.domain.repository.fake.FakeGoogleRepositoryImpl
 import info.imdang.domain.usecase.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +19,6 @@ open class GetGoogleAccessTokenUseCase @Inject constructor(
 }
 
 class FakeGetGoogleAccessTokenUseCase : GetGoogleAccessTokenUseCase(
-    repository = object : GoogleRepository {
-        override suspend fun getAccessToken(code: String): GoogleAccessTokenDto {
-            TODO("Not yet implemented")
-        }
-    },
+    repository = FakeGoogleRepositoryImpl(),
     dispatcher = Dispatchers.IO
 )

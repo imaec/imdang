@@ -12,7 +12,38 @@ data class PagingDto<T>(
     val last: Boolean,
     val empty: Boolean,
     val content: List<T>
-)
+) {
+    companion object {
+        fun <T> empty() = PagingDto<T>(
+            totalElements = 0,
+            totalPages = 0,
+            size = 0,
+            number = 0,
+            sort = SortDto(
+                empty = true,
+                sorted = false,
+                unsorted = false
+            ),
+            numberOfElements = 0,
+            pageable = PageableDto(
+                offset = 0,
+                sort = SortDto(
+                    empty = true,
+                    sorted = false,
+                    unsorted = false
+                ),
+                paged = false,
+                pageNumber = 0,
+                pageSize = 0,
+                unpaged = false
+            ),
+            first = true,
+            last = true,
+            empty = true,
+            content = emptyList()
+        )
+    }
+}
 
 data class SortDto(
     val empty: Boolean,
