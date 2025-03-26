@@ -6,7 +6,8 @@ fun String.validateNickname(): String {
     return when (length) {
         0 -> "닉네임을 입력해주세요"
         1 -> "2자-10자로 작성해주세요"
-        else -> ""
+        in 2..10 -> ""
+        else -> "2자-10자로 작성해주세요"
     }
 }
 
