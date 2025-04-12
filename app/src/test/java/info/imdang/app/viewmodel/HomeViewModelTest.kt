@@ -1,6 +1,8 @@
 package info.imdang.app.viewmodel
 
+import androidx.paging.PagingData
 import info.imdang.app.model.complex.VisitedComplexVo
+import info.imdang.app.model.insight.ExchangeType
 import info.imdang.app.ui.main.home.HomeViewModel
 import info.imdang.domain.model.common.AddressDto
 import info.imdang.domain.model.common.PagingDto
@@ -28,6 +30,7 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -236,5 +239,49 @@ class HomeViewModelTest {
                 viewModel.visitedComplexes.value.first { it.isSelected }.complexName
             )
             assert(viewModel.insightsByComplex.value.size in 0..3)
+        }
+
+    @Test
+    fun `updateExchangeType(REQUEST) 호출 시 exchangeType이 REQUEST로 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `HomeViewModel 생성 시 초기 데이터 설정`()
+
+            val exchangeType = ExchangeType.REQUEST
+            val insightDto = InsightDto(
+                insightId = "testInsightId",
+                recommendedCount = 0,
+                address = AddressDto(
+                    siDo = "testSiDo",
+                    siGunGu = "testSiGunGu",
+                    eupMyeonDong = "testEupMyeonDong",
+                    roadName = "testRoadName",
+                    buildingNumber = "testBuildingNumber",
+                    detail = "testDetail",
+                    latitude = 0.0,
+                    longitude = 0.0
+                ),
+                title = "testTitle",
+                mainImage = "testMainImage",
+                memberId = "testMemberId",
+                memberNickname = "testMemberNickname"
+            )
+            val insightDtoList = buildList {
+                repeat(10) {
+                    add(insightDto)
+                }
+            }
+
+            coEvery { getRequestExchangesUseCase(any(), any()) } returns flow {
+                PagingData.from(insightDtoList)
+            }
+
+            // when
+            viewModel.updateExchangeType(exchangeType)
+            advanceUntilIdle()
+            delay(1000)
+
+            // then
+            assertEquals(exchangeType, viewModel.currentExchangeType.value)
         }
 }
