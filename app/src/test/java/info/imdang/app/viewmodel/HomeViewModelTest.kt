@@ -2,6 +2,7 @@ package info.imdang.app.viewmodel
 
 import androidx.paging.PagingData
 import info.imdang.app.model.complex.VisitedComplexVo
+import info.imdang.app.model.insight.ExchangeRequestStatus
 import info.imdang.app.model.insight.ExchangeType
 import info.imdang.app.ui.main.home.HomeViewModel
 import info.imdang.domain.model.common.AddressDto
@@ -283,5 +284,49 @@ class HomeViewModelTest {
 
             // then
             assertEquals(exchangeType, viewModel.currentExchangeType.value)
+        }
+
+    @Test
+    fun `onClickExchangeStatus(PENDING) 호출 시 exchangeStatus가 PENDING으로 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `HomeViewModel 생성 시 초기 데이터 설정`()
+
+            val exchangeStatus = ExchangeRequestStatus.PENDING
+            val insightDto = InsightDto(
+                insightId = "testInsightId",
+                recommendedCount = 0,
+                address = AddressDto(
+                    siDo = "testSiDo",
+                    siGunGu = "testSiGunGu",
+                    eupMyeonDong = "testEupMyeonDong",
+                    roadName = "testRoadName",
+                    buildingNumber = "testBuildingNumber",
+                    detail = "testDetail",
+                    latitude = 0.0,
+                    longitude = 0.0
+                ),
+                title = "testTitle",
+                mainImage = "testMainImage",
+                memberId = "testMemberId",
+                memberNickname = "testMemberNickname"
+            )
+            val insightDtoList = buildList {
+                repeat(10) {
+                    add(insightDto)
+                }
+            }
+
+            coEvery { getRequestExchangesUseCase(any(), any()) } returns flow {
+                PagingData.from(insightDtoList)
+            }
+
+            // when
+            viewModel.onClickExchangeStatus(exchangeStatus)
+            advanceUntilIdle()
+            delay(1000)
+
+            // then
+            assertEquals(exchangeStatus, viewModel.selectedExchangeStatus.value)
         }
 }
