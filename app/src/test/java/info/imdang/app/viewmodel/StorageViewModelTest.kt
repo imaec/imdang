@@ -50,8 +50,43 @@ class StorageViewModelTest {
     @Test
     fun `StorageViewModel 생성 시 초기 데이터 설정`() = runTest(UnconfinedTestDispatcher()) {
         // given
-        val addresses = listOf<MyInsightAddressDto>()
-        val complexes = listOf<ComplexDto>()
+        val addresses = listOf(
+            MyInsightAddressDto(
+                siDo = "testSido",
+                siGunGu = "testSiGunGu",
+                eupMyeonDong = "testEupMyeonDong",
+                apartmentComplexCount = 3,
+                insightCount = 5
+            ),
+            MyInsightAddressDto(
+                siDo = "testSido",
+                siGunGu = "testSiGunGu",
+                eupMyeonDong = "testEupMyeonDong",
+                apartmentComplexCount = 4,
+                insightCount = 6
+            ),
+            MyInsightAddressDto(
+                siDo = "testSido",
+                siGunGu = "testSiGunGu",
+                eupMyeonDong = "testEupMyeonDong",
+                apartmentComplexCount = 2,
+                insightCount = 2
+            )
+        )
+        val complexes = listOf(
+            ComplexDto(
+                apartmentComplexName = "testComplexName",
+                insightCount = 10
+            ),
+            ComplexDto(
+                apartmentComplexName = "testComplexName",
+                insightCount = 5
+            ),
+            ComplexDto(
+                apartmentComplexName = "testComplexName",
+                insightCount = 6
+            )
+        )
         val insightDto = InsightDto(
             insightId = "testInsightId",
             recommendedCount = 0,
