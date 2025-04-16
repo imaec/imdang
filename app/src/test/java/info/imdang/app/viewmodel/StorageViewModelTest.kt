@@ -1,7 +1,6 @@
 package info.imdang.app.viewmodel
 
 import androidx.paging.PagingData
-import info.imdang.app.model.myinsight.MyInsightAddressVo
 import info.imdang.app.model.myinsight.mapper
 import info.imdang.app.ui.main.storage.StorageViewModel
 import info.imdang.domain.model.common.AddressDto
@@ -123,9 +122,26 @@ class StorageViewModelTest {
         // then
         assertEquals(
             addresses.mapIndexed { index, dto ->
-                dto.mapper(isSelected = index == 0) },
+                dto.mapper(isSelected = index == 0)
+            },
             viewModel.addresses.value
         )
         assertEquals(complexes.map(ComplexDto::mapper), viewModel.complexes.value)
     }
+
+    @Test
+    fun `getSelectedDong 호출 시 selectedAddress가 선택된 address로 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `StorageViewModel 생성 시 초기 데이터 설정`()
+
+            // when
+            advanceUntilIdle()
+
+            // then
+            assertEquals(
+                viewModel.addresses.value.first { it.isSelected }.eupMyeonDong,
+                viewModel.getSelectedDong()
+            )
+        }
 }
