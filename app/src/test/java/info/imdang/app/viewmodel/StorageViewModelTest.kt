@@ -144,4 +144,69 @@ class StorageViewModelTest {
                 viewModel.getSelectedDong()
             )
         }
+
+    @Test
+    fun `selectInsightAddressPage 호출 시 selectedInsightAddressPage가 선택된 page로 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `StorageViewModel 생성 시 초기 데이터 설정`()
+            val selectedPage = 1
+            val complexes = listOf(
+                ComplexDto(
+                    apartmentComplexName = "testComplexName1",
+                    insightCount = 10
+                ),
+                ComplexDto(
+                    apartmentComplexName = "testComplexName2",
+                    insightCount = 5
+                ),
+                ComplexDto(
+                    apartmentComplexName = "testComplexName3",
+                    insightCount = 6
+                )
+            )
+            val insightDto = InsightDto(
+                insightId = "testInsightId",
+                recommendedCount = 0,
+                address = AddressDto(
+                    siDo = "testSiDo",
+                    siGunGu = "testSiGunGu",
+                    eupMyeonDong = "testEupMyeonDong",
+                    roadName = "testRoadName",
+                    buildingNumber = "testBuildingNumber",
+                    detail = "testDetail",
+                    latitude = 0.0,
+                    longitude = 0.0
+                ),
+                title = "testTitle",
+                mainImage = "testMainImage",
+                memberId = "testMemberId",
+                memberNickname = "testMemberNickname"
+            )
+            val insightDtoList = buildList {
+                repeat(10) {
+                    add(insightDto)
+                }
+            }
+
+            coEvery { getComplexesByAddressUseCase(any(), any()) } returns complexes
+            coEvery { getMyInsightsByAddressUseCase(any(), any()) } returns flow {
+                PagingData.from(insightDtoList)
+            }
+
+            // when
+            viewModel.selectInsightAddressPage(page = selectedPage)
+            advanceUntilIdle()
+
+            // then
+            assertEquals(
+                selectedPage,
+                viewModel.selectedInsightAddressPage.value
+            )
+            assertEquals(
+                viewModel.addresses.value[selectedPage].eupMyeonDong,
+                viewModel.getSelectedDong()
+            )
+            assertEquals(complexes.map(ComplexDto::mapper), viewModel.complexes.value)
+        }
 }
