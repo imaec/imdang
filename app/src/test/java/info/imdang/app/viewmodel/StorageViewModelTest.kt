@@ -209,4 +209,45 @@ class StorageViewModelTest {
             )
             assertEquals(complexes.map(ComplexDto::mapper), viewModel.complexes.value)
         }
+
+    @Test
+    fun `toggleMyInsightOnly 호출 시 isSeeOnlyMyInsight가 true로 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `StorageViewModel 생성 시 초기 데이터 설정`()
+            val insightDto = InsightDto(
+                insightId = "testInsightId",
+                recommendedCount = 0,
+                address = AddressDto(
+                    siDo = "testSiDo",
+                    siGunGu = "testSiGunGu",
+                    eupMyeonDong = "testEupMyeonDong",
+                    roadName = "testRoadName",
+                    buildingNumber = "testBuildingNumber",
+                    detail = "testDetail",
+                    latitude = 0.0,
+                    longitude = 0.0
+                ),
+                title = "testTitle",
+                mainImage = "testMainImage",
+                memberId = "testMemberId",
+                memberNickname = "testMemberNickname"
+            )
+            val insightDtoList = buildList {
+                repeat(10) {
+                    add(insightDto)
+                }
+            }
+
+            coEvery { getMyInsightsByAddressUseCase(any(), any()) } returns flow {
+                PagingData.from(insightDtoList)
+            }
+
+            // when
+            viewModel.toggleMyInsightOnly()
+            advanceUntilIdle()
+
+            // then
+            assertEquals(true, viewModel.isSeeOnlyMyInsight.value)
+        }
 }
