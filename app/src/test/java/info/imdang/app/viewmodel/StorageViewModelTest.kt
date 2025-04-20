@@ -1,6 +1,7 @@
 package info.imdang.app.viewmodel
 
 import androidx.paging.PagingData
+import info.imdang.app.model.myinsight.ComplexVo
 import info.imdang.app.model.myinsight.mapper
 import info.imdang.app.ui.main.storage.StorageViewModel
 import info.imdang.domain.model.common.AddressDto
@@ -249,5 +250,51 @@ class StorageViewModelTest {
 
             // then
             assertEquals(true, viewModel.isSeeOnlyMyInsight.value)
+        }
+
+    @Test
+    fun `updateSelectedComplex 호출 시 selectedComplex가 선택된 complex로 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `StorageViewModel 생성 시 초기 데이터 설정`()
+            val complexVo = ComplexVo(
+                complexName = "testComplexName",
+                insightCount = 10,
+                isSelected = true
+            )
+            val insightDto = InsightDto(
+                insightId = "testInsightId",
+                recommendedCount = 0,
+                address = AddressDto(
+                    siDo = "testSiDo",
+                    siGunGu = "testSiGunGu",
+                    eupMyeonDong = "testEupMyeonDong",
+                    roadName = "testRoadName",
+                    buildingNumber = "testBuildingNumber",
+                    detail = "testDetail",
+                    latitude = 0.0,
+                    longitude = 0.0
+                ),
+                title = "testTitle",
+                mainImage = "testMainImage",
+                memberId = "testMemberId",
+                memberNickname = "testMemberNickname"
+            )
+            val insightDtoList = buildList {
+                repeat(10) {
+                    add(insightDto)
+                }
+            }
+
+            coEvery { getMyInsightsByAddressUseCase(any(), any()) } returns flow {
+                PagingData.from(insightDtoList)
+            }
+
+            // when
+            viewModel.updateSelectedComplex(complexVo)
+            advanceUntilIdle()
+
+            // then
+            assertEquals(complexVo, viewModel.selectedComplex.value)
         }
 }
