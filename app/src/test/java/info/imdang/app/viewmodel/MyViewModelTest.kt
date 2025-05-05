@@ -1,6 +1,7 @@
 package info.imdang.app.viewmodel
 
 import info.imdang.app.model.my.mapper
+import info.imdang.app.ui.my.MyEvent
 import info.imdang.app.ui.my.MyViewModel
 import info.imdang.domain.model.mypage.MyPageDto
 import info.imdang.domain.usecase.auth.RemoveTokenUseCase
@@ -10,6 +11,7 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -53,5 +55,19 @@ class MyViewModelTest {
 
         // then
         assertEquals(myPageDto.mapper(), viewModel.myPage.value)
+    }
+
+    @Test
+    fun `logout 성공 시 MoveLoginScreen 이벤트 발행`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `MyViewModel 생성 시 초기 데이터 설정`()
+
+        coEvery { removeTokenUseCase(Unit, any()) } returns Unit
+
+        // when
+        viewModel.logout()
+
+        // then
+        assertEquals(MyEvent.MoveLoginScreen, viewModel.event.first())
     }
 }
