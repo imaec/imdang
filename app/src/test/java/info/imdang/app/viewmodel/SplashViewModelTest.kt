@@ -57,4 +57,19 @@ class SplashViewModelTest {
             // then
             assertEquals(SplashEvent.MoveMainScreen, viewModel.event.first())
         }
+
+    @Test
+    fun `SplashViewModel 생성 시 로그아웃 상태이면 MoveLoginScreen 이벤트 발행`() =
+        runTest {
+            // given
+            val accessToken = null
+
+            coEvery { getTokenUseCase(Unit, any()) } returns accessToken
+
+            // when
+            delay(100)
+
+            // then
+            assertEquals(SplashEvent.MoveLoginScreen, viewModel.event.first())
+        }
 }
