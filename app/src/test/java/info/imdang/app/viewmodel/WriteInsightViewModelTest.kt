@@ -1,6 +1,7 @@
 package info.imdang.app.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import info.imdang.app.model.insight.mapper
 import info.imdang.app.ui.insight.write.WriteInsightViewModel
 import info.imdang.domain.model.common.AddressDto
 import info.imdang.domain.model.insight.ApartmentComplexDto
@@ -46,50 +47,52 @@ class WriteInsightViewModelTest {
         )
     }
 
+    private fun getInsightDetailDto() = InsightDetailDto(
+        memberId = "testMemberId",
+        memberNickname = "testMemberNickname",
+        insightId = "testInsightId",
+        snapshotId = 1L,
+        mainImage = "testMainImage",
+        title = "testTitle",
+        address = AddressDto(
+            siDo = "testSido",
+            siGunGu = "testSigungu",
+            eupMyeonDong = "testEupmyeondong",
+            roadName = "testRoadname",
+            buildingNumber = "testBuildingnumber",
+            detail = "testDetail",
+            latitude = 1.0,
+            longitude = 2.0
+        ),
+        apartmentComplex = ApartmentComplexDto(name = "testComplexName"),
+        visitAt = "2025-05-12",
+        visitTimes = listOf("testVisitTime"),
+        visitMethods = listOf("testVisitMethod"),
+        access = "testAccess",
+        summary = "testSummary",
+        infra = null,
+        complexEnvironment = null,
+        complexFacility = null,
+        favorableNews = null,
+        recommended = true,
+        accused = false,
+        recommendedCount = 1,
+        accusedCount = null,
+        viewCount = 1,
+        score = 1,
+        createdAt = "testCreatedAt",
+        createdByMe = true,
+        exchangeRequestStatus = null,
+        exchangeRequestCreatedByMe = null,
+        exchangeRequestId = null
+    )
+
     @Test
     fun `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`() =
         runTest(UnconfinedTestDispatcher()) {
             // given
             val insightId = "testInsightId"
-            val insight = InsightDetailDto(
-                memberId = "testMemberId",
-                memberNickname = "testMemberNickname",
-                insightId = "testInsightId",
-                snapshotId = 1L,
-                mainImage = "testMainImage",
-                title = "testTitle",
-                address = AddressDto(
-                    siDo = "testSido",
-                    siGunGu = "testSigungu",
-                    eupMyeonDong = "testEupmyeondong",
-                    roadName = "testRoadname",
-                    buildingNumber = "testBuildingnumber",
-                    detail = "testDetail",
-                    latitude = 1.0,
-                    longitude = 2.0
-                ),
-                apartmentComplex = ApartmentComplexDto(name = "testComplexName"),
-                visitAt = "2025-05-12",
-                visitTimes = listOf("testVisitTime"),
-                visitMethods = listOf("testVisitMethod"),
-                access = "testAccess",
-                summary = "testSummary",
-                infra = null,
-                complexEnvironment = null,
-                complexFacility = null,
-                favorableNews = null,
-                recommended = true,
-                accused = false,
-                recommendedCount = 1,
-                accusedCount = null,
-                viewCount = 1,
-                score = 1,
-                createdAt = "testCreatedAt",
-                createdByMe = true,
-                exchangeRequestStatus = null,
-                exchangeRequestCreatedByMe = null,
-                exchangeRequestId = null
-            )
+            val insight = getInsightDetailDto()
 
             coEvery { getInsightDetailUseCase(insightId, any()) } returns insight
 
@@ -98,5 +101,10 @@ class WriteInsightViewModelTest {
 
             // then
             assertEquals(insightId, viewModel.insightId)
+            assertEquals(insight.mapper().mainImage, viewModel.coverImageUrl.value)
+            assertEquals(insight.mapper().title, viewModel.title.value)
+            assertEquals(insight.mapper().address.toJibunAddress(), viewModel.address.value)
+            assertEquals(insight.mapper().complexName, viewModel.complexName.value)
+            assertEquals(insight.mapper().visitAt, viewModel.visitDate.value)
         }
 }
