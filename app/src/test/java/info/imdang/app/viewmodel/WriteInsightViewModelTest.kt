@@ -17,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
@@ -107,4 +108,17 @@ class WriteInsightViewModelTest {
             assertEquals(insight.mapper().complexName, viewModel.complexName.value)
             assertEquals(insight.mapper().visitAt, viewModel.visitDate.value)
         }
+
+    @Test
+    fun `updateProgress 호출 시 progress 값이 00%로 변경`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+        val progress = "00%"
+
+        // when
+        viewModel.updateProgress()
+
+        // then
+        assertEquals(progress, viewModel.progress.value)
+    }
 }
