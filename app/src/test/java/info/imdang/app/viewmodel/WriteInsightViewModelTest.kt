@@ -121,4 +121,17 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(progress, viewModel.progress.value)
     }
+
+    @Test
+    fun `updateSelectedPage 호출 시 selectedPage 값이 변경`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+        val selectedPage = 1
+
+        // when
+        viewModel.updateSelectedPage(selectedPage)
+
+        // then
+        assertEquals(selectedPage, viewModel.selectedPage.value)
+    }
 }
