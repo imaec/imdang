@@ -11,13 +11,13 @@ import info.imdang.domain.usecase.insight.UpdateInsightUseCase
 import info.imdang.domain.usecase.insight.WriteInsightUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
+import java.io.File
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
@@ -134,4 +134,18 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(selectedPage, viewModel.selectedPage.value)
     }
+
+    @Test
+    fun `updateCoverImageFile 호출 시 coverImageFile 값이 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+            val coverImageFile = File("testCoverImageFile")
+
+            // when
+            viewModel.updateCoverImageFile(coverImageFile)
+
+            // then
+            assertEquals(coverImageFile, viewModel.coverImageFile.value)
+        }
 }
