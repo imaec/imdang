@@ -161,4 +161,17 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(title, viewModel.title.value)
     }
+
+    @Test
+    fun `updateTitleFocused 호출 시 isTitleFocused 값이 변경`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+        val isTitleFocused = true
+
+        // when
+        viewModel.updateTitleFocused(isTitleFocused)
+
+        // then
+        assertEquals(isTitleFocused, viewModel.isTitleFocused.value)
+    }
 }
