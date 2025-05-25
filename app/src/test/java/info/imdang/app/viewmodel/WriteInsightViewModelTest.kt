@@ -174,4 +174,17 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(isTitleFocused, viewModel.isTitleFocused.value)
     }
+
+    @Test
+    fun `updateAddress 호출 시 address 값이 변경`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+        val address = "testAddress"
+
+        // when
+        viewModel.updateAddress(address)
+
+        // then
+        assertEquals(address, viewModel.address.value)
+    }
 }
