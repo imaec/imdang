@@ -187,4 +187,17 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(address, viewModel.address.value)
     }
+
+    @Test
+    fun `updateComplexName 호출 시 complexName 값이 변경`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+        val complexName = "testComplexName"
+
+        // when
+        viewModel.updateComplexName(complexName)
+
+        // then
+        assertEquals(complexName, viewModel.complexName.value)
+    }
 }
