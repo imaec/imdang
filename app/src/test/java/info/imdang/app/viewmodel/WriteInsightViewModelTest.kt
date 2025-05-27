@@ -200,4 +200,17 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(complexName, viewModel.complexName.value)
     }
+
+    @Test
+    fun `updateVisitDate 호출 시 latitude 값이 변경`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+        val visitDate = "2025.10.10"
+
+        // when
+        viewModel.updateVisitDate(visitDate)
+
+        // then
+        assertEquals(visitDate, viewModel.visitDate.value)
+    }
 }
