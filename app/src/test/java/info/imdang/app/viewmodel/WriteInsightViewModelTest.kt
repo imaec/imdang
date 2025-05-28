@@ -213,4 +213,18 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(visitDate, viewModel.visitDate.value)
     }
+
+    @Test
+    fun `updateVisitDateFocused 호출 시 isVisitDateFocused 값이 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+            val isVisitDateFocused = true
+
+            // when
+            viewModel.updateVisitDateFocused(isVisitDateFocused)
+
+            // then
+            assertEquals(isVisitDateFocused, viewModel.isVisitDateFocused.value)
+        }
 }
