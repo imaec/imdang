@@ -240,4 +240,17 @@ class WriteInsightViewModelTest {
         // then
         assertEquals(summary, viewModel.summary.value)
     }
+
+    @Test
+    fun `updateInfraReview 호출 시 infraReview 값이 변경`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+        val infraReview = "testInfraReview"
+
+        // when
+        viewModel.updateInfraReview(infraReview)
+
+        // then
+        assertEquals(infraReview, viewModel.infraReview.value)
+    }
 }
