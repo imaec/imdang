@@ -267,4 +267,18 @@ class WriteInsightViewModelTest {
             // then
             assertEquals(complexEnvironmentReview, viewModel.complexEnvironmentReview.value)
         }
+
+    @Test
+    fun `updateComplexFacilityReview 호출 시 complexFacilityReview 값이 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+            val complexFacilityReview = "testComplexFacilityReview"
+
+            // when
+            viewModel.updateComplexFacilityReview(complexFacilityReview)
+
+            // then
+            assertEquals(complexFacilityReview, viewModel.complexFacilityReview.value)
+        }
 }
