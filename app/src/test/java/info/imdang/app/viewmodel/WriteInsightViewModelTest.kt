@@ -281,4 +281,18 @@ class WriteInsightViewModelTest {
             // then
             assertEquals(complexFacilityReview, viewModel.complexFacilityReview.value)
         }
+
+    @Test
+    fun `updateGoodNewsReview 호출 시 goodNewsReview 값이 변경`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            `WriteInsightViewModel 생성 시 insightId가 null이 아니면 인사이트 상세 조회`()
+            val goodNewsReview = "testGoodNewsReview"
+
+            // when
+            viewModel.updateGoodNewsReview(goodNewsReview)
+
+            // then
+            assertEquals(goodNewsReview, viewModel.goodNewsReview.value)
+        }
 }
